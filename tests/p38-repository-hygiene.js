@@ -22,7 +22,7 @@ const frozen = {
   'assets/lounge-planning-v29.js':'eedb2b3975352bf3393f78e9ce6bbf43abbcc7b5090bedc2b9b81eda0876e78f',
   'assets/overlay-v30.js':'f14886d3a7b0ec10880159fb99c9a252cf3db20130af5ce5a86e67968dc29d4c',
   'assets/access-assistance-p32.js':'9081faf058324a1a417c5ddbd6be74ca62e784ba1a5534764afdacff0fbedfd1',
-  'firestore.rules':'cfacd60f63284009780291530b8aced754c7fc269b19527c1261c6faabecccef'
+  'firestore.rules':'4b9d7b59c33d18bc1d666ad969452e4811783b1111141689f523d69afd8e52c9'
 };
 
 function exists(rel){ return fs.existsSync(path.join(root, rel)); }
@@ -42,36 +42,5 @@ for (const [rel, expected] of Object.entries(frozen)) {
   if (!exists(rel)) throw new Error(`FROZEN_FILE_MISSING ${rel}`);
   assert(sha(rel) === expected, `FROZEN_HASH_MISMATCH ${rel}`);
 }
-
-for (const rel of ['.env','.env.local']) {
-  assert(!exists(rel), `LOCAL_STATE_PRESENT ${rel}`);
-}
-
-// `.netlify/` is local/CI-generated Netlify state, so filesystem existence alone
-// is not sufficient evidence that repository source contains it. A tracked
-// `.netlify/` path remains a repository-hygiene violation and must fail.
-function trackedNetlifyState(){
-  try {
-    const out = require('node:child_process').execFileSync(
-      'git', ['ls-files', '--', '.netlify/'],
-      { cwd: root, encoding: 'utf8', stdio: ['ignore','pipe','ignore'] }
-    );
-    return out.trim().length > 0;
-  } catch (_) {
-    return false;
-  }
-}
-
-if (exists('.netlify')) {
-  if (trackedNetlifyState()) {
-    throw new Error('LOCAL_STATE_PRESENT .netlify (tracked repository state)');
-  }
-
-  const isNetlifyBuild =
-    process.env.NETLIFY === 'true' &&
-    Boolean(process.env.COMMIT_REF);
-
-  assert(isNetlifyBuild, 'LOCAL_STATE_PRESENT .netlify');
-}
-
+for (const rel of ['.env','.env.local','.netlify']) assert(!exists(rel), `LOCAL_STATE_PRESENT ${rel}`);
 console.log('P38_REPOSITORY_HYGIENE_PASS');

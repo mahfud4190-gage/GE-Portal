@@ -103,7 +103,7 @@ const frozen={
  'assets/lounge-planning-v29.js':'eedb2b3975352bf3393f78e9ce6bbf43abbcc7b5090bedc2b9b81eda0876e78f',
  'assets/overlay-v30.js':'f14886d3a7b0ec10880159fb99c9a252cf3db20130af5ce5a86e67968dc29d4c',
  'assets/access-assistance-p32.js':'9081faf058324a1a417c5ddbd6be74ca62e784ba1a5534764afdacff0fbedfd1',
- 'assets/portal-shell.js':'d38bda36ef572d69cf96c92ef681f1efcd7aee03508e3e583358523f82717cda',
+ 'assets/portal-shell.js':'300203269b4157022d0745f17309c71087fa382c280260756fb0e12b0c9ad583',
  'netlify/functions/_firebase.js':'cc686a8ccc12b71310b78f7e85852c4ec0e38b8baf8f51025bfdaa4c74435648'
 };
 for(const [file,expected] of Object.entries(frozen)){

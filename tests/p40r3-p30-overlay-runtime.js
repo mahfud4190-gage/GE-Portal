@@ -16,6 +16,9 @@ else ok('R10 app-shell/sidebar/overlay duplicate authority retired');
 if (!shell.includes("item('calendar.html','Calendar & Project Tracking','▦')")) fail('Calendar & Project Tracking is missing from shared navigation');
 else ok('Calendar & Project Tracking is present in shared navigation');
 
+if (!shell.includes('function init(){stabilizeSidebar();setTimeout(touchpointPreview,30)}')) fail('Sidebar stabilization is not invoked by the R8 lifecycle');
+else ok('Sidebar stabilization is invoked by the R8 lifecycle');
+
 // P30: overlay-v30 remains the single portal-wide overlay normalization authority.
 if (!overlay.includes("const SELECTORS=['.modal-backdrop'")) fail('P30 selector registry missing');
 else ok('P30 selector registry present');

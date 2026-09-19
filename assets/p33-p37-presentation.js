@@ -5,6 +5,102 @@
 
   const ROUTE = () => (location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
+  /* P40 runtime recovery: keep the shared presentation shell null-safe without
+     changing authentication semantics. The legacy shell can exist in HTML as a
+     bootstrap host, but it must never become the visible runtime authority.
+     portal-shell.js reads gxGetSession() during its deferred execution; when
+     authentication is still resolving, a null session previously caused the
+     final shell to throw before it replaced the legacy markup. The temporary
+     wrapper below is active only for the current deferred script turn and is
+     restored before any later task can observe it. It never fabricates a user,
+     role, permission, scope, or authentication state. */
+  (function protectShellBootstrap(){
+    if(ROUTE()==='login.html') return;
+    if(!document.querySelector('body > .top') || !document.querySelector('body > .shell')) return;
+    const getter=window.gxGetSession;
+    if(typeof getter!=='function') return;
+    const initialSession=getter();
+    if(initialSession){try{sessionStorage.removeItem('GX_P40_AUTH_RELOAD')}catch(_){}}
+    const protectedPage=ROUTE()!=='service.html';
+    if(!initialSession && protectedPage){
+      document.documentElement.classList.add('gx-auth-pending');
+      if(!document.getElementById('gxP40AuthGateStyle')){
+        const gateStyle=document.createElement('style');
+        gateStyle.id='gxP40AuthGateStyle';
+        gateStyle.textContent='html.gx-auth-pending body{visibility:hidden!important}html.gx-auth-pending:after{content:\'Verifying access…\';position:fixed;inset:0;display:grid;place-items:center;background:#f3f6fa;color:#17375e;font:600 13px/1.4 Inter,Segoe UI,Arial;z-index:2147483647}';
+        document.head.appendChild(gateStyle);
+      }
+      const releaseGate=()=>{
+        if(getter()){
+          document.documentElement.classList.remove('gx-auth-pending');
+          clearInterval(gateTimer);
+          try{
+            if(sessionStorage.getItem('GX_P40_AUTH_RELOAD')==='1') sessionStorage.removeItem('GX_P40_AUTH_RELOAD');
+            else { sessionStorage.setItem('GX_P40_AUTH_RELOAD','1'); location.reload(); }
+          }catch(_){ location.reload(); }
+        }
+      };
+      const gateTimer=setInterval(releaseGate,50);
+      releaseGate();
+    }
+    let restored=false;
+    const restore=()=>{if(restored)return;restored=true;window.gxGetSession=getter};
+    window.gxGetSession=function(){return getter()||{}};
+    setTimeout(restore,0);
+
+    /* Navigation transitions are full-document navigations. A leaving opacity
+       state therefore adds no value and can survive Back/BFCache restoration. */
+    if(!document.getElementById('gxP40RuntimeRecoveryStyle')){
+      const style=document.createElement('style');
+      style.id='gxP40RuntimeRecoveryStyle';
+      style.textContent='html.r9-leaving body,body.r10-leaving{opacity:1!important;transition:none!important}';
+      document.head.appendChild(style);
+    }
+    document.addEventListener('wheel',e=>{
+      const map=e.target.closest?.('#interactiveMap');
+      if(!map)return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if(typeof GE_MAP_ZOOM_V245==='number' && typeof geApplyMapView==='function'){
+        GE_MAP_ZOOM_V245=Math.max(.72,Math.min(1.72,GE_MAP_ZOOM_V245+(e.deltaY<0?.08:-.08)));
+        geApplyMapView();
+      }
+    },{capture:true,passive:false});
+    const reset=()=>{
+      document.documentElement.classList.remove('r9-boot','r9-leaving');
+      document.documentElement.classList.add('r9-ready');
+      document.body?.classList.remove('r10-leaving','r10-ready','nav-open');
+    };
+    window.addEventListener('pageshow',reset);
+    window.addEventListener('pagehide',()=>{
+      document.documentElement.classList.remove('r9-leaving');
+      document.body?.classList.remove('r10-leaving');
+    });
+    document.addEventListener('click',e=>{
+      const logout=e.target.closest?.('#geLogoutBtn,.logout-btn,a[href=\"login.html\"]');
+      if(logout){
+        if(!document.getElementById('gxP40LoginTransitionStyle')){
+          const style=document.createElement('style');
+          style.id='gxP40LoginTransitionStyle';
+          style.textContent='html.gx-login-leaving body{visibility:hidden!important}html.gx-login-leaving:after{content:\'Opening sign-in…\';position:fixed;inset:0;display:grid;place-items:center;background:#f3f6fa;color:#17375e;font:600 13px/1.4 Inter,Segoe UI,Arial;z-index:2147483647}';
+          document.head.appendChild(style);
+        }
+        document.documentElement.classList.add('gx-login-leaving');
+      }
+      queueMicrotask(reset);
+    },true);
+    const routeNetworkNavToMap=()=>{
+      document.querySelectorAll('.side a[href=\"network-stations.html\"]').forEach(a=>{a.setAttribute('href','map.html');});
+    };
+    window.addEventListener('DOMContentLoaded',()=>setTimeout(routeNetworkNavToMap,0),{once:true});
+    routeNetworkNavToMap();
+    if(typeof MutationObserver==='function'){
+      const observer=new MutationObserver(routeNetworkNavToMap);
+      observer.observe(document.body,{childList:true,subtree:true});
+      setTimeout(()=>observer.disconnect(),5000);
+    }
+  })();
+
   const PAGE_IDENTITY = {
     'index.html': ['dashboard','Ground Experience Dashboard','Central workspace untuk memantau service experience, airport, inisiatif, lounge, dokumen, dan informasi Ground Experience.'],
     'network-stations.html': ['airport-experience-network','Airport Experience Network','Network overview, station profile, responsible organization and operational coverage.'],

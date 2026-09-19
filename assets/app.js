@@ -1250,11 +1250,42 @@ function geEnhanceTable(table){
 function geEnhanceAllTables(){
   document.querySelectorAll('table').forEach(geEnhanceTable);
 }
+window.geRefreshTables=function(){
+  try{geEnhanceAllTables()}catch(_){ }
+};
 window.addEventListener('DOMContentLoaded',()=>{
   setTimeout(geEnhanceAllTables,0);
-  const pageObserver=new MutationObserver(()=>geEnhanceAllTables());
-  pageObserver.observe(document.body,{childList:true,subtree:true});
 });
+
+/* P40 page-runtime guard: repeated historical render hooks are made idempotent.
+   This does not alter data; it only prevents identical DOM rebuilds from stacking
+   during the same page lifecycle. */
+(function(){
+  'use strict';
+  function stableWrap(name,signature){
+    const fn=window[name];
+    if(typeof fn!=='function'||fn.__p40Stable)return;
+    const wrapped=function(...args){
+      let key;
+      try{key=signature?String(signature(...args)):JSON.stringify(args)}catch(_){key='__args__'}
+      if(wrapped.__p40Last===key)return;
+      wrapped.__p40Last=key;
+      return fn.apply(this,args);
+    };
+    wrapped.__p40Stable=true;
+    wrapped.__p40Original=fn;
+    window[name]=wrapped;
+  }
+  stableWrap('renderAirportMapMarkers',()=>{
+    const rows=typeof geMapFilteredAirports==='function'?geMapFilteredAirports():[];
+    return JSON.stringify([window.GE_MAP_REGION||'',rows.map(x=>String(x.id??x.code??'')),rows.map(x=>String(x.status||''))]);
+  });
+  stableWrap('renderAirports',()=>{
+    const rows=typeof geAirportVisibleRows==='function'?geAirportVisibleRows():[];
+    return JSON.stringify(rows.map(x=>[x.id,x.code,x.status,x.pending]));
+  });
+  stableWrap('geApplyMapView',()=>JSON.stringify([window.GE_MAP_REGION||'',window.GE_MAP_ZOOM_V245||window.GE_MAP_ZOOM||1,document.getElementById('mapViewport')?.clientWidth||0]));
+})();
 
 
 /* ==============================================================

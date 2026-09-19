@@ -5,102 +5,6 @@
 
   const ROUTE = () => (location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
-  /* P40 runtime recovery: keep the shared presentation shell null-safe without
-     changing authentication semantics. The legacy shell can exist in HTML as a
-     bootstrap host, but it must never become the visible runtime authority.
-     portal-shell.js reads gxGetSession() during its deferred execution; when
-     authentication is still resolving, a null session previously caused the
-     final shell to throw before it replaced the legacy markup. The temporary
-     wrapper below is active only for the current deferred script turn and is
-     restored before any later task can observe it. It never fabricates a user,
-     role, permission, scope, or authentication state. */
-  (function protectShellBootstrap(){
-    if(ROUTE()==='login.html') return;
-    if(!document.querySelector('body > .top') || !document.querySelector('body > .shell')) return;
-    const getter=window.gxGetSession;
-    if(typeof getter!=='function') return;
-    const initialSession=getter();
-    if(initialSession){try{sessionStorage.removeItem('GX_P40_AUTH_RELOAD')}catch(_){}}
-    const protectedPage=ROUTE()!=='service.html';
-    if(!initialSession && protectedPage){
-      document.documentElement.classList.add('gx-auth-pending');
-      if(!document.getElementById('gxP40AuthGateStyle')){
-        const gateStyle=document.createElement('style');
-        gateStyle.id='gxP40AuthGateStyle';
-        gateStyle.textContent='html.gx-auth-pending body{visibility:hidden!important}html.gx-auth-pending:after{content:\'Verifying access…\';position:fixed;inset:0;display:grid;place-items:center;background:#f3f6fa;color:#17375e;font:600 13px/1.4 Inter,Segoe UI,Arial;z-index:2147483647}';
-        document.head.appendChild(gateStyle);
-      }
-      const releaseGate=()=>{
-        if(getter()){
-          document.documentElement.classList.remove('gx-auth-pending');
-          clearInterval(gateTimer);
-          try{
-            if(sessionStorage.getItem('GX_P40_AUTH_RELOAD')==='1') sessionStorage.removeItem('GX_P40_AUTH_RELOAD');
-            else { sessionStorage.setItem('GX_P40_AUTH_RELOAD','1'); location.reload(); }
-          }catch(_){ location.reload(); }
-        }
-      };
-      const gateTimer=setInterval(releaseGate,50);
-      releaseGate();
-    }
-    let restored=false;
-    const restore=()=>{if(restored)return;restored=true;window.gxGetSession=getter};
-    window.gxGetSession=function(){return getter()||{}};
-    setTimeout(restore,0);
-
-    /* Navigation transitions are full-document navigations. A leaving opacity
-       state therefore adds no value and can survive Back/BFCache restoration. */
-    if(!document.getElementById('gxP40RuntimeRecoveryStyle')){
-      const style=document.createElement('style');
-      style.id='gxP40RuntimeRecoveryStyle';
-      style.textContent='html.r9-leaving body,body.r10-leaving{opacity:1!important;transition:none!important}';
-      document.head.appendChild(style);
-    }
-    document.addEventListener('wheel',e=>{
-      const map=e.target.closest?.('#interactiveMap');
-      if(!map)return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      if(typeof GE_MAP_ZOOM_V245==='number' && typeof geApplyMapView==='function'){
-        GE_MAP_ZOOM_V245=Math.max(.72,Math.min(1.72,GE_MAP_ZOOM_V245+(e.deltaY<0?.08:-.08)));
-        geApplyMapView();
-      }
-    },{capture:true,passive:false});
-    const reset=()=>{
-      document.documentElement.classList.remove('r9-boot','r9-leaving');
-      document.documentElement.classList.add('r9-ready');
-      document.body?.classList.remove('r10-leaving','r10-ready','nav-open');
-    };
-    window.addEventListener('pageshow',reset);
-    window.addEventListener('pagehide',()=>{
-      document.documentElement.classList.remove('r9-leaving');
-      document.body?.classList.remove('r10-leaving');
-    });
-    document.addEventListener('click',e=>{
-      const logout=e.target.closest?.('#geLogoutBtn,.logout-btn,a[href=\"login.html\"]');
-      if(logout){
-        if(!document.getElementById('gxP40LoginTransitionStyle')){
-          const style=document.createElement('style');
-          style.id='gxP40LoginTransitionStyle';
-          style.textContent='html.gx-login-leaving body{visibility:hidden!important}html.gx-login-leaving:after{content:\'Opening sign-in…\';position:fixed;inset:0;display:grid;place-items:center;background:#f3f6fa;color:#17375e;font:600 13px/1.4 Inter,Segoe UI,Arial;z-index:2147483647}';
-          document.head.appendChild(style);
-        }
-        document.documentElement.classList.add('gx-login-leaving');
-      }
-      queueMicrotask(reset);
-    },true);
-    const routeNetworkNavToMap=()=>{
-      document.querySelectorAll('.side a[href=\"network-stations.html\"]').forEach(a=>{a.setAttribute('href','map.html');});
-    };
-    window.addEventListener('DOMContentLoaded',()=>setTimeout(routeNetworkNavToMap,0),{once:true});
-    routeNetworkNavToMap();
-    if(typeof MutationObserver==='function'){
-      const observer=new MutationObserver(routeNetworkNavToMap);
-      observer.observe(document.body,{childList:true,subtree:true});
-      setTimeout(()=>observer.disconnect(),5000);
-    }
-  })();
-
   const PAGE_IDENTITY = {
     'index.html': ['dashboard','Ground Experience Dashboard','Central workspace untuk memantau service experience, airport, inisiatif, lounge, dokumen, dan informasi Ground Experience.'],
     'network-stations.html': ['airport-experience-network','Airport Experience Network','Network overview, station profile, responsible organization and operational coverage.'],
@@ -322,4 +226,70 @@
   window.GX_P33_P37_INIT=init;
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,40));
   else setTimeout(init,40);
+})();
+
+/* P40 runtime recovery — presentation contract repair.
+   This does not replace the shared shell. It repairs only two user-facing
+   contracts that the current role-aware shell output does not currently expose:
+   Calendar & Project Tracking and Airport Experience Network -> map. */
+(function(){
+  'use strict';
+  const route=()=> (location.pathname.split('/').pop()||'index.html').toLowerCase();
+  const isProtected=()=>route()!=='login.html' && !!document.querySelector('body > .top');
+  function repairNavigation(){
+    if(!isProtected())return false;
+    const side=document.querySelector('body.final-v257 > .shell > .side');
+    if(!side)return false;
+    const session=typeof window.gxGetSession==='function'?window.gxGetSession():window.GX_CURRENT_USER||null;
+    if(!session)return false;
+
+    side.querySelectorAll('a.ge-nav-link').forEach(a=>{
+      if((a.textContent||'').trim()==='Airport Experience Network'){
+        a.setAttribute('href','map.html');
+        a.setAttribute('title','Airport Experience Network');
+        a.classList.toggle('active',route()==='map.html');
+      }
+    });
+
+    let calendar=side.querySelector('a.ge-nav-link[data-gx-recovery-calendar="1"]');
+    const canCalendar=typeof window.gxHasPermission==='function'
+      ? window.gxHasPermission('initiatives')
+      : session.role==='Super Admin';
+    if(!canCalendar)return true;
+    if(!calendar){
+      const section=[...side.querySelectorAll('.ge-nav-section')].find(x=>(x.textContent||'').trim()==='IMPROVEMENT & PLANNING');
+      if(!section)return false;
+      const source=section.nextElementSibling;
+      if(!source || !source.matches('a.ge-nav-link'))return false;
+      calendar=source.cloneNode(true);
+      calendar.dataset.gxRecoveryCalendar='1';
+      calendar.setAttribute('href','calendar.html');
+      calendar.setAttribute('title','Calendar & Project Tracking');
+      const label=calendar.querySelector('span:last-child');
+      if(label)label.textContent='Calendar & Project Tracking';
+      else calendar.textContent='Calendar & Project Tracking';
+      section.insertAdjacentElement('afterend',calendar);
+    }
+    calendar.classList.toggle('active',route()==='calendar.html');
+    return true;
+  }
+  function resetLifecycle(){
+    document.documentElement.classList.remove('r9-leaving');
+    document.body?.classList.remove('r10-leaving');
+    if(isProtected())document.documentElement.classList.add('r9-ready');
+  }
+  function start(){
+    resetLifecycle();
+    let tries=0;
+    const timer=setInterval(()=>{
+      tries++;
+      const done=repairNavigation();
+      resetLifecycle();
+      if(done||tries>=80)clearInterval(timer);
+    },50);
+    setTimeout(()=>clearInterval(timer),4500);
+  }
+  window.addEventListener('pageshow',start);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(start,0),{once:true});
+  else setTimeout(start,0);
 })();

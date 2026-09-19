@@ -42,5 +42,12 @@ for (const [rel, expected] of Object.entries(frozen)) {
   if (!exists(rel)) throw new Error(`FROZEN_FILE_MISSING ${rel}`);
   assert(sha(rel) === expected, `FROZEN_HASH_MISMATCH ${rel}`);
 }
-for (const rel of ['.env','.env.local','.netlify']) assert(!exists(rel), `LOCAL_STATE_PRESENT ${rel}`);
+// Netlify's build workspace may contain a runtime-managed `.netlify` directory.
+// That directory is not repository state and must not fail the repository hygiene
+// contract during Deploy Preview / Branch Deploy builds. Local `.netlify` state
+// remains forbidden when this contract is run outside Netlify CI.
+const netlifyCi = process.env.NETLIFY === 'true' ||
+  ['deploy-preview', 'branch-deploy', 'production'].includes(process.env.CONTEXT || '');
+for (const rel of ['.env','.env.local']) assert(!exists(rel), `LOCAL_STATE_PRESENT ${rel}`);
+if (!netlifyCi) assert(!exists('.netlify'), 'LOCAL_STATE_PRESENT .netlify');
 console.log('P38_REPOSITORY_HYGIENE_PASS');

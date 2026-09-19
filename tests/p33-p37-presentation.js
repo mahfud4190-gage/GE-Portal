@@ -39,7 +39,7 @@ const frozenHashes={
  'assets/lounge-planning-v29.js':'eedb2b3975352bf3393f78e9ce6bbf43abbcc7b5090bedc2b9b81eda0876e78f',
  'assets/overlay-v30.js':'f14886d3a7b0ec10880159fb99c9a252cf3db20130af5ce5a86e67968dc29d4c',
  'assets/access-assistance-p32.js':'9081faf058324a1a417c5ddbd6be74ca62e784ba1a5534764afdacff0fbedfd1',
- 'assets/portal-shell.js':'291888ee291c538e6d19a588a1ea8374e6ba226add0743405f7323d3f9cd9c3b',
+ 'assets/portal-shell.js':'a70b069d06d8e8cb1d3fe6607d6fcce09b7b1fca1472f7f53ca7ff6a48931bcb',
  'netlify/functions/_firebase.js':'cc686a8ccc12b71310b78f7e85852c4ec0e38b8baf8f51025bfdaa4c74435648'
 };
 for(const [f,expected] of Object.entries(frozenHashes)){

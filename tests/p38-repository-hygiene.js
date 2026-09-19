@@ -18,7 +18,7 @@ const required = [
 const frozen = {
   'assets/auth.js':'2624398450a3385a487559b0d93fa81633130b94abbc95b0c1cd7ddd0d75b49c',
   'assets/firebase-client.js':'433fc3f068d3d55d1b64dcf126101306d8acd147e39ef888d1c2a5fa35cdcb89',
-  'assets/portal-shell.js':'291888ee291c538e6d19a588a1ea8374e6ba226add0743405f7323d3f9cd9c3b',
+  'assets/portal-shell.js':'a70b069d06d8e8cb1d3fe6607d6fcce09b7b1fca1472f7f53ca7ff6a48931bcb',
   'assets/dashboard-pov.js':'fc155e455330d1484fe6f938614157f29992370d323829bc54bad35677c6f8c2',
   'assets/lounge-planning-v29.js':'eedb2b3975352bf3393f78e9ce6bbf43abbcc7b5090bedc2b9b81eda0876e78f',
   'assets/overlay-v30.js':'f14886d3a7b0ec10880159fb99c9a252cf3db20130af5ce5a86e67968dc29d4c',

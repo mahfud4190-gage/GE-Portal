@@ -1,47 +1,52 @@
-/* P40 Runtime Data Bridge — read-only Firestore initiative hydration.
-   Uses the authenticated server endpoint and feeds the existing page-owned
-   GE_V2_1_DATA compatibility store. No auth/session bypass and no schema migration. */
+/* P40 Runtime Data Bridge — read-only hydration from the production portalData contract. */
 (function(){
   'use strict';
-  const ROUTE=(location.pathname.split('/').pop()||'index.html').toLowerCase();
-  const TARGETS=new Set(['index.html','inisiatif.html','calendar.html']);
-  if(!TARGETS.has(ROUTE))return;
-  let started=false;
-  const wait=(fn,tries=100)=>{
-    if(started)return;
-    const ready=typeof window.gxGetSession==='function' && window.gxGetSession() && window.GXFirebase?.currentUser;
-    if(ready){started=true;fn();return;}
-    if(tries>0)setTimeout(()=>wait(fn,tries-1),100);
-  };
-  async function hydrate(){
+  const route=(location.pathname.split('/').pop()||'index.html').toLowerCase();
+  if(!['index.html','inisiatif.html','calendar.html'].includes(route))return;
+  let done=false,attempts=0;
+  const hydrate=async()=>{
+    if(done||!window.GXFirebase?.currentUser)return;
     try{
       const user=await window.GXFirebase.currentUser();
-      if(!user)return;
+      if(!user){if(++attempts<40)setTimeout(hydrate,250);return}
       const token=await user.getIdToken();
-      const res=await fetch('/api/initiatives',{method:'GET',headers:{Authorization:`Bearer ${token}`},cache:'no-store'});
-      let payload=null;try{payload=await res.json()}catch(_){payload=null}
-      if(!res.ok||!Array.isArray(payload?.initiatives))return;
+      const response=await fetch('/api/planning-data',{method:'GET',headers:{Authorization:`Bearer ${token}`},cache:'no-store'});
+      let payload=null;try{payload=await response.json()}catch(_){payload=null}
+      if(!response.ok||!Array.isArray(payload?.initiatives))throw new Error(payload?.message||`Planning data failed (${response.status})`);
       const rows=payload.initiatives;
+      const projectEvents=Array.isArray(payload.projectEvents)?payload.projectEvents:[];
+      done=true;
       if(window.GEStore?.get&&window.GEStore?.save){
         const d=window.GEStore.get();
         d.initiatives=rows;
-        window.GEStore.save(d);
-        if(window.data&&typeof window.data==='object')window.data.initiatives=rows;
+        if(projectEvents.length){
+          const existing=Array.isArray(d.events)?d.events:[];
+          const byId=new Map(existing.map(x=>[String(x.id),x]));
+          projectEvents.forEach(x=>byId.set(`firebase-project-${x.id}`,{...x,id:`firebase-project-${x.id}`,pic:x.pic||x.picName||'',touchpoint:x.touchpoint||x.tp||'',source:'Firebase Project Event'}));
+          d.events=[...byId.values()];
+        }
+        window.GEStore.save(d)
       }
-      // Existing page engines remain the renderer authority.
-      if(ROUTE==='inisiatif.html'){
-        if(typeof window.renderInitiatives==='function')window.renderInitiatives();
-        else if(typeof window.r9RenderAllInitiatives==='function')window.r9RenderAllInitiatives();
+      if(window.data&&typeof window.data==='object'){
+        window.data.initiatives=rows;
+        if(projectEvents.length){
+          const existing=Array.isArray(window.data.events)?window.data.events:[];
+          const byId=new Map(existing.map(x=>[String(x.id),x]));
+          projectEvents.forEach(x=>byId.set(`firebase-project-${x.id}`,{...x,id:`firebase-project-${x.id}`,pic:x.pic||x.picName||'',touchpoint:x.touchpoint||x.tp||'',source:'Firebase Project Event'}));
+          window.data.events=[...byId.values()];
+        }
       }
-      if(ROUTE==='calendar.html'){
-        if(typeof window.geV2532RenderCalendar==='function')window.geV2532RenderCalendar();
+      if(route==='inisiatif.html')window.renderInitiatives?.();
+      if(route==='calendar.html'){
+        if(typeof window.geCalRenderV2533==='function')window.geCalRenderV2533();
+        else if(typeof window.geV2532RenderCalendar==='function')window.geV2532RenderCalendar();
         else if(typeof window.geV251RenderCalendar==='function')window.geV251RenderCalendar();
       }
-      if(ROUTE==='index.html'&&typeof window.GEDashboard?.render==='function')window.GEDashboard.render();
-      document.dispatchEvent(new CustomEvent('gx-firestore-initiatives-ready',{detail:{count:rows.length}}));
     }catch(e){
-      console.warn('P40 initiative hydration unavailable; existing page data preserved.',e);
+      console.warn('[P40] Firebase portalData hydration unavailable',e);
+      if(++attempts<40)setTimeout(hydrate,250);
     }
-  }
-  wait(hydrate);
+  };
+  const wait=()=>{if(done)return;if(window.GXFirebase?.currentUser)hydrate();else if(++attempts<40)setTimeout(wait,250)};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(wait,100),{once:true});else setTimeout(wait,100);
 })();

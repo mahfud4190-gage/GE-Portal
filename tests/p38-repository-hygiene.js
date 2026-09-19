@@ -42,5 +42,8 @@ for (const [rel, expected] of Object.entries(frozen)) {
   if (!exists(rel)) throw new Error(`FROZEN_FILE_MISSING ${rel}`);
   assert(sha(rel) === expected, `FROZEN_HASH_MISMATCH ${rel}`);
 }
-for (const rel of ['.env','.env.local','.netlify']) assert(!exists(rel), `LOCAL_STATE_PRESENT ${rel}`);
+const localStateChecks = process.env.NETLIFY === 'true'
+  ? ['.env', '.env.local']
+  : ['.env', '.env.local', '.netlify'];
+for (const rel of localStateChecks) assert(!exists(rel), `LOCAL_STATE_PRESENT ${rel}`);
 console.log('P38_REPOSITORY_HYGIENE_PASS');

@@ -254,7 +254,8 @@ function navFor(s){
  const planning=[
    item('service-planning.html','Planning Overview','≡'),
    item('planning-workspace.html','Planning Workspace','◇'),
-   item('planning-documents.html','Planning Documents','▤')
+   item('planning-documents.html','Planning Documents','▤'),
+   item('calendar.html','Calendar & Project Tracking','▦')
  ];
  const commonSupport=group('SUPPORT',[item('berita.html','Berita & Informasi','▣'),item('kontak.html','Contact Support','☎')]);
  if(['Lounge Staff','Lounge Luar Biasa'].includes(s?.role)) return [
@@ -506,7 +507,7 @@ function stabilizeSidebar(){const body=document.body,side=document.querySelector
 }
 function replaceBrand(){document.querySelectorAll('.ge-brand-logos .garuda').forEach(img=>img.src='assets/garuda-horizontal-white.png')}
 function enhanceTouchpointView(){const m=document.getElementById('tpViewModal'),photos=document.getElementById('tpViewPhotos');if(!m||!photos)return;let last='';const obs=new MutationObserver(()=>{if(!m.classList.contains('show'))return;const srcs=[...photos.querySelectorAll('img')].map(i=>i.src);const sig=srcs.join('|');if(!srcs.length||sig===last||photos.classList.contains('r9-carousel'))return;last=sig;let idx=0;photos.classList.add('r9-carousel');function paint(){photos.innerHTML=srcs.map((s,i)=>`<div class="r9-slide ${i===idx?'active':''}"><img src="${esc(s)}" alt="Foto Touch Point ${i+1}"></div>`).join('')+`<div class="r9-carousel-bar"><button type="button" id="r9PrevPhoto">‹ Sebelumnya</button><span class="r9-counter">Foto ${idx+1} dari ${srcs.length}</span><button type="button" id="r9NextPhoto">Berikutnya ›</button></div>`;document.getElementById('r9PrevPhoto').onclick=()=>{idx=(idx-1+srcs.length)%srcs.length;paint()};document.getElementById('r9NextPhoto').onclick=()=>{idx=(idx+1)%srcs.length;paint()}}paint()});obs.observe(m,{attributes:true,attributeFilter:['class'],subtree:true,childList:true})}
-function init(){document.documentElement.classList.remove('r9-boot');document.documentElement.classList.add('r9-ready');document.addEventListener('click',e=>{const a=e.target.closest('a[href]');if(!a||a.target==='_blank'||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const h=a.getAttribute('href')||'';if(!h||h.startsWith('#')||h.startsWith('javascript:'))return;document.documentElement.classList.add('r9-leaving')},true);replaceBrand();stabilizeSidebar();enhanceTouchpointView();if(document.getElementById('initRows')){bindInitiativeCapture();setJourney(getJourney());setTimeout(renderInitiatives,80)}setTimeout(replaceBrand,120)}
+function init(){document.documentElement.classList.remove('r9-boot');document.documentElement.classList.add('r9-ready');replaceBrand();stabilizeSidebar();enhanceTouchpointView();if(document.getElementById('initRows')){bindInitiativeCapture();setJourney(getJourney());setTimeout(renderInitiatives,80)}setTimeout(replaceBrand,120)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 
@@ -547,3 +548,52 @@ function bindMarkerDetail(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(bindMarkerDetail,160));else setTimeout(bindMarkerDetail,160);
 })();
 
+/* P40-R3: R10 app-shell authority retired. Sidebar, navigation lifecycle, and overlay promotion are owned by the final shell + P30 overlay authority. */
+
+/* R10.13: canonical R10.3 Journey filter for both progress summary and list. */
+(function(){
+  'use strict';
+  if(!document.getElementById('initiativeCharts')||!document.getElementById('initRows'))return;
+  var selected='';
+  function scopesOf(item){
+    var scopes=Array.isArray(item&&item.journeyScopes)?item.journeyScopes.filter(Boolean):[];
+    if(scopes.length)return scopes;
+    if(item&&item.journey)return [item.journey];
+    try{return item&&item.tp&&typeof getJourney==='function'?[getJourney(item.tp)]:[]}catch(_){return []}
+  }
+  function rows(){
+    var all=[];
+    try{all=(data.initiatives||[]).slice()}catch(_){try{all=(GEStore.get().initiatives||[]).slice()}catch(__){}}
+    if(selected)all=all.filter(function(item){return scopesOf(item).indexOf(selected)!==-1});
+    var q=(document.getElementById('q')&&document.getElementById('q').value||'').trim().toLowerCase();
+    var tp=document.getElementById('ft')&&document.getElementById('ft').value||'';
+    var status=document.getElementById('fs')&&document.getElementById('fs').value||'';
+    return all.filter(function(item){
+      var tps=Array.isArray(item.touchpoints)&&item.touchpoints.length?item.touchpoints:[item.tp].filter(Boolean);
+      var value='';try{value=achievement(item.plan,item.real)}catch(_){}
+      var text=[item.name,item.airport,item.pic].concat(tps).join(' ').toLowerCase();
+      return (!q||text.indexOf(q)!==-1)&&(!tp||tps.indexOf(tp)!==-1)&&(!status||value===status);
+    });
+  }
+  function render(){
+    var filtered=rows(),box=document.getElementById('initRows');
+    if(typeof refreshInitiativeFilters==='function')refreshInitiativeFilters();
+    if(box){
+      var visible=typeof geInitiativeScopedV224==='function'?filtered.filter(geInitiativeScopedV224):filtered;
+      box.innerHTML=visible.length&&typeof geInitiativeCardV251==='function'?visible.map(geInitiativeCardV251).join(''):'<div class="initiative-empty-v246">Belum ada inisiatif pada filter ini.</div>';
+    }
+    if(typeof renderInitiativeCharts==='function')renderInitiativeCharts(filtered);
+    document.querySelectorAll('.journey-tab').forEach(function(tab){tab.classList.toggle('active',(tab.dataset.journey||'')===selected)});
+  }
+  window.setJourneyFilter=function(journey){
+    selected=journey||'';
+    try{activeJourney=selected}catch(_){}
+    render();
+  };
+  window.renderInitiatives=render;
+  document.querySelectorAll('.journey-tab').forEach(function(tab){
+    tab.onclick=function(event){event.preventDefault();window.setJourneyFilter(tab.dataset.journey||'')};
+  });
+  ['q','ft','fs'].forEach(function(id){var field=document.getElementById(id);if(field){field.oninput=render;field.onchange=render}});
+  render();
+})();

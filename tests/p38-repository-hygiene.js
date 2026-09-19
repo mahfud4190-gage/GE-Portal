@@ -17,7 +17,7 @@ const required = [
 const frozen = {
   'assets/auth.js':'2624398450a3385a487559b0d93fa81633130b94abbc95b0c1cd7ddd0d75b49c',
   'assets/firebase-client.js':'433fc3f068d3d55d1b64dcf126101306d8acd147e39ef888d1c2a5fa35cdcb89',
-  'assets/portal-shell.js':'300203269b4157022d0745f17309c71087fa382c280260756fb0e12b0c9ad583',
+  'assets/portal-shell.js':'0da9991286a6f6edc87acceeb0bdd873e0f806efa4a4d3f447b9961938862342',
   'assets/dashboard-pov.js':'fc155e455330d1484fe6f938614157f29992370d323829bc54bad35677c6f8c2',
   'assets/lounge-planning-v29.js':'eedb2b3975352bf3393f78e9ce6bbf43abbcc7b5090bedc2b9b81eda0876e78f',
   'assets/overlay-v30.js':'f14886d3a7b0ec10880159fb99c9a252cf3db20130af5ce5a86e67968dc29d4c',
@@ -42,12 +42,5 @@ for (const [rel, expected] of Object.entries(frozen)) {
   if (!exists(rel)) throw new Error(`FROZEN_FILE_MISSING ${rel}`);
   assert(sha(rel) === expected, `FROZEN_HASH_MISMATCH ${rel}`);
 }
-// Netlify's build workspace may contain a runtime-managed `.netlify` directory.
-// That directory is not repository state and must not fail the repository hygiene
-// contract during Deploy Preview / Branch Deploy builds. Local `.netlify` state
-// remains forbidden when this contract is run outside Netlify CI.
-const netlifyCi = process.env.NETLIFY === 'true' ||
-  ['deploy-preview', 'branch-deploy', 'production'].includes(process.env.CONTEXT || '');
-for (const rel of ['.env','.env.local']) assert(!exists(rel), `LOCAL_STATE_PRESENT ${rel}`);
-if (!netlifyCi) assert(!exists('.netlify'), 'LOCAL_STATE_PRESENT .netlify');
+for (const rel of ['.env','.env.local','.netlify']) assert(!exists(rel), `LOCAL_STATE_PRESENT ${rel}`);
 console.log('P38_REPOSITORY_HYGIENE_PASS');

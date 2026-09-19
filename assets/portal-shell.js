@@ -357,6 +357,7 @@ function sidebarToggle(){
  applyCollapsed(saved);
 }
 function shell(){
+ if(window.__GE_CANONICAL_SHELL_RENDERED)return;
  if(path()==='login.html'||!finalUserPages.has(path()))return;
  const refs=ensureShell();
  if(!refs)return;
@@ -405,7 +406,8 @@ function setupPeriodControl(){
  sel.addEventListener('change',()=>{try{localStorage.setItem('GE_V257_DASHBOARD_PERIOD',sel.value)}catch(e){};document.dispatchEvent(new CustomEvent('ge-dashboard-period-change',{detail:{year:sel.value}}))});
 }
 
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',shell);else shell();
+function fallbackShellBoot(){try{shell()}catch(e){console.error('[P40-R9] fallback shell boot failed',e)}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fallbackShellBoot);else fallbackShellBoot();
 })();
 
 /* v257-r8-stabilization.js */

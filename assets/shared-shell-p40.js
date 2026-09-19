@@ -1,0 +1,204 @@
+/* P40-R9 canonical shared-shell bootstrap. */
+(function(){
+(function(){
+'use strict';
+const NAV_SVG={
+ home:'<path d="M3 10.5 10 4l7 6.5V18H6v-7.5"/><path d="M8.5 18v-5h3v5"/>',
+ cx:'<circle cx="10" cy="10" r="7"/><path d="M7 11c1.8 2 4.2 2 6 0"/><path d="M7.5 8h.01M12.5 8h.01"/>',
+ journey:'<path d="M3 10h14M5.5 7.5 3 10l2.5 2.5M14.5 7.5 17 10l-2.5 2.5"/>',
+ network:'<path d="M2.5 11h15M10 3.5v13M4.5 6.5h11M4.5 15h11"/><circle cx="10" cy="10" r="7.5"/>',
+ station:'<path d="M4 17V7l6-4 6 4v10M7 17v-4h6v4M7 9h.01M10 9h.01M13 9h.01"/>',
+ initiative:'<circle cx="10" cy="10" r="3"/><path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4"/>',
+ opportunity:'<path d="M10 2.5a5 5 0 0 0-3 9v2h6v-2a5 5 0 0 0-3-9Z"/><path d="M8 16h4M8.5 18h3"/>',
+ scenario:'<path d="M3 5h5l2 3 2-3h5M3 15h5l2-3 2 3h5"/>',
+ calendar:'<rect x="3" y="4.5" width="14" height="12.5" rx="2"/><path d="M6 2.5v4M14 2.5v4M3 8h14M6 11h2M10 11h2M6 14h2M10 14h2"/>',
+ budget:'<rect x="3" y="5" width="14" height="11" rx="2"/><path d="M3 8h14M6 12h3"/>',
+ readiness:'<path d="m4 10 4 4 8-9"/>',
+ document:'<path d="M5 2.5h7l3 3V17H5Z"/><path d="M12 2.5V6h3M7.5 10h5M7.5 13h5"/>',
+ data:'<ellipse cx="10" cy="5" rx="6" ry="2.5"/><path d="M4 5v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5V5M4 10v5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-5"/>',
+ user:'<circle cx="10" cy="7" r="3"/><path d="M4.5 17c.5-3 2.3-4.5 5.5-4.5s5 1.5 5.5 4.5"/>',
+ history:'<path d="M4 6H1.8V3.8"/><path d="M3 6a7 7 0 1 1-.2 7"/><path d="M10 6v4l3 2"/>',
+ support:'<path d="M4 10a6 6 0 0 1 12 0v5M4 11H2.5v4H6v-4H4M16 11h1.5v4H14v-4h2M14 17h-3"/>',
+ standard:'<path d="M4 5h12M4 10h12M4 15h12"/>'
+};
+function icon(x){const key=({'⌂':'home','◎':'cx','↔':'journey','✈':'network','⌾':'station','⚙':'initiative','✧':'opportunity','◇':'scenario','▦':'calendar','▣':'budget','◉':'budget','✓':'readiness','▤':'document','≡':'standard','⬡':'data','◫':'data','♙':'user','◷':'history','☎':'support','⇧':'data','◈':'station'})[x]||'standard';return `<span class="ni" aria-hidden="true"><svg viewBox="0 0 20 20">${NAV_SVG[key]}</svg></span>`;}
+const path=()=>{const raw=(location.pathname.split('/').pop()||'index.html').toLowerCase();return raw.includes('.')?raw:(raw||'index')+'.html'};
+const item=(href,label,i,sub=false)=>`<a class="ge-nav-link ${sub?'ge-nav-sub':''} ${path()===href?'active':''}" href="${href}" title="${label}">${icon(i)}<span>${label}</span></a>`;
+function group(title,items){return `<div class="ge-nav-section">${title}</div>${items.join('')}`}
+function dashboardPOV(s){
+ const r=String(s?.role||'').trim().toLowerCase().replace(/[\s_-]+/g,' ');
+ if(r==='super admin'||r==='superadmin')return 'superadmin';
+ if(r==='management')return 'management';
+ if(['ge team','ground experience team','head office','headoffice','staff'].includes(r))return 'ge-team';
+ if(['branch office','branchoffice','bo'].includes(r))return 'branch';
+ return 'unresolved';
+}
+window.GXDashboardPOV=dashboardPOV;
+const navItem=(href,label,i,sub=false)=>item(href,label,i,sub);
+function navFor(s){
+ const pov=dashboardPOV(s);
+ const planning=[
+   item('service-planning.html','Planning Overview','≡'),
+   item('planning-workspace.html','Planning Workspace','◇'),
+   item('planning-documents.html','Planning Documents','▤'),
+   item('calendar.html','Calendar & Project Tracking','▦')
+ ];
+ const commonSupport=group('SUPPORT',[item('berita.html','Berita & Informasi','▣'),item('kontak.html','Contact Support','☎')]);
+ if(['Lounge Staff','Lounge Luar Biasa'].includes(s?.role)) return [
+  group('LOUNGE OPERATION',[item('lounge-access.html','Lounge Access','◉'),item('lounge-visitor.html','Visitor & Report','▤')]),
+  commonSupport].join('');
+ if(pov==='branch') return [
+  item('index.html','Branch Office Dashboard','⌂'),
+  group('MY STATION',[item('station-360.html','Station Profile / 360','⌾'),item('readiness.html','Readiness','✓'),item('service-capability.html','Capability & Standards','◈')]),
+  group('CUSTOMER EXPERIENCE',[item('customer-experience.html','Customer Experience','◎')]),
+  group('TASKS & ACTIONS',[item('improvement-intake.html','Improvement Opportunity','✧'),item('inisiatif.html','Initiative & Action','⚙')]),
+  group('IMPROVEMENT & PLANNING',planning),
+  group('BUDGET & COST',[item('budget-cost.html','Budget & Cost','▣')]),
+  group('DOCUMENTS / SUPPORT',[item('kontak.html','Support / Reference','☎')])].join('');
+ if(pov==='ge-team') return [
+  item('index.html','GE Team Dashboard','⌂'),
+  group('EXPERIENCE & INSIGHT',[item('customer-experience.html','Customer Experience','◎'),item('network-stations.html','Airport Experience Network','✈'),item('station-360.html','Station Profile / 360','⌾')]),
+  group('READINESS & STANDARDS',[item('readiness.html','Readiness Assessment','✓'),item('service-capability.html','Capability & Standards','◈'),item('standar.html','Service Standard','≡')]),
+  group('IMPROVEMENT & PLANNING',[item('improvement-intake.html','Improvement Opportunity','✧'),item('inisiatif.html','Initiative & Improvement','⚙'),...planning]),
+  group('BUDGET & COST',[item('budget-cost.html','Budget & Cost','▣'),item('cost-intelligence.html','Cost Intelligence','◉')]),
+  group('DATA',[item('data.html','Data Management','⬡')]),
+  commonSupport].join('');
+ if(pov==='management') return [
+  item('index.html','Management Dashboard','⌂'),
+  group('EXPERIENCE & INSIGHT',[item('customer-experience.html','Customer Experience','◎'),item('network-stations.html','Airport Experience Network','✈')]),
+  group('IMPROVEMENT & PLANNING',[item('inisiatif.html','Initiative & Improvement','⚙'),...planning]),
+  group('BUDGET & COST',[item('budget-cost.html','Budget & Cost','▣')]),
+  group('REPORTS / DECISION SUPPORT',[item('management-outcome.html','Management Outcome','◷')]),
+  commonSupport].join('');
+ if(pov==='superadmin') return [
+  item('index.html','Super Admin / System Dashboard','⌂'),
+  group('EXPERIENCE & INSIGHT',[item('customer-experience.html','Customer Experience','◎'),item('network-stations.html','Airport Experience Network','✈'),item('station-360.html','Station Profile / 360','⌾')]),
+  group('READINESS & STANDARDS',[item('readiness.html','Readiness Assessment','✓'),item('service-capability.html','Capability & Standards','◈'),item('standar.html','Service Standard','≡')]),
+  group('IMPROVEMENT & PLANNING',[item('inisiatif.html','Initiative & Improvement','⚙'),item('improvement-intake.html','Improvement Opportunity','✧'),...planning]),
+  group('BUDGET & COST',[item('budget-cost.html','Budget & Cost','▣'),item('cost-intelligence.html','Cost Intelligence','◉')]),
+  group('DATA & ADMINISTRATION',[item('data.html','Data Management','⬡'),item('master-data.html','Master Data','◫'),item('admin.html','User & Access','♙'),item('portal-management.html','Portal Management','⚙'),item('audit-log.html','Audit Log','◷')]),
+  commonSupport].join('');
+ return [group('DASHBOARD',[item('index.html','Dashboard','⌂')]),commonSupport].join('');
+}
+
+const finalUserPages=new Set(['index.html','customer-experience.html','cx-import.html','touchpoint.html','network-stations.html','station-360.html','inisiatif.html','improvement-intake.html','action-scenario.html','calendar.html','budget-cost.html','program-kerja.html','cost-intelligence.html','readiness.html','agreement-service.html','standar.html','data.html','master-data.html','admin.html','portal-management.html','audit-log.html','service-capability.html','service-locations.html','berita.html','kontak.html','management-outcome.html','airport-experience-map.html','map.html','profile.html','service-planning.html','planning-workspace.html','lounge-list.html','branch-office-planning.html','gaso-planning.html','planning-documents.html','airport-systems.html','asset-facility.html','bo-space.html','layanan.html','lounge-access.html','lounge-flights.html','lounge-procurement.html','lounge-purchase.html','lounge-visitor.html','post-flight.html','post-journey.html','pre-flight.html','pre-journey.html','station-material.html','initiative-conversion.html','initiative-traceability.html']);
+const PLANNING_PAGES=new Set(['service-planning.html','planning-workspace.html','lounge-list.html','branch-office-planning.html','gaso-planning.html','planning-documents.html']);
+const PLANNING_TABS=[
+  ['lounge-list.html','Lounge / Tenant','lounge'],
+  ['branch-office-planning.html','Branch Office','branch'],
+  ['gaso-planning.html','GASO','gaso']
+];
+function planningContext(){
+ const p=path();
+ if(p==='lounge-list.html')return'lounge';
+ if(p==='branch-office-planning.html')return'branch';
+ if(p==='gaso-planning.html')return'gaso';
+ return'';
+}
+function planningTabs(){
+ if(!PLANNING_PAGES.has(path()))return;
+ const main=document.querySelector('body > .shell > .main');if(!main||main.querySelector('.ge-planning-tabs'))return;
+ const context=planningContext();
+ const wrap=document.createElement('nav');wrap.className='ge-planning-tabs';wrap.setAttribute('aria-label','Planning Workspace');
+ wrap.innerHTML=PLANNING_TABS.map(([href,label,key])=>`<a href="${href}" class="${context===key?'active':''}" aria-current="${context===key?'page':'false'}"><span>${label}</span></a>`).join('');
+ const target=main.querySelector('.hero,.ge-page-head,.title');
+ if(target)target.insertAdjacentElement('afterend',wrap);else main.prepend(wrap);
+ const title=main.querySelector('.hero h2,.ge-page-head h1');
+ if(title&&path()!=='planning-workspace.html')title.dataset.gePlanningTitle=title.textContent.trim();
+}
+function cleanNavigation(){
+ const side=document.querySelector('body > .shell > .side');if(!side)return;
+ side.querySelectorAll('.ge-nav-section').forEach(section=>{
+   let node=section.nextElementSibling,has=false;
+   while(node&&!node.classList.contains('ge-nav-section')&&!node.classList.contains('ge-nav-divider')){
+     if(node.matches?.('a.ge-nav-link')&&getComputedStyle(node).display!=='none'&&!node.classList.contains('rbac-hidden'))has=true;
+     node=node.nextElementSibling;
+   }
+   section.style.display=has?'':'none';
+ });
+ side.querySelectorAll('.ge-nav-link[href]').forEach(a=>a.classList.toggle('active',path()===(a.getAttribute('href')||'').split('?')[0].split('#')[0]));
+}
+function ensureShell(){
+ if(path()==='login.html'||!finalUserPages.has(path())) return null;
+ const top=document.querySelector('body > .top');
+ const shell=document.querySelector('body > .shell');
+ const side=shell&&shell.querySelector(':scope > .side');
+ const main=shell&&shell.querySelector(':scope > .main');
+ if(!top||!shell||!side||!main){console.warn('Final portal shell missing for',path());return null}
+ return {top,shell,side,main};
+}
+function applyCollapsed(on){
+ document.body.classList.toggle('sidebar-collapsed',!!on);
+ try{localStorage.setItem('GE_V257_SIDEBAR_COLLAPSED',on?'1':'0')}catch(e){}
+ const btn=document.querySelector('.ge-sidebar-toggle');
+ if(btn){btn.setAttribute('aria-expanded',on?'false':'true');const a=btn.querySelector('.toggle-arrow');if(a)a.textContent=on?'»':'«'}
+}
+function sidebarToggle(){
+ let btn=document.querySelector('.ge-sidebar-toggle');
+ if(!btn){
+   btn=document.createElement('button');btn.type='button';btn.className='ge-sidebar-toggle';btn.innerHTML='<span class="toggle-arrow">«</span><span class="toggle-label">Collapse</span>';const side=document.querySelector('body > .shell > .side');if(side)side.appendChild(btn);
+ }
+ btn.onclick=()=>applyCollapsed(!document.body.classList.contains('sidebar-collapsed'));
+ let saved=false;try{saved=localStorage.getItem('GE_V257_SIDEBAR_COLLAPSED')==='1'}catch(e){}
+ applyCollapsed(saved);
+}
+function shell(){
+ if(window.__GE_CANONICAL_SHELL_RENDERED)return;
+ if(path()==='login.html'||!finalUserPages.has(path()))return;
+ const refs=ensureShell();
+ if(!refs)return;
+ document.body.classList.add('final-v257','final-shell-r5');
+ const s=window.gxGetSession?gxGetSession():window.GX_CURRENT_USER||{};
+ const pov=dashboardPOV(s);
+ const initials=(s.name||s.username||'GE').split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+ const roleLabel=pov==='branch'?(s.unit||'Branch Office'):(pov==='ge-team'?'Ground Experience Team':(s.role||'User'));
+ const context={superadmin:'Super Admin / System Dashboard',management:'Management Dashboard','ge-team':'Ground Experience Team / Head Office Dashboard',branch:'Branch Office Dashboard',unresolved:'Dashboard — Role Not Mapped'}[pov]||'Dashboard';
+ refs.top.innerHTML=`<button id="mobileNavTriggerV233" class="mobile-nav-trigger-v233 ge-iconbtn" type="button" aria-label="Menu">☰</button>
+ <div class="ge-brand-logos"><img class="garuda" src="assets/garuda-horizontal-white.png" alt="Garuda Indonesia"><img class="danantara" src="assets/danantara-white-user.png" alt="Danantara Indonesia"></div>
+ <div class="ge-title"><strong>GROUND EXPERIENCE PORTAL</strong><span>${context}</span></div>
+ <div class="ge-session"><label class="filter"><span>Period</span><select id="gePeriodSelect" aria-label="Period"></select></label><button class="ge-top-action ge-notify" id="geNotifyBtn" type="button" title="Notifications" aria-label="Notifications"><span class="bell-shape"></span><b class="ge-notify-badge" id="geNotifyBadge" hidden></b></button><a class="ge-top-action ge-help" href="kontak.html" title="Help" aria-label="Help">?</a><button class="ge-user-menu" id="geUserMenuBtn" type="button" aria-expanded="false" aria-haspopup="menu"><span class="avatar">${initials}</span><span class="who"><b>${s.name||s.username||'User'}</b><span>${roleLabel}</span></span></button><div class="ge-user-pop" id="geUserPop" role="menu"><a href="profile.html" role="menuitem">Profile</a><button type="button" id="geMenuNotifications" role="menuitem">Notifications</button><button type="button" id="geLogoutBtn" role="menuitem">Sign Out</button></div><div class="ge-notify-pop" id="geNotifyPop" role="dialog" aria-label="Notifications"><div class="ge-pop-head"><b>Notifications</b><button type="button" id="geNotifyClose" aria-label="Close">×</button></div><div id="geNotifyList" class="ge-notify-list"></div></div></div>`;
+ refs.side.innerHTML=navFor(s);
+ if(typeof gxApplyNavigation==='function')gxApplyNavigation();
+ cleanNavigation();
+ planningTabs();
+ sidebarToggle();
+ const mt=document.getElementById('mobileNavTriggerV233'); if(mt)mt.onclick=()=>document.body.classList.toggle('nav-open');
+ setupAccountControls(s);
+ setupPeriodControl();
+ window.__GE_CANONICAL_SHELL_RENDERED=true;
+}
+function setupAccountControls(s){
+ const umb=document.getElementById('geUserMenuBtn'),up=document.getElementById('geUserPop');
+ const np=document.getElementById('geNotifyPop'),nb=document.getElementById('geNotifyBtn'),nc=document.getElementById('geNotifyClose');
+ const list=document.getElementById('geNotifyList'),badge=document.getElementById('geNotifyBadge');
+ const notifications=()=>{try{const d=window.GEStore?.get?.()||{};const uid=String(s?.uid||s?.id||'');const rows=Array.isArray(d.inbox)?d.inbox.filter(x=>!x.recipientId||String(x.recipientId)===uid):[];return rows.slice(0,8)}catch(e){return[]}};
+ const renderNotifications=()=>{const rows=notifications();const unread=rows.filter(x=>String(x.status||'').toUpperCase()!=='READ').length;if(badge){badge.textContent=unread>99?'99+':String(unread);badge.hidden=!unread}if(list)list.innerHTML=rows.length?rows.map(x=>`<div class="ge-notify-item"><b>${String(x.subject||x.title||x.type||'Notification').replace(/[&<>]/g,'')}</b><span>${String(x.message||x.detail||'').replace(/[&<>]/g,'')}</span></div>`).join(''):'<div class="ge-notify-empty">No notifications available.</div>'};
+ const closeAll=()=>{up?.classList.remove('open');np?.classList.remove('open');umb?.setAttribute('aria-expanded','false')};
+ umb?.addEventListener('click',e=>{e.stopPropagation();np?.classList.remove('open');up?.classList.toggle('open');umb.setAttribute('aria-expanded',up.classList.contains('open')?'true':'false')});
+ nb?.addEventListener('click',e=>{e.stopPropagation();up?.classList.remove('open');np?.classList.toggle('open');renderNotifications()});
+ nc?.addEventListener('click',closeAll);
+ document.getElementById('geMenuNotifications')?.addEventListener('click',e=>{e.stopPropagation();up?.classList.remove('open');np?.classList.add('open');renderNotifications()});
+ document.getElementById('geLogoutBtn')?.addEventListener('click',()=>gxLogout());
+ document.addEventListener('click',closeAll,{capture:true});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+ renderNotifications();
+}
+function setupPeriodControl(){
+ const sel=document.getElementById('gePeriodSelect');if(!sel)return;
+ const years=new Set();
+ try{const d=window.GEStore?.get?.()||{};[...(d.initiatives||[]),...(d.budgets||[]),...(d.actuals||[]),...(d.measurements||[])].forEach(x=>{const raw=x.periodStart||x.period||x.year||x.date||x.updatedAt||x.createdAt;const m=String(raw||'').match(/(20\d{2})/);if(m)years.add(m[1])})}catch(e){}
+ if(!years.size)years.add(String(new Date().getFullYear()));
+ const ordered=[...years].sort((a,b)=>Number(b)-Number(a));sel.innerHTML=ordered.map(y=>`<option value="${y}">${y}</option>`).join('');
+ let saved='';try{saved=localStorage.getItem('GE_V257_DASHBOARD_PERIOD')||''}catch(e){};if(saved&&ordered.includes(saved))sel.value=saved;
+ sel.addEventListener('change',()=>{try{localStorage.setItem('GE_V257_DASHBOARD_PERIOD',sel.value)}catch(e){};document.dispatchEvent(new CustomEvent('ge-dashboard-period-change',{detail:{year:sel.value}}))});
+}
+
+function boot(){try{shell()}catch(e){console.error('[P40-R9] canonical shell boot failed',e)}}
+boot();
+window.setTimeout(boot,120);
+window.setTimeout(boot,600);
+window.setTimeout(boot,1500);
+})();
+
+
+})();

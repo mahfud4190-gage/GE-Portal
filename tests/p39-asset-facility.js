@@ -15,7 +15,7 @@ const bad = m => fail.push(m);
 const frozen = {
   'assets/auth.js':'2624398450a3385a487559b0d93fa81633130b94abbc95b0c1cd7ddd0d75b49c',
   'assets/firebase-client.js':'433fc3f068d3d55d1b64dcf126101306d8acd147e39ef888d1c2a5fa35cdcb89',
-  'assets/portal-shell.js':'a47d144595be4194919bf5c717ab61ec1639b47f8fccd173e74c3b68b3576c0a',
+  'assets/portal-shell.js':'b05565ab27f37f144fa307b9b3693694d4be34031bbe34bde4d51baba4f8e186',
   'assets/dashboard-pov.js':'fc155e455330d1484fe6f938614157f29992370d323829bc54bad35677c6f8c2',
   'assets/lounge-planning-v29.js':'eedb2b3975352bf3393f78e9ce6bbf43abbcc7b5090bedc2b9b81eda0876e78f',
   'assets/overlay-v30.js':'f14886d3a7b0ec10880159fb99c9a252cf3db20130af5ce5a86e67968dc29d4c',

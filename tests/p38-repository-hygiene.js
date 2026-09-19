@@ -3,6 +3,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const { execFileSync } = require('node:child_process');
 
 const root = process.cwd();
 const required = [
@@ -42,5 +43,19 @@ for (const [rel, expected] of Object.entries(frozen)) {
   if (!exists(rel)) throw new Error(`FROZEN_FILE_MISSING ${rel}`);
   assert(sha(rel) === expected, `FROZEN_HASH_MISMATCH ${rel}`);
 }
-for (const rel of ['.env','.env.local','.netlify']) assert(!exists(rel), `LOCAL_STATE_PRESENT ${rel}`);
+// Repository hygiene must inspect repository state, not the build workspace.
+// Netlify may materialize `.netlify` inside /opt/build/repo during a build even
+// when that directory is not committed to Git. Treat only tracked local-state
+// paths as violations.
+function tracked(rel){
+  try {
+    execFileSync('git', ['ls-files', '--error-unmatch', '--', rel], { cwd: root, stdio: ['ignore','pipe','ignore'] });
+    return true;
+  } catch {
+    return false;
+  }
+}
+for (const rel of ['.env','.env.local','.netlify']) {
+  assert(!tracked(rel), `LOCAL_STATE_TRACKED ${rel}`);
+}
 console.log('P38_REPOSITORY_HYGIENE_PASS');

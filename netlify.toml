@@ -1,22 +1,22 @@
 [build]
-  command = "npm --prefix netlify/functions install --omit=dev --ignore-scripts && npm run build"
-  publish = "dist"
+  command = "npm --prefix netlify/functions install --omit=dev --ignore-scripts && node tests/run-build.mjs --netlify"
+  publish = "."
 
 [build.environment]
   NODE_VERSION = "20"
 
 [context.production]
-  publish = "dist"
+  publish = "."
 
 [context.deploy-preview]
-  publish = "dist"
+  publish = "."
 
 [context.branch-deploy]
-  publish = "dist"
+  publish = "."
 
 [dev]
   framework = "#static"
-  publish = "dist"
+  publish = "."
   port = 8888
   autoLaunch = false
 

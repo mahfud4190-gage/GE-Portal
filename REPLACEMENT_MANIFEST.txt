@@ -1,8 +1,9 @@
-P40 — EDITION 1 CANONICAL RUNTIME & PRESENTATION CLEANUP
+P40 — EDITION 1 CANONICAL RUNTIME GRAPH REPLACEMENT
 
-Replacement delta only.
+PURPOSE
+Replace the 12 Edition 1 page runtime graphs with one deterministic dependency structure based on the working Planning Workspace architecture.
 
-Replaced canonical Edition 1 pages:
+REPLACE
 - standar.html
 - inisiatif.html
 - service-planning.html
@@ -15,12 +16,13 @@ Replaced canonical Edition 1 pages:
 - lounge-list.html
 - branch-office-planning.html
 - gaso-planning.html
+- tests/p40-edition1-canonical-runtime.js
 
-Replaced:
-- package.json build chain: obsolete P40R8/P40R9/P40R11/P40R12 chain removed; one canonical Edition 1 test used.
-- tests/p40-edition1-canonical-runtime.js: new single Edition 1 source/runtime contract.
+ADD
+- assets/service-planning.js
+- docs/P40_EDITION1_CANONICAL_RUNTIME_GRAPH.md
 
-Removed from canonical package/build:
+DELETE FROM THE EXISTING CHECKOUT IF STILL PRESENT
 - tests/p40r8-data-page-runtime.js
 - tests/p40r9-data-page-shell-runtime.js
 - tests/p40r10-data-page-canonical-runtime.js
@@ -31,14 +33,34 @@ Removed from canonical package/build:
 - docs/P40R11_EDITION1_DATA_PAGE_RUNTIME_RECOVERY.md
 - docs/P40R12_EDITION1_SHELL_BOOTSTRAP_RECOVERY.md
 
-Retained unchanged:
-- assets/portal-shell.js (protected by P33-P37 frozen-source contract)
-- Firebase/Auth/Firestore runtime and production data
-- all pre-P40 build contracts
+RUNTIME GRAPH RULES
+- One shell authority: assets/portal-shell.js?v=10.20.1
+- Canonical shell hosts: header.top, aside.side, main.main
+- No r9 boot/ready/leaving marker
+- No compatibility-v257.js on Edition 1 pages
+- No v254-project.js on Edition 1 pages
+- No v2544-modal-fix.js on Edition 1 pages
+- Service Planning no longer loads the monolithic app.js; its counters are owned by assets/service-planning.js
+- Initiative and Calendar retain v2554-stability because their existing interaction contract uses it
+- Admin retains user-access-p26 and page-identity-v28
+- Lounge/Tenant retains lounge-planning-v29
+- Other pages retain app.js where their existing business functions are still owned there
+- Firebase, Auth, Firestore, Netlify Functions, P29 business logic, and P39 are not changed
 
-Verification performed in the reconstructed working tree:
-- P40_EDITION1_CANONICAL_RUNTIME_PASS (12 pages)
-- npm run build PASS
-- portal-shell.js SHA-256 remains 300203269b4157022d0745f17309c71087fa382c280260756fb0e12b0c9ad583
+VALIDATION IN THE RECONSTRUCTED WORKING TREE
+- regression-audit PASS
+- P29 lounge planning PASS
+- P31 authentication PASS
+- P31 role/POV PASS
+- P31A session profile PASS
+- P31B access assistance PASS
+- P32 admin PASS
+- P32 runtime PASS
+- P33-P37 presentation PASS
+- P27 profile PASS
+- P38 repository hygiene PASS
+- P40 Edition 1 canonical runtime PASS (12 pages)
+- JavaScript syntax check PASS
 
-Git exact-case verification could not be executed in this artifact because the reconstructed working tree does not contain a .git directory. It must be executed in the actual Git checkout before commit/push.
+IMPORTANT
+This delta was prepared from the reconstructed working tree available in the recovery workspace, not from the user's live Git checkout. Git exact-case tracking checks and authenticated browser validation must therefore be performed in the actual recovery branch before commit/push. No production deployment is claimed.

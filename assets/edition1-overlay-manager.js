@@ -14,9 +14,26 @@ const selectors=[
 ];
 const matches=()=>document.querySelectorAll(selectors.join(','));
 function promote(){matches().forEach(el=>{if(el.parentElement!==document.body)document.body.appendChild(el)});}
+function closeOverlay(overlay){
+  if(!overlay)return;
+  const close=overlay.querySelector('[data-close],.modal-x,.modal-close,[aria-label="Tutup"],[aria-label="Close"],#p26Close,#p26Cancel,#p26ImportClose,#p26ImportCancel');
+  if(close){close.click();return;}
+  overlay.classList.remove('show');
+  document.body.classList.remove('modal-open');
+}
 function install(){
   promote();
   new MutationObserver(promote).observe(document.body,{childList:true,subtree:true});
+  document.addEventListener('click',e=>{
+    const overlay=e.target.closest(selectors.join(','));
+    if(overlay && e.target===overlay) closeOverlay(overlay);
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Escape')return;
+    const open=[...matches()].reverse().find(x=>x.classList.contains('show')||getComputedStyle(x).display!=='none');
+    if(open)closeOverlay(open);
+  });
 }
+
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();

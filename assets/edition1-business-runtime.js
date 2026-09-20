@@ -1,4 +1,19 @@
-/* P40 Edition 1 — passive business definitions. Page boot owns initialization. */
+/* P40 canonical Edition 1 business definitions.
+ * This is the existing business engine with automatic page-wide boot disabled.
+ * Page initialization is owned exclusively by edition1-page-boot.js.
+ */
+(function(){
+'use strict';
+const __wAdd=window.addEventListener.bind(window);
+const __dAdd=document.addEventListener.bind(document);
+window.addEventListener=function(type,listener,options){
+  if(type==='DOMContentLoaded') return;
+  return __wAdd(type,listener,options);
+};
+document.addEventListener=function(type,listener,options){
+  if(type==='DOMContentLoaded') return;
+  return __dAdd(type,listener,options);
+};
 
 const store=window.GEStore;
 let data=store.get();
@@ -281,7 +296,16 @@ function initJourneyPage(){
  if(all&&!activeJourney)all.classList.add('active');
  document.querySelectorAll('.journey-tab').forEach(x=>x.classList.toggle('active',x.dataset.journey===activeJourney));
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+ restoreNavigationState();
+ initSessionUI();
+ initJourneyPage();
+ renderInitiatives();
+ renderAirports();
+ renderNews();
+ renderNewsAdmin();
+ setupBackToTop();
+});
 
 const airportMapInfo={
  CGK:{code:'CGK',name:'Soekarno-Hatta',city:'Jakarta',region:'Domestik',official:'Service Leader CGK',status:'Active',pending:'2 Kontrak',visitor:'2.540 visitor',facilities:'Lounge • Check-in • Boarding • Premium Service'},
@@ -400,7 +424,7 @@ async function addLounge(){
 function deleteLounge(id){if(confirm('Hapus lounge ini?')){data.lounges=data.lounges.filter(x=>x.id!==id);save();renderLounges()}}
 function downloadLoungesCSV(){let csv='No,Nama Lounge,PIC,Airport,Status,Periode Kerja Sama,Dokumen Kerja Sama\n';loungeFiltered().forEach((x,i)=>csv+=`${i+1},"${x.name}","${x.pic}",${x.airport},"${x.status}","${x.period}","${x.documentName||''}"\n`);downloadBlob(csv,'Daftar_Lounge.csv','text/csv;charset=utf-8')}
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{restoreLoungeState();fillAirportSelects();initDashboard();renderLoungeVisitors();renderLounges()});
 
 
 /* =========================================================
@@ -697,7 +721,7 @@ function downloadLoungeVisitorsCSV(){
   downloadBlob(csv,'Lounge_Visitor.csv','text/csv;charset=utf-8');
 }
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('beforeunload',stopCameraScanner);
 
 
 /* ==========================================================
@@ -874,7 +898,7 @@ function downloadLoungeVisitorsCSV(){
  downloadBlob(csv,'Lounge_Visitor.csv','text/csv;charset=utf-8');
 }
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{fillAirportSelects();renderLounges();renderLoungeVisitors();});
 
 
 
@@ -1056,19 +1080,18 @@ function openLoungeEdit(id){
 }
 async function saveLoungeEdit(){
  if(!currentUserIsAdmin())return;
- const id=Number(editLoungeId.value),x=data.lounges.find(a=>a.id===id);if(!x)return;
- const price=parsePriceInput(editLoungePriceDisplay.value);
- x.region=editLoungeRegion.value;x.airport=editLoungeAirport.value.trim().toUpperCase();
- x.name=editLoungeName.value.trim();x.serviceCategory=editLoungeCategory.value.trim()||'Lounge';
- x.pricePerPax=price.amount;x.currency=price.currency;x.priceDisplay=price.display;
- x.startDate=editLoungeStartDate.value;x.startDisplay=x.startDate;
- x.endDate=editLoungeEndDate.value;x.endDisplay=x.endDate;
- x.documentNumber=editLoungeDocumentNumber.value.trim();x.documentType=editLoungeDocumentType.value.trim();
- x.documentStatus=editLoungeDocumentStatus.value.trim();x.remarks=editLoungeRemarks.value.trim();
- const f=editLoungeDocument.files?.[0];
- if(f){const key='lounge_doc_'+Date.now();await GEFiles.put(key,f);x.documentName=f.name;x.documentKey=key}
- save();closeLoungeEdit();fillAirportSelects();renderLounges();refreshScanLoungeOptions();
- alert('Data lounge berhasil diperbarui.');
+ const id=Number(editLoungeId.value),x=data.lounges.find(a=>Number(a.id)===id);if(!x)return;
+ const price=parsePriceInput(editLoungePriceDisplay?.value||'');
+ const patch={name:editLoungeName.value.trim(),region:editLoungeRegion?.value?.trim?.()||x.region||'',airport:editLoungeAirport.value.trim().toUpperCase(),serviceCategory:editLoungeCategory.value.trim()||'Lounge',pricePerPax:price.amount||Number(editLoungePrice.value||0),currency:price.currency||x.currency||'IDR',priceDisplay:price.display||x.priceDisplay||'',startDate:editLoungeStartDate.value,endDate:editLoungeEndDate.value,documentNumber:editLoungeDocumentNumber.value.trim(),documentType:editLoungeDocumentType.value.trim(),documentStatus:editLoungeDocumentStatus.value.trim(),remarks:editLoungeRemarks.value.trim()};
+ try{
+   if(window.GXFirebase?.saveLoungeRecord){
+     const f=editLoungeDocument.files?.[0];
+     const result=await window.GXFirebase.saveLoungeRecord('UPDATE',{...patch,firestoreId:x.firestoreId||String(x.id)});
+     Object.assign(x,patch,{firestoreId:String(result?.lounge?.firestoreId||x.firestoreId||x.id)});
+     if(f){const key='lounge_doc_'+Date.now();await GEFiles.put(key,f);x.documentName=f.name;x.documentKey=key}
+   }else{Object.assign(x,patch);const f=editLoungeDocument.files?.[0];if(f){const key='lounge_doc_'+Date.now();await GEFiles.put(key,f);x.documentName=f.name;x.documentKey=key}}
+   save();closeLoungeEdit();fillAirportSelects();renderLounges();refreshScanLoungeOptions();alert('Data lounge berhasil diperbarui.');
+ }catch(e){console.error(e);geStorageNoticeV223?.('Gagal Menyimpan',e?.message||'Data lounge tidak dapat disimpan ke Firestore.')}
 }
 function downloadLoungesCSV(){
  let csv='No,Region,Station,Lounge Provider,Kategori Layanan,Harga Per Pax,Mulai,Berakhir,Nomor Dokumen,Jenis,Status Dokumen,Remarks,Lampiran Dokumen\n';
@@ -1136,7 +1159,7 @@ function downloadLoungeVisitorsCSV(){
  loungeVisitorFiltered().map(geResolveVisitorLounge).forEach((x,i)=>csv+=`${i+1},${x.date},${x.time},"${x.name}",${x.flight},${x.seq||''},${x.airport},"${String(x.loungeName||'').replaceAll('"','""')}","${x.category}","${String(x.priceDisplay||'').replaceAll('"','""')}"\n`);
  downloadBlob(csv,'Lounge_Visitor.csv','text/csv;charset=utf-8');
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{geBackfillHistoricalVisitorPrices();populateLoungeMasterFilters();renderLounges();refreshScanLoungeOptions();renderLoungeVisitors();});
 
 
 /* ==============================================================
@@ -1242,7 +1265,11 @@ function geEnhanceTable(table){
 function geEnhanceAllTables(){
   document.querySelectorAll('table').forEach(geEnhanceTable);
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(geEnhanceAllTables,0);
+  const pageObserver=new MutationObserver(()=>geEnhanceAllTables());
+  pageObserver.observe(document.body,{childList:true,subtree:true});
+});
 
 
 /* ==============================================================
@@ -1661,8 +1688,8 @@ function geInitV211(){
  renderLoungeVisitors();
  renderLounges();
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',geInitV211);
+window.addEventListener('gx-auth-verified',()=>{if(typeof syncFirebaseUsers==='function')syncFirebaseUsers()});
 
 
 /* ==============================================================
@@ -1885,7 +1912,7 @@ function geInitV212(){
   if(typeof gxApplyRole==='function')gxApplyRole();
   renderPersonnel();renderPersonnelReadiness();renderUserAccounts();renderAirports();renderDocumentsAdmin();
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',geInitV212);
 
 
 /* ==============================================================
@@ -1999,7 +2026,11 @@ function gxApplyNavigationV121(){
     });
   });
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  gxApplyNavigationV121();
+  renderPersonnel();
+  if(document.getElementById('standardPeoplePanel'))showStandardPanel('people',document.querySelector('[data-standard-panel="people"]'));
+});
 
 
 /* ==============================================================
@@ -2074,7 +2105,7 @@ function save(){
   store.save(data);
   GE_LAST_SAVED_SNAPSHOT=geSafeClone(data);
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{GE_LAST_SAVED_SNAPSHOT=geSafeClone(data)});
 
 /* ---------- Admin dashboard ---------- */
 function showAdminSection(name,btn){
@@ -2302,7 +2333,7 @@ function submitGuestbook(){
 function geInitV213(){
  renderAdminOverview();renderAdminInbox();renderAuditLogs();applyNewsRoleUI();renderArticles();renderAnnouncements();renderFaqs();renderUserAccounts();
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',geInitV213);
 
 
 /* ==============================================================
@@ -2479,7 +2510,7 @@ function filterAirportMap(region,button){
   hideAirportTooltip();renderAirportMapMarkers();
 }
 function geInitAirportV214(){renderAirports();renderAirportMapMarkers()}
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',geInitAirportV214);
 
 
 /* ==============================================================
@@ -2557,7 +2588,7 @@ function showAirportTooltip(ev,code){
   top=Math.max(12,Math.min(mr.height-tooltipH-12,top));
   t.style.left=left+'px';t.style.top=top+'px';t.classList.add('show');
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{geUpdateMapRegionCounts();geApplyMapView()});
 
 
 /* ==============================================================
@@ -2686,7 +2717,20 @@ function geUpdateMapRegionCounts(){
 }
 
 /* Wheel zoom is deliberately subtle, and only applies while pointer is over map. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  const map=document.getElementById('interactiveMap');
+  if(map){
+    map.addEventListener('wheel',e=>{
+      if(!e.ctrlKey && Math.abs(e.deltaY)<2)return;
+      e.preventDefault();
+      GE_MAP_USER_ZOOM_216=Math.max(.72,Math.min(1.65,GE_MAP_USER_ZOOM_216+(e.deltaY<0?.08:-.08)));
+      geApplyMapView();
+    },{passive:false});
+  }
+  geUpdateMapRegionCounts();
+  geApplyMapView();
+  renderAirportMapMarkers();
+});
 
 
 /* ==============================================================
@@ -2777,7 +2821,7 @@ function geBindRelocation217(){
 }
 const GE_RENDER_MAP_216=renderAirportMapMarkers;
 renderAirportMapMarkers=function(){GE_RENDER_MAP_216();geBindRelocation217();};
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{geBindRelocation217();renderAirportMapMarkers();});
 
 
 /* ==============================================================
@@ -2897,7 +2941,13 @@ geFinishRelocate217=function(ev,marker){
 };
 
 /* ESC closes confirmation or cancels an active relocation. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('keydown',ev=>{
+  if(ev.key!=='Escape')return;
+  if(document.getElementById('airportMoveModal')?.classList.contains('show')){
+    geCloseMoveModal218();GE_MOVE_PENDING_218=null;return;
+  }
+  if(GE_MAP_RELOCATE_217)geCancelRelocate218();
+});
 
 
 /* ==============================================================
@@ -3023,7 +3073,10 @@ renderAirportMapMarkers=function(){
   geBindRelocation219();
 };
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  geBindRelocation219();
+  renderAirportMapMarkers();
+});
 
 
 /* ==============================================================
@@ -3287,7 +3340,7 @@ geOpenAirportDetail217=function(code,marker){
 
 /* Navigation group */
 function togglePlanning(event){event?.preventDefault();const n=document.getElementById('planningNav');if(!n)return false;n.classList.toggle('collapsed');localStorage.setItem('GE_PLANNING_COLLAPSED',n.classList.contains('collapsed')?'true':'false');return false}
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{const n=document.getElementById('planningNav');if(n)n.classList.toggle('collapsed',localStorage.getItem('GE_PLANNING_COLLAPSED')==='true')});
 
 /* Final V2.20 RBAC nav — explicit planning tab support */
 function gxApplyNavigationV220(){
@@ -3319,7 +3372,7 @@ function geRenderPlanningPage(){
  renderPlanningOverview();renderStationMaterials();renderLoungeProcurement();renderBOSpaces();renderAirportSystems();renderPlanningDocuments();renderSkyPriority();renderTouchpointStandards();
  if(typeof gxApplyRole==='function')gxApplyRole();
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{gxApplyNavigationV220();geRenderPlanningPage()});
 
 
 /* ==============================================================
@@ -3413,7 +3466,14 @@ function showBOPlanningPanel(name,button){
   if(name==='space')renderBOSpaces();
   if(name==='systems')renderAirportSystems();
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  if(document.getElementById('boPlanningPanelLounge')){
+    const p=new URLSearchParams(location.search).get('panel')||'lounge';
+    const order={lounge:0,space:1,systems:2};
+    const btn=document.querySelectorAll('.bo-planning-selector')[order[p]??0];
+    showBOPlanningPanel(p,btn);
+  }
+});
 
 
 /* ==============================================================
@@ -3521,14 +3581,30 @@ function geRefreshLoungeVisitorStateV222(){
 }
 
 /* Normal navigation, browser back-forward cache, and multi-tab synchronization. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  if(document.getElementById('loungeVisitorRows')){
+    setTimeout(geRefreshLoungeVisitorStateV222,0);
+  }
+});
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('pageshow',()=>{
+  if(document.getElementById('loungeVisitorRows')){
+    geRefreshLoungeVisitorStateV222();
+  }
+});
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('storage',ev=>{
+  if(ev.key===store.KEY && document.getElementById('loungeVisitorRows')){
+    geRefreshLoungeVisitorStateV222();
+  }
+});
 
 /* Refresh immediately when the Lounge Visitor tab/page regains focus. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('focus',()=>{
+  if(document.getElementById('loungeVisitorRows')){
+    geRefreshLoungeVisitorStateV222();
+  }
+});
 
 
 /* ==============================================================
@@ -3694,10 +3770,22 @@ function geRefreshLoungeVisitorStateV223(){
   initDashboard();
 }
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  if(!geStorageIntegrityCheckV223()){
+    setTimeout(()=>geStorageNoticeV223(
+      'Penyimpanan Lokal Bermasalah',
+      'Portal mendeteksi penyimpanan lokal tidak dapat melakukan read/write dengan benar. Silakan reload halaman sebelum melakukan input.'
+    ),250);
+  }
+  if(document.getElementById('loungeVisitorRows')){
+    setTimeout(geRefreshLoungeVisitorStateV223,0);
+  }
+});
+window.addEventListener('pageshow',()=>geRefreshLoungeVisitorStateV223());
+window.addEventListener('focus',()=>geRefreshLoungeVisitorStateV223());
+window.addEventListener('storage',ev=>{
+  if(ev.key===store.KEY)geRefreshLoungeVisitorStateV223();
+});
 
 
 /* ==============================================================
@@ -4088,7 +4176,7 @@ function confirmBulkImportV223(){
   );
 }
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{geApplyBulkVisitorUIV223()});
 
 
 /* ==============================================================
@@ -4184,30 +4272,28 @@ function openInitiativeModalV224(id=null){
   initiativeModalV224.classList.add('show');
 }
 function closeInitiativeModalV224(){initiativeModalV224?.classList.remove('show')}
-function saveInitiativeV224(){
+async function saveInitiativeV224(){
   if(!geInitiativeAdminV224())return;
   const id=Number(initiativeEditIdV224.value||0);
-  const obj={
-    name:initiativeNameV224.value.trim(),
-    tp:initiativeTouchpointV224.value.trim(),
-    airport:initiativeAirportV224.value.trim().toUpperCase(),
-    pic:initiativePicV224.value.trim(),
-    dueDate:initiativeDueDateV224.value,
-    journey:initiativeJourneyV224.value,
-    plan:Number(initiativePlanV224.value||0),
-    real:Number(initiativeRealV224.value||0),
-    remark:initiativeRemarkV224.value.trim()
-  };
+  const obj={name:initiativeNameV224.value.trim(),tp:initiativeTouchpointV224.value.trim(),airport:initiativeAirportV224.value.trim().toUpperCase(),pic:initiativePicV224.value.trim(),dueDate:initiativeDueDateV224.value,journey:initiativeJourneyV224.value,plan:Number(initiativePlanV224.value||0),real:Number(initiativeRealV224.value||0),remark:initiativeRemarkV224.value.trim()};
   if(!obj.name||!obj.tp)return geStorageNoticeV223('Data Belum Lengkap','Nama Inisiatif dan Touch Point wajib diisi.');
-  if(id){
-    const x=data.initiatives.find(v=>v.id===id);if(!x)return;
-    Object.assign(x,obj);x.workflow=Array.isArray(x.workflow)?x.workflow:[];
-  }else{
-    data.initiatives.push({id:Date.now(),...obj,workflow:[],triggerDocuments:[],supportingDocuments:[]});
-  }
-  if(!data.touchpoints.includes(obj.tp))data.touchpoints.push(obj.tp);
-  save();closeInitiativeModalV224();renderInitiatives();
-  geStorageNoticeV223('Inisiatif Tersimpan',`${obj.name} berhasil disimpan.`,'success');
+  try{
+    const current=id?(data.initiatives||[]).find(v=>Number(v.id)===id):null;
+    if(window.GXFirebase?.saveInitiativeRecord){
+      const payload={...obj,firestoreId:current?.firestoreId||''};
+      const result=await window.GXFirebase.saveInitiativeRecord(id?'UPDATE':'CREATE',payload);
+      const saved=result?.initiative;
+      if(saved){
+        const normalized={...saved,firestoreId:String(saved.firestoreId||saved.id||current?.firestoreId||''),id:Number.isFinite(Number(saved.id))?Number(saved.id):(current?.id||Date.now())};
+        if(id){const idx=data.initiatives.findIndex(v=>Number(v.id)===id);if(idx>=0)data.initiatives[idx]={...data.initiatives[idx],...normalized}}else data.initiatives.push(normalized);
+      }
+    }else{
+      if(id){const x=data.initiatives.find(v=>Number(v.id)===id);if(x)Object.assign(x,obj)}else data.initiatives.push({id:Date.now(),...obj,workflow:[],triggerDocuments:[],supportingDocuments:[]});
+      save();
+    }
+    if(!data.touchpoints.includes(obj.tp))data.touchpoints.push(obj.tp);
+    save();closeInitiativeModalV224();renderInitiatives();geStorageNoticeV223('Inisiatif Tersimpan',`${obj.name} berhasil disimpan.`,'success');
+  }catch(e){console.error(e);geStorageNoticeV223('Gagal Menyimpan',e?.message||'Perubahan initiative tidak dapat disimpan ke Firestore.');}
 }
 function deleteInitiativeV224(id){
   if(!geInitiativeAdminV224()||!confirm('Hapus inisiatif ini?'))return;
@@ -4423,7 +4509,18 @@ exportCSV=function(){
 };
 
 /* Normalize old records after load */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  let changed=false;
+  (data.initiatives||[]).forEach(x=>{
+    if(!('pic'in x)){x.pic='';changed=true}
+    if(!('dueDate'in x)){x.dueDate='';changed=true}
+    if(!Array.isArray(x.workflow)){x.workflow=[];changed=true}
+    if(!Array.isArray(x.triggerDocuments)){x.triggerDocuments=[];changed=true}
+    if(!Array.isArray(x.supportingDocuments)){x.supportingDocuments=[];changed=true}
+  });
+  if(changed)save();
+  renderInitiatives();
+});
 
 /* ==============================================================
    V2.25 — Initiative horizontal scroll + robust Visitor template
@@ -4513,7 +4610,16 @@ saveLoungeFromModalV221 = function(){
 };
 
 /* Existing legacy records remain compatible: category = service type. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  let changed=false;
+  (data.lounges||[]).forEach(l=>{
+    if(!l.serviceType){
+      l.serviceType=l.serviceCategory||'Lounge';
+      changed=true;
+    }
+  });
+  if(changed)save();
+});
 
 /* Consolidated planning-document library */
 function gePlanningDocumentsV229(){
@@ -4991,7 +5097,7 @@ renderPlanningDocuments=function(){
  gePlanningEmpty('planningDocumentEmpty',filtered);if(typeof geEnhanceAllTables==='function')setTimeout(geEnhanceAllTables,0);
 };
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{renderGasoAllV231();});
 
 
 /* ==============================================================
@@ -5009,7 +5115,18 @@ userDefaultTabs=function(role){
 
 /* External USB/Bluetooth keyboard-wedge scanner:
    automatically verify when scanner sends Enter. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  const scan=document.getElementById('boardingScan');
+  if(scan && !scan.dataset.autoScannerV232){
+    scan.dataset.autoScannerV232='1';
+    scan.addEventListener('keydown',e=>{
+      if(e.key==='Enter' && !e.shiftKey){
+        e.preventDefault();
+        if(scan.value.trim().length>=8)verifyBoardingPass();
+      }
+    });
+  }
+});
 
 /* ---------- Lounge/Tenant Visitor hourly traffic ---------- */
 function geVisitorTimeInRangeV232(x){
@@ -5076,7 +5193,12 @@ renderLoungeVisitors=function(){
   }
   renderVisitorTrafficV232();
 };
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  ['visitorHourFromV232','visitorHourToV232'].forEach(id=>{
+    document.getElementById(id)?.addEventListener('change',()=>renderLoungeVisitors());
+  });
+  renderVisitorTrafficV232();
+});
 
 /* ---------- Purchase Access ---------- */
 function geCanManagePurchaseV232(){
@@ -5140,7 +5262,7 @@ function renderPurchaseV232(){
   set('purchaseTotalV232',all.length);set('purchasePaidV232',all.filter(x=>x.status==='Paid').length);set('purchasePendingV232',all.filter(x=>x.status==='Pending').length);set('purchaseAirportCountV232',new Set(all.map(x=>x.airport)).size);
   gePlanningEmpty('purchaseEmptyV232',rows);if(typeof geEnhanceAllTables==='function')setTimeout(geEnhanceAllTables,0);
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>renderPurchaseV232());
 
 
 /* ==============================================================
@@ -5270,7 +5392,7 @@ gxApplyNavigationV220=function(){
   }
 };
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',geInitNavigationV233);
 
 
 /* ==============================================================
@@ -5509,7 +5631,9 @@ deletePurchaseV232 = async function(id){
 })();
 
 /* Visible build marker for troubleshooting, stored on DOM only. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  document.documentElement.dataset.geBuild='2.51.2';
+});
 
 
 /* ==============================================================
@@ -5692,7 +5816,9 @@ stopCameraScanner=function(){
   if(loungeCameraStream){loungeCameraStream.getTracks().forEach(t=>t.stop());loungeCameraStream=null}
   const video=document.getElementById('cameraVideo');if(video)video.srcObject=null;
 };
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  const e=document.getElementById('boardingScan');if(e&&!e.dataset.finalScannerV236){e.dataset.finalScannerV236='1';e.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&!ev.shiftKey&&e.value.trim().length>8){ev.preventDefault();verifyBoardingPass()}})}
+});
 
 renderLoungeVisitors=function(){
   const rows=loungeVisitorFiltered().map(geResolveVisitorLounge),t=document.getElementById('loungeVisitorRows');if(!t)return;
@@ -5746,7 +5872,7 @@ function confirmFlightBulkV236(){
   GE_FLIGHT_BULK_ROWS_V236.forEach(r=>{const flight=normalizeFlight(r.flight),from=String(r.from||'').trim().toUpperCase(),to=String(r.to||'').trim().toUpperCase(),date=geNormalizeDateUploadV223(r.date);if(!flight||!from||!to||!date){skipped++;return}data.flightSchedule.push({id:Date.now()+added,flight,from,to,date,std:String(r.std||'').slice(0,5),etd:String(r.etd||'').slice(0,5),capacity:Number(r.capacity||0),status:String(r.status||'Scheduled').trim()});added++});
   save();closeFlightBulkV236();renderFlightsV236();geStorageNoticeV223('Import Selesai',`${added} penerbangan ditambahkan • ${skipped} dilewati.`,'success');
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{geFlightActionsVisibilityV236();renderFlightsV236()});
 
 if(!GE_TAB_OPTIONS.some(x=>x[0]==='lounge-flights'))GE_TAB_OPTIONS.splice(7,0,['lounge-flights','Daftar Penerbangan']);
 const GE_USER_TABS_V236=userDefaultTabs;
@@ -5756,7 +5882,9 @@ userDefaultTabs=function(role){
   if(role==='Branch Office')return [...new Set([...GE_USER_TABS_V236(role),'lounge-flights'])];
   return GE_USER_TABS_V236(role);
 };
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  const link=document.querySelector('.side a[href="lounge-flights.html"]');if(link){const s=geSession()||{},allowed=['Super Admin','Admin','Branch Office','Lounge Staff','Lounge Luar Biasa'].includes(s.role)||(typeof gxHasTab==='function'&&gxHasTab('lounge-flights'));link.style.display=allowed?'':'none'}
+});
 
 /* V2.37 — Lounge/Tenant reference design + paginated master cards */
 let GE_LOUNGE_CARD_PAGE_V237=1;
@@ -5811,7 +5939,12 @@ function renderLoungeCardsV237(){
   if(prev)prev.disabled=GE_LOUNGE_CARD_PAGE_V237<=1;if(next)next.disabled=GE_LOUNGE_CARD_PAGE_V237>=pages;
 }
 function changeLoungeCardPageV237(delta){GE_LOUNGE_CARD_PAGE_V237+=delta;renderLoungeCardsV237();document.querySelector('.lounge-open-heading-v237')?.scrollIntoView({behavior:'smooth',block:'start'})}
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  renderLoungeCardsV237();
+  ['loungeSearch','loungeSearchV234','loungeAirportFilter','loungeAirportFilterV234'].forEach(id=>{
+    const e=document.getElementById(id);if(e)e.addEventListener(e.tagName==='INPUT'?'input':'change',()=>{GE_LOUNGE_CARD_PAGE_V237=1;renderLoungeCardsV237()});
+  });
+});
 const GE_SAVE_V237=typeof save==='function'?save:null;
 if(GE_SAVE_V237){save=function(){const r=GE_SAVE_V237.apply(this,arguments);setTimeout(renderLoungeCardsV237,0);return r}}
 
@@ -5982,7 +6115,7 @@ downloadLoungeVisitorsCSV=function(){
   downloadBlob(csv,'Lounge_Tenant_Visitor.csv','text/csv;charset=utf-8');
 };
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{if(document.getElementById('loungeVisitorRows'))renderLoungeVisitors();},120));
 
 
 /* ==============================================================
@@ -6022,7 +6155,7 @@ function renderLoungePriceSummaryV243(){
 }
 const GE_RENDER_LOUNGES_V243=renderLounges;
 renderLounges=function(){gePopulateLoungeProviderFilterV243();GE_RENDER_LOUNGES_V243();renderLoungeCardsV237();renderLoungePriceSummaryV243()};
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{gePopulateLoungeProviderFilterV243();renderLoungePriceSummaryV243()});
 
 /* Combined Lounge Master + Service Procurement */
 function geServiceProcurementRowsV243(){
@@ -6339,7 +6472,10 @@ showAirportTooltip=function(ev,code){
   t.style.left=left+'px';t.style.top=top+'px';t.classList.add('show');
 };
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  gePopulateMapVendorFilterV244();
+  renderAirportMapMarkers();
+});
 
 
 /* ==============================================================
@@ -6410,8 +6546,20 @@ function filterAirportMap(region,button){
 }
 
 /* Capture wheel first so legacy wheel listeners do not create double/contradictory zoom. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  const map=document.getElementById('interactiveMap');
+  if(map&&!map.dataset.zoomV245){
+    map.dataset.zoomV245='1';
+    map.addEventListener('wheel',e=>{
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      GE_MAP_ZOOM_V245=Math.max(.72,Math.min(1.72,GE_MAP_ZOOM_V245+(e.deltaY<0?.08:-.08)));
+      geApplyMapView();
+    },{capture:true,passive:false});
+  }
+  setTimeout(geApplyMapView,0);
+});
+window.addEventListener('resize',()=>{if(document.getElementById('mapStage'))geApplyMapView()});
 
 /* ---------- Searchable filter combobox ----------
    Applied only to FILTER selects, not data-entry forms.
@@ -6536,7 +6684,20 @@ function geEnhanceAllFilterSelectsV245(root=document){
   root.querySelectorAll('select').forEach(geEnhanceFilterSelectV245);
 }
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  geEnhanceAllFilterSelectsV245();
+  const obs=new MutationObserver(mutations=>{
+    mutations.forEach(m=>m.addedNodes.forEach(n=>{
+      if(n.nodeType!==1)return;
+      if(n.matches?.('select'))geEnhanceFilterSelectV245(n);
+      geEnhanceAllFilterSelectsV245(n);
+    }));
+  });
+  obs.observe(document.body,{childList:true,subtree:true});
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.search-filter-combo-v245'))geCloseSearchableFiltersV245();
+  });
+});
 
 /* ==============================================================
    V2.46 — Planning governance + initiative cards + announcement library
@@ -6585,7 +6746,7 @@ window.geAnnouncementLibraryV246=[
 function renderAnnouncementLibraryV246(){const box=document.getElementById('announcementLibraryV246');if(!box)return;const q=(document.getElementById('announcementSearchV246')?.value||'').toLowerCase(),type=document.getElementById('announcementTypeV246')?.value||'',aircraft=document.getElementById('announcementAircraftV246')?.value||'',lang=document.getElementById('announcementLanguageV246')?.value||'';const rows=geAnnouncementLibraryV246.filter(x=>(!q||`${x.title} ${x.touchpoint} ${x.type}`.toLowerCase().includes(q))&&(!type||x.touchpoint===type)&&(!aircraft||x.variants.includes(aircraft))&&(!lang||x.languages.includes(lang)));box.innerHTML=rows.map((x,i)=>`<article class="announcement-card-v246"><div class="announcement-no-v246">${String(i+1).padStart(2,'0')}</div><div><span class="eyebrow">${geEsc(x.touchpoint)} • ${geEsc(x.type)}</span><h3>${geEsc(x.title)}</h3><p>${geEsc(x.summary)}</p><div class="announcement-tags-v246">${x.variants.map(v=>`<span>${v}</span>`).join('')}${x.languages.map(v=>`<span>${v}</span>`).join('')}</div><button class="btn secondary compact-btn" onclick="openAnnouncementReferenceV246('${x.id}')">Buka Announcement</button></div></article>`).join('')};
 function openAnnouncementReferenceV246(id){const x=geAnnouncementLibraryV246.find(v=>v.id===id);if(!x)return;document.getElementById('announcementReferenceTitleV246').textContent=x.title;document.getElementById('announcementReferenceBodyV246').innerHTML=`<div class="announcement-reference-head-v246"><span>${x.touchpoint}</span><span>${x.type}</span></div><p>${geEsc(x.summary)}</p><h4>Urutan / Struktur Announcement</h4><div class="announcement-sequence-v246">${x.groups.map((g,i)=>`<div><b>${String(i+1).padStart(2,'0')}</b><span>${geEsc(g)}</span></div>`).join('')}</div><div class="announcement-note-v246">Script lengkap mengikuti master announcement resmi yang dikelola pada modul ini.</div>`;document.getElementById('announcementReferenceModalV246').classList.add('show')}
 function closeAnnouncementReferenceV246(){document.getElementById('announcementReferenceModalV246')?.classList.remove('show')}
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{renderAnnouncementLibraryV246()});
 
 
 /* ==============================================================
@@ -6656,7 +6817,18 @@ function geUpgradeFilterBehaviorV247(){
     },true);
   });
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(geUpgradeFilterBehaviorV247,20);
+  const obs=new MutationObserver(()=>setTimeout(geUpgradeFilterBehaviorV247,0));
+  obs.observe(document.body,{childList:true,subtree:true});
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.search-filter-combo-v245')){
+      document.querySelectorAll('.search-filter-combo-v245.open').forEach(w=>{
+        w.classList.remove('open');geRestoreSearchableFilterV247(w);
+      });
+    }
+  },true);
+});
 
 /* ---------- Initiative card refinement ---------- */
 function geInitiativeCardV247(x,i){
@@ -6816,7 +6988,11 @@ showStandardPanel=function(name,button){
   if(name==='skypriority')renderSkyPriority();
 };
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  GE_STANDARD_CATEGORY_V247='People';
+  const hidden=document.getElementById('tpStdCategoryFilter');if(hidden)hidden.value='People';
+  renderTouchpointStandards();
+});
 
 
 /* ==============================================================
@@ -6987,7 +7163,7 @@ function geCloseAnnouncementEditV248(){document.getElementById('announcementEdit
 function geSaveAnnouncementV248(){if(!geIsStandardAdminV248())return;const sc=geEnsureStandardContentV248(),id=announcementEditIdV248.value,title=annTitleV248.value.trim();if(!title)return;const obj={id:id||String(Date.now()),sectionId:'process-main',title,touchpoint:annTouchpointV248.value.trim(),type:annTypeV248.value.trim(),variants:geLinesV248(annVariantsV248.value),languages:geLinesV248(annLanguagesV248.value),summary:annSummaryV248.value.trim(),groups:String(annGroupsV248.value||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean)};const old=sc.announcements.find(x=>String(x.id)===String(id));if(old)Object.assign(old,obj);else sc.announcements.push(obj);save();geCloseAnnouncementEditV248();renderAnnouncementLibraryV246()}
 async function geDeleteAnnouncementV248(id){if(!geIsStandardAdminV248())return;const ok=typeof geConfirmDeleteV234==='function'?await geConfirmDeleteV234({title:'Hapus Announcement?',item:geAnnouncementRowsV248().find(x=>String(x.id)===String(id))?.title||'Announcement',message:'Announcement akan dihapus dari Standard Reference.'}):confirm('Hapus announcement?');if(!ok)return;const sc=geEnsureStandardContentV248();sc.announcements=sc.announcements.filter(x=>String(x.id)!==String(id));save();renderAnnouncementLibraryV246()}
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{geEnsureStandardContentV248();geEnsureStandardModalV248();geApplyStandardContentV248();renderAnnouncementLibraryV246()});
 
 /* ========================= V2.50 Portal Management Foundation ========================= */
 function pmState(){try{return JSON.parse(localStorage.getItem('gxPortalManagementV250')||'{}')}catch(e){return{}}}
@@ -7054,7 +7230,7 @@ function geV251CalMove(n){geV251CalDate=new Date(geV251CalDate.getFullYear(),geV
 function geV251OpenEvent(){if(!geV251Admin())return;geV251EventTitle.value='';geV251EventDate.value=new Date().toISOString().slice(0,10);geV251EventTime.value='';geV251EventAirport.value='';geV251EventCategory.value='Meeting';geV251EventRemark.value='';geV251EventModal.classList.add('show')}
 function geV251SaveEvent(){const title=geV251EventTitle.value.trim(),date=geV251EventDate.value;if(!title||!date)return alert('Judul dan tanggal wajib diisi.');geV251Ensure().events.push({id:Date.now(),title,date,time:geV251EventTime.value,airport:geV251EventAirport.value.trim(),category:geV251EventCategory.value,remark:geV251EventRemark.value.trim(),source:'Manual'});save();geV251EventModal.classList.remove('show');geV251RenderCalendar()}
 function geV251InitCalendar(){if(!document.getElementById('geCalendarV251'))return;geV251RenderCalendar();const today=new Date().toISOString().slice(0,10),due=geV251AllEvents().filter(e=>String(e.date).slice(0,10)===today);if(due.length&&'Notification'in window&&Notification.permission==='granted')new Notification('Ground Experience Calendar',{body:`${due.length} agenda jatuh tempo hari ini.`})}
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{geV251Ensure();geV251RenderTouchpointPage();geV251InitCalendar();});
 
 
 /* ================= V2.51 Consolidated R1 — Touch Point Multi Photo ================= */
@@ -7171,7 +7347,7 @@ function pmApplyPageR2(){
  if(Array.isArray(pc.order)&&pc.order.length){const parent=document.querySelector('.main');if(parent){pc.order.forEach(id=>{const el=document.querySelector(`[data-pm-section="${CSS.escape(id)}"]`);if(el&&el.parentElement===parent)parent.appendChild(el)})}}
  const menus=cfg.menus||{};document.querySelectorAll('.side a').forEach(a=>{const k=(a.getAttribute('href')||'').split('#')[0];if(k&&menus[k]?.visible===false)a.style.display='none'});
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>setTimeout(pmApplyPageR2,0));
 
 const PM_PAGE_SECTIONS_R2={
  'index.html':[
@@ -7207,7 +7383,7 @@ function pmPreviewR2(){pmActivity('Preview: buka page terkait pada tab baru untu
 function pmPublishR2(){const cfg=pmCfgR2();Object.values(cfg.pages).forEach(p=>{p.draft=false;p.publishedAt=new Date().toISOString()});cfg.publishedAt=new Date().toISOString();save();portalPublishState.textContent='Published';pmActivity('Perubahan Portal Management dipublish pada browser prototype ini.')}
 function pmRenderMenusR2(){const box=document.getElementById('pmMenuListR2');if(!box)return;const items=[['layanan.html','Layanan Garuda Indonesia'],['inisiatif.html','Kegiatan & Inisiatif'],['service-planning.html','Service Planning'],['data.html','Data'],['berita.html','Berita & Informasi'],['kontak.html','Hubungi Kami'],['admin.html','Admin / Pengelola']];const cfg=pmCfgR2().menus;box.innerHTML=items.map(([k,l])=>`<div class="portal-menu-item"><b>${l}</b><small>${k}</small><label class="pm-switch-r2"><input data-menu="${k}" type="checkbox" ${cfg[k]?.visible===false?'':'checked'}><span></span></label></div>`).join('')}
 function pmSaveMenusR2(){const cfg=pmCfgR2().menus;document.querySelectorAll('#pmMenuListR2 input[data-menu]').forEach(x=>{cfg[x.dataset.menu]={visible:x.checked}});save();pmActivity('Menu visibility disimpan sebagai draft.')}
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('pmPage'))setTimeout(pmLoadPageR2,20)});
 
 /* ---------- Asset Library: actual IndexedDB files ---------- */
 async function pmRegisterAssetsR2(){const files=[...(pmAsset?.files||[])];if(!files.length)return pmActivity('Pilih asset terlebih dahulu.');const cfg=pmCfgR2();cfg.assets||=[];for(const f of files){const key=`portal_asset_${Date.now()}_${Math.random().toString(36).slice(2)}`;await GEFiles.put(key,f);cfg.assets.push({key,name:f.name,size:f.size,type:f.type,createdAt:new Date().toISOString()})}save();pmAsset.value='';pmActivity(`${files.length} asset tersimpan di IndexedDB browser.`);pmAssetListR2()}
@@ -7244,7 +7420,7 @@ function geV251SaveEventR2(){const title=geV251EventTitle.value.trim(),date=geV2
 async function geV251DeleteEventR2(){const id=geV251EventIdR2.value;if(!id)return;const ok=typeof geConfirmDeleteV234==='function'?await geConfirmDeleteV234({title:'Hapus Kegiatan?',item:geV251EventTitle.value,message:'Kegiatan manual akan dihapus dari kalender.'}):confirm('Hapus kegiatan?');if(!ok)return;const s=geV251Ensure();s.events=s.events.filter(x=>String(x.id)!==String(id));save();geV251EventModal.classList.remove('show');geV251RenderCalendar()}
 function geV251OpenEventDetailR2(id){const e=geV251AllEvents().find(x=>String(x.id)===String(id));if(!e)return;if(e.readOnly){if(e.initiativeId&&typeof openInitiativeTimelineV224==='function')openInitiativeTimelineV224(e.initiativeId);return}geV251OpenEvent(e.id)}
 function geV251CheckRemindersR2(){const now=new Date();geV251AllEvents().filter(e=>e.source==='Manual'&&e.date).forEach(e=>{const due=new Date(`${e.date}T${e.time||'09:00'}:00`),minutes=Number(e.reminder||0),alertAt=new Date(due.getTime()-minutes*60000),key=`calrem_${e.id}_${e.date}_${e.time}_${minutes}`;if(now>=alertAt&&now<due&&sessionStorage.getItem(key)!=='1'){sessionStorage.setItem(key,'1');if('Notification'in window&&Notification.permission==='granted')new Notification('Ground Experience Calendar',{body:`${e.title} • ${e.airport||''} ${e.time||''}`});else geStorageNoticeV223('Calendar Reminder',`${e.title} • ${e.date} ${e.time||''}`,'warning')}})}
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('geCalendarV251')){geV251RenderCalendar();setInterval(geV251CheckRemindersR2,60000);geV251CheckRemindersR2()}});
 
 
 /* ==============================================================
@@ -7391,7 +7567,7 @@ geV251RenderCalendar=function(){
  geV251AllEvents=geFilteredCalendarEventsV252;
  try{return geRenderCalendarBaseV252()}finally{geV251AllEvents=original}
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{geEnsureV252();geUpgradeInitiativeModalV252();geUpgradeCalendarModalV252();geAddCalendarFiltersV252();});
 /* ==============================================================
    V2.53 — CALENDAR & PROJECT TRACKING FOCUS
    ============================================================== */
@@ -7416,12 +7592,12 @@ geV251OpenEvent=function(id=null){
  const scopes=geArrV252(e.journeyScopes);[...geV252JourneyScopes.options].forEach(o=>o.selected=scopes.length?scopes.includes(o.value):o.value==='Tidak Terkait Journey');
 }
 /* Activity linked to initiative can inherit scope/touchpoint. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+document.addEventListener('change',e=>{if(e.target?.id!=='geV252InitiativeLink')return;const x=(data.initiatives||[]).find(v=>String(v.id)===String(e.target.value));if(!x)return;geV252ActivityType.value='initiative';geV252Touchpoints.value=geTPsV252(x).join(', ');const scopes=geScopesV252(x);[...geV252JourneyScopes.options].forEach(o=>o.selected=scopes.includes(o.value));if(!geV251EventAirport.value)geV251EventAirport.value=x.airport||'';if(!geV251EventPicR2.value)geV251EventPicR2.value=x.pic||''});
 /* Extend reminders. */
 function geUpgradeReminderV253(){const s=document.getElementById('geV251EventReminderR2');if(!s||s.dataset.v253)return;s.dataset.v253='1';s.innerHTML=`<option value="0">Saat jatuh tempo</option><option value="60">1 jam sebelum</option><option value="1440">H-1</option><option value="4320">H-3</option><option value="10080">H-7</option><option value="20160">H-14</option><option value="43200">H-30</option>`}
 const geRenderCalV253=geV251RenderCalendar;
 geV251RenderCalendar=function(){const r=geRenderCalV253();geRenderProjectSummaryV253();return r}
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{geUpgradeReminderV253();geRenderProjectSummaryV253()});
 
 /* V2.53.1 — Calendar navigation self-healing hotfix */
 function geEnsureCalendarNavV2531(){
@@ -7440,7 +7616,11 @@ function geEnsureCalendarNavV2531(){
   link.style.removeProperty('display');
   link.style.removeProperty('visibility');
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  geEnsureCalendarNavV2531();
+  setTimeout(geEnsureCalendarNavV2531,50);
+  setTimeout(geEnsureCalendarNavV2531,250);
+});
 
 
 /* ==============================================================
@@ -7640,7 +7820,12 @@ function geV2532FixActiveNav(){
   });
 }
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  if(!document.getElementById('geCalendarV251')){geV2532FixActiveNav();return}
+  geV2532FixActiveNav();
+  geUpgradeCalendarModalV252();geAddCalendarFiltersV252();geUpgradeReminderV253();
+  geV2532RenderCalendar();
+});
 
 
 /* ==============================================================
@@ -7985,7 +8170,16 @@ function geCalSaveActivityV2533(){
   geCalRenderV2533();
 }
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+document.addEventListener('change',e=>{
+  if(e.target?.id!=='geCalInitiativeV2533')return;
+  const x=(data.initiatives||[]).find(v=>String(v.id)===String(e.target.value));if(!x)return;
+  geCalActivityTypeV2533.value='initiative';
+  if(!geV251EventAirport.value)geV251EventAirport.value=x.airport||'';
+  if(!geV251EventPicR2.value)geV251EventPicR2.value=x.pic||'';
+  const scopes=geCalScopesV2533(x),tps=geCalTPV2533(x);
+  [...geCalJourneyEditV2533.options].forEach(o=>o.selected=scopes.includes(o.value));
+  [...geCalTouchEditV2533.options].forEach(o=>o.selected=tps.includes(o.value));
+});
 
 /* read-only detail for initiative / milestone */
 function geCalEnsureDetailModalV2533(){
@@ -8079,7 +8273,12 @@ function geCalFixSidebarActiveV2533(){
   });
 }
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  geCalFixSidebarActiveV2533();
+  if(!document.getElementById('geCalendarV251'))return;
+  geCalBuildFiltersV2533();
+  geCalRenderV2533();
+});
 
 
 /* ==============================================================
@@ -8200,7 +8399,11 @@ function geCalRenderKPIV2534(){
 const geCalRenderKPIBaseV2534 = geCalRenderKPIV2533;
 geCalRenderKPIV2533 = geCalRenderKPIV2534;
 
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  if(document.getElementById('geCalendarV251')){
+    geCalRenderKPIV2534();
+  }
+});
 
 
 /* ==============================================================
@@ -8380,7 +8583,28 @@ function geCalDeleteActivityV2535(){
 }
 
 /* Initiative selection auto-populates project context. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+document.addEventListener('change',e=>{
+  if(e.target?.id!=='geCalInitiativeV2535')return;
+  const x=(data.initiatives||[]).find(v=>String(v.id)===String(e.target.value));
+  if(!x)return;
+
+  const type=geCalElV2535('geCalActivityTypeV2535');
+  if(type)type.value='initiative';
+
+  const airport=geCalElV2535('geV251EventAirport');
+  if(airport&&!airport.value)airport.value=x.airport||'';
+
+  const pic=geCalElV2535('geV251EventPicR2');
+  if(pic&&!pic.value)pic.value=x.pic||'';
+
+  const scopes=geCalScopesV2533(x);
+  const scopeSel=geCalElV2535('geCalJourneyEditV2535');
+  if(scopeSel)[...scopeSel.options].forEach(o=>o.selected=scopes.includes(o.value));
+
+  const tps=geCalTPV2533(x);
+  const touchSel=geCalElV2535('geCalTouchEditV2535');
+  if(touchSel)[...touchSel.options].forEach(o=>o.selected=tps.includes(o.value));
+});
 
 /* Route manual event detail to the same robust editor. */
 const geCalOpenDetailBaseV2535=geCalOpenDetailV2533;
@@ -8392,7 +8616,26 @@ geCalOpenDetailV2533=function(id){
 };
 
 /* Bind by JS as well as inline onclick, for file:// browser reliability. */
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>{
+  const addBtn=document.querySelector('[data-calendar-add-v2535]');
+  if(addBtn){
+    addBtn.onclick=null;
+    addBtn.addEventListener('click',e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      geCalOpenActivityV2535();
+    });
+  }
+
+  const saveBtn=geCalElV2535('geCalSaveActivityBtnV2535');
+  if(saveBtn){
+    saveBtn.onclick=null;
+    saveBtn.addEventListener('click',e=>{
+      e.preventDefault();
+      geCalSaveActivityV2535();
+    });
+  }
+});
 
 
 /* P22/P23/P24 — Planning action visibility follows Access Level + Permission, not Role alone. */
@@ -8404,7 +8647,7 @@ function applyPlanningActions(){
  if(!PLANNING_PAGES_P22.has(page))return;
  document.querySelectorAll('[data-admin-only]').forEach(el=>{el.style.display=gePlanningCanAction('Edit')?'':'none'});
 }
-/* EDITION1_BOOT_OWNED: legacy global listener removed from shared runtime. */
+window.addEventListener('DOMContentLoaded',()=>setTimeout(applyPlanningActions,120));
 })();
 
 
@@ -8434,4 +8677,10 @@ if(originalRenderUserAccounts){
    return out;
  };
 }
+})();
+
+window.GERefreshData=function(){try{data=store.get();return data}catch(e){return null}};
+window.GE_APP_DEFINITIONS_READY=true;
+window.addEventListener=__wAdd;
+document.addEventListener=__dAdd;
 })();

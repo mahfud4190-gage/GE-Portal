@@ -1,5 +1,6 @@
-# P40 Edition 1 — Canonical Runtime Replacement
+# P40 Edition 1 Canonical Runtime
 
-This replacement uses Planning Workspace as the execution-graph control. The 12 Edition 1 pages use empty canonical shell hosts and a deterministic foundation. The legacy monolithic app runtime is converted to a passive business-definition library; page initialization is owned by one Edition 1 page boot. Legacy compatibility/project/stability runtime is removed from the 12-page graph. Firebase/Auth/Firestore source files are unchanged.
-
-The package does not create production data, fake authentication, or bypass access controls.
+This replacement uses Planning Workspace as the execution-graph reference.
+The 12 Edition 1 pages use one page boot owner and the existing business definitions with automatic DOMContentLoaded boot disabled.
+Firestore-backed Initiative and Lounge master reads/writes are routed through authenticated Netlify Functions using Firebase Admin; Firebase configuration and Firestore rules are not changed.
+Connected planning destinations station-material, bo-space and airport-systems are also canonicalized; bo-space and airport-systems route to Branch Office Planning panels.

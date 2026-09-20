@@ -1,49 +1,45 @@
-<!DOCTYPE html>
-<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Station Material</title><script src="assets/auth.js?v=2.54.1"></script><script src="assets/data.js?v=2.54.1"></script><script defer="" src="assets/core-v257.js?v=2.57-P1.1"></script><script defer="" src="assets/relationships-v257.js?v=2.57-P1.2"></script><script defer="" src="assets/compatibility-v257.js?v=2.57-P1.7"></script><script src="assets/files.js?v=2.54.1"></script><script defer="" src="assets/app.js?v=2.54.1"></script><script defer="" src="assets/v254-project.js?v=2.54.4"></script><script defer="" src="assets/v2544-modal-fix.js?v=2.54.4"></script><script>document.documentElement.classList.add("r9-boot")</script><link href="assets/portal.css?v=10.5" rel="stylesheet"/></head><body id="top">
-<header class="top"></header>
-<div class="shell"><aside class="side"></aside><main class="main">
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Station Material</title><link rel="stylesheet" href="assets/portal.css?v=10.20.1"><script src="assets/auth.js?v=2.57"></script><script src="assets/data.js?v=2.57"></script><script src="assets/core-v257.js?v=2.57"></script><script src="assets/relationships-v257.js?v=2.57"></script><script src="assets/permission-v257.js?v=2.57"></script><script src="assets/files.js?v=2.57"></script><script src="assets/edition1-business-runtime.js?v=40.2"></script><script src="assets/edition1-page-boot.js?v=40.2"></script><script src="assets/overlay-v30.js?v=30.1" defer></script><script src="assets/access-assistance-p32.js?v=32.1" defer></script><script src="assets/portal-shell.js?v=10.20.1" defer></script><script src="assets/p33-p37-presentation.js?v=37.1" defer></script></head><body><header class="top"></header><div class="shell"><aside class="side"></aside><main class="main">
 <section class="hero"><h2>Station Material</h2><p>Master sementara Barang Cetak Kestasiunan berdasarkan data terbaru yang disampaikan.</p></section>
 <div class="title">
-<div><h3>Barang Cetak Kestasiunan</h3><div class="section-subtitle">Kode barang, area/touch point, vendor, periode perjanjian, dan status penggunaan.</div></div>
-<div class="bulk-action-group" data-admin-only="">
-<button class="btn" onclick="openStationMaterialModalV231()">Tambah Material</button>
-<a class="btn secondary" download="" href="templates/Template_Station_Material.csv">Unduh Template</a>
-<button class="btn secondary" onclick="openBulkImportV223('station-material')">Upload Data</button>
-</div>
+  <div><h3>Barang Cetak Kestasiunan</h3><div class="section-subtitle">Kode barang, area/touch point, vendor, periode perjanjian, dan status penggunaan.</div></div>
+  <div class="bulk-action-group" data-admin-only>
+    <button class="btn" onclick="openStationMaterialModalV231()">Tambah Material</button>
+    <a class="btn secondary" href="templates/Template_Station_Material.csv" download>Unduh Template</a>
+    <button class="btn secondary" onclick="openBulkImportV223('station-material')">Upload Data</button>
+  </div>
 </div>
 <div class="card data-filter-card"><div class="data-filter-grid">
-<input id="materialSearch" oninput="renderStationMaterials()" placeholder="Cari kode / nama barang / vendor"/>
-<select id="materialAreaFilterV231" onchange="renderStationMaterials()"><option value="">Semua Area</option></select>
-<select id="materialVendorFilterV231" onchange="renderStationMaterials()"><option value="">Semua Vendor</option></select>
-<select id="materialStatusFilter" onchange="renderStationMaterials()"><option value="">Semua Status</option></select>
+  <input id="materialSearch" placeholder="Cari kode / nama barang / vendor" oninput="renderStationMaterials()">
+  <select id="materialAreaFilterV231" onchange="renderStationMaterials()"><option value="">Semua Area</option></select>
+  <select id="materialVendorFilterV231" onchange="renderStationMaterials()"><option value="">Semua Vendor</option></select>
+  <select id="materialStatusFilter" onchange="renderStationMaterials()"><option value="">Semua Status</option></select>
 </div></div>
 <div class="card table-scroll"><table class="planning-table"><thead><tr>
-<th>No</th><th>Kode Barang</th><th>Nama Barang Cetak Kestasiunan</th><th>Area</th><th>Provider</th><th>Mulai</th><th>Berakhir</th><th>Status</th><th>Dokumen</th><th data-admin-only="">Kelola</th>
+  <th>No</th><th>Kode Barang</th><th>Nama Barang Cetak Kestasiunan</th><th>Area</th><th>Provider</th><th>Mulai</th><th>Berakhir</th><th>Status</th><th>Dokumen</th><th data-admin-only>Kelola</th>
 </tr></thead><tbody id="stationMaterialRows"></tbody></table><div id="stationMaterialEmpty"></div></div>
-<div class="modal-backdrop" id="stationMaterialModalV231"><div class="modal-card">
+
+<div id="stationMaterialModalV231" class="modal-backdrop"><div class="modal-card">
 <button class="modal-x" onclick="closeStationMaterialModalV231()">×</button>
-<h2 id="stationMaterialModalTitleV231">Tambah Station Material</h2><input id="stationMaterialEditIdV231" type="hidden"/>
+<h2 id="stationMaterialModalTitleV231">Tambah Station Material</h2><input id="stationMaterialEditIdV231" type="hidden">
 <div class="formgrid">
-<label>Kode Barang<input id="stationMaterialCodeV231" required=""/></label>
-<label>Nama Barang<input id="stationMaterialNameV231" required=""/></label>
-<label>Area<input id="stationMaterialAreaV231"/></label>
-<label>Provider<input id="stationMaterialVendorV231"/></label>
-<label>Mulai<input id="stationMaterialStartV246" type="date"/></label>
-<label>Berakhir<input id="stationMaterialEndV246" type="date"/></label>
-<input id="stationMaterialPeriodV231" type="hidden"/>
-<label>Status<input id="stationMaterialStatusV231" placeholder="Digunakan"/></label>
-<label class="span2">Lampiran Dokumen<input id="stationMaterialFileV231" type="file"/></label>
+<label>Kode Barang<input id="stationMaterialCodeV231" required></label>
+<label>Nama Barang<input id="stationMaterialNameV231" required></label>
+<label>Area<input id="stationMaterialAreaV231"></label>
+<label>Provider<input id="stationMaterialVendorV231"></label>
+<label>Mulai<input id="stationMaterialStartV246" type="date"></label>
+<label>Berakhir<input id="stationMaterialEndV246" type="date"></label>
+<input id="stationMaterialPeriodV231" type="hidden">
+<label>Status<input id="stationMaterialStatusV231" placeholder="Digunakan"></label>
+<label class="span2">Lampiran Dokumen<input id="stationMaterialFileV231" type="file"></label>
 </div>
 <div class="modal-actions sticky-actions"><button class="btn" onclick="saveStationMaterialV231()">Simpan</button><button class="btn secondary" onclick="closeStationMaterialModalV231()">Batal</button></div>
 </div></div>
-<div class="modal-backdrop" id="bulkImportModalV223"><div class="modal-card bulk-import-modal-v223">
+
+<div id="bulkImportModalV223" class="modal-backdrop"><div class="modal-card bulk-import-modal-v223">
 <button class="modal-x" onclick="closeBulkImportV223()">×</button><span class="bulk-import-eyebrow">Bulk Data Import</span>
-<h2 id="bulkImportTitleV223">Upload Data</h2><p class="section-subtitle" id="bulkImportHelpV223"></p>
-<div class="bulk-import-dropzone"><input accept=".csv" id="bulkImportFileV223" onchange="previewBulkImportV223(this.files[0])" type="file"/><div><b>Pilih file CSV</b><span>Gunakan template agar nama kolom dikenali otomatis.</span></div></div>
-<div class="bulk-import-preview-v223" id="bulkImportPreviewV223"></div>
-<div class="modal-actions sticky-actions"><button class="btn" disabled="" id="bulkImportConfirmV223" onclick="confirmBulkImportV231()">Import Data</button><button class="btn secondary" onclick="closeBulkImportV223()">Batal</button></div>
+<h2 id="bulkImportTitleV223">Upload Data</h2><p id="bulkImportHelpV223" class="section-subtitle"></p>
+<div class="bulk-import-dropzone"><input id="bulkImportFileV223" type="file" accept=".csv" onchange="previewBulkImportV223(this.files[0])"><div><b>Pilih file CSV</b><span>Gunakan template agar nama kolom dikenali otomatis.</span></div></div>
+<div id="bulkImportPreviewV223" class="bulk-import-preview-v223"></div>
+<div class="modal-actions sticky-actions"><button id="bulkImportConfirmV223" class="btn" onclick="confirmBulkImportV231()" disabled>Import Data</button><button class="btn secondary" onclick="closeBulkImportV223()">Batal</button></div>
 </div></div>
-</main></div>
-<footer class="footer"><b>GROUND EXPERIENCE — GARUDA INDONESIA</b><br/>Portal Service Experience • Internal Ground Services Workspace</footer>
-<button aria-label="Kembali ke atas" class="back-to-top" id="backToTop" title="Kembali ke atas">↑</button>
-<script defer="" src="assets/v2554-stability.js?v=2.55.5"></script><script defer="" src="assets/overlay-v30.js?v=30.1"></script><script defer="" src="assets/access-assistance-p32.js?v=32.1"></script><script defer="" src="assets/p33-p37-presentation.js?v=37.1"></script><script defer="" src="assets/portal-shell.js?v=10.5"></script></body></html>
+</main></div></body></html>

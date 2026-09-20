@@ -236,7 +236,7 @@ const NAV_SVG={
  standard:'<path d="M4 5h12M4 10h12M4 15h12"/>'
 };
 function icon(x){const key=({'⌂':'home','◎':'cx','↔':'journey','✈':'network','⌾':'station','⚙':'initiative','✧':'opportunity','◇':'scenario','▦':'calendar','▣':'budget','◉':'budget','✓':'readiness','▤':'document','≡':'standard','⬡':'data','◫':'data','♙':'user','◷':'history','☎':'support','⇧':'data','◈':'station'})[x]||'standard';return `<span class="ni" aria-hidden="true"><svg viewBox="0 0 20 20">${NAV_SVG[key]}</svg></span>`;}
-const path=()=>{const raw=(location.pathname.split('/').pop()||'index.html').toLowerCase();return raw.includes('.')?raw:(raw||'index')+'.html'};
+const path=()=>location.pathname.split('/').pop()||'index.html';
 const item=(href,label,i,sub=false)=>`<a class="ge-nav-link ${sub?'ge-nav-sub':''} ${path()===href?'active':''}" href="${href}" title="${label}">${icon(i)}<span>${label}</span></a>`;
 function group(title,items){return `<div class="ge-nav-section">${title}</div>${items.join('')}`}
 function dashboardPOV(s){
@@ -254,8 +254,7 @@ function navFor(s){
  const planning=[
    item('service-planning.html','Planning Overview','≡'),
    item('planning-workspace.html','Planning Workspace','◇'),
-   item('planning-documents.html','Planning Documents','▤'),
-   item('calendar.html','Calendar & Project Tracking','▦')
+   item('planning-documents.html','Planning Documents','▤')
  ];
  const commonSupport=group('SUPPORT',[item('berita.html','Berita & Informasi','▣'),item('kontak.html','Contact Support','☎')]);
  if(['Lounge Staff','Lounge Luar Biasa'].includes(s?.role)) return [
@@ -295,7 +294,7 @@ function navFor(s){
  return [group('DASHBOARD',[item('index.html','Dashboard','⌂')]),commonSupport].join('');
 }
 
-const finalUserPages=new Set(['index.html','customer-experience.html','cx-import.html','touchpoint.html','network-stations.html','station-360.html','inisiatif.html','improvement-intake.html','action-scenario.html','calendar.html','budget-cost.html','program-kerja.html','cost-intelligence.html','readiness.html','agreement-service.html','standar.html','data.html','master-data.html','admin.html','portal-management.html','audit-log.html','service-capability.html','service-locations.html','berita.html','kontak.html','management-outcome.html','airport-experience-map.html','map.html','profile.html','service-planning.html','planning-workspace.html','lounge-list.html','branch-office-planning.html','gaso-planning.html','planning-documents.html','airport-systems.html','asset-facility.html','bo-space.html','layanan.html','lounge-access.html','lounge-flights.html','lounge-procurement.html','lounge-purchase.html','lounge-visitor.html','post-flight.html','post-journey.html','pre-flight.html','pre-journey.html','station-material.html','initiative-conversion.html','initiative-traceability.html']);
+const finalUserPages=new Set(['index.html','customer-experience.html','cx-import.html','touchpoint.html','network-stations.html','station-360.html','inisiatif.html','improvement-intake.html','action-scenario.html','calendar.html','budget-cost.html','program-kerja.html','cost-intelligence.html','readiness.html','agreement-service.html','standar.html','data.html','master-data.html','admin.html','portal-management.html','audit-log.html','service-capability.html','service-locations.html','berita.html','kontak.html','management-outcome.html','airport-experience-map.html','map.html','profile.html','service-planning.html','planning-workspace.html','lounge-list.html','branch-office-planning.html','gaso-planning.html','planning-documents.html']);
 const PLANNING_PAGES=new Set(['service-planning.html','planning-workspace.html','lounge-list.html','branch-office-planning.html','gaso-planning.html','planning-documents.html']);
 const PLANNING_TABS=[
   ['lounge-list.html','Lounge / Tenant','lounge'],
@@ -357,7 +356,6 @@ function sidebarToggle(){
  applyCollapsed(saved);
 }
 function shell(){
- if(window.__GE_CANONICAL_SHELL_RENDERED)return;
  if(path()==='login.html'||!finalUserPages.has(path()))return;
  const refs=ensureShell();
  if(!refs)return;
@@ -406,8 +404,7 @@ function setupPeriodControl(){
  sel.addEventListener('change',()=>{try{localStorage.setItem('GE_V257_DASHBOARD_PERIOD',sel.value)}catch(e){};document.dispatchEvent(new CustomEvent('ge-dashboard-period-change',{detail:{year:sel.value}}))});
 }
 
-function fallbackShellBoot(){try{shell()}catch(e){console.error('[P40-R9] fallback shell boot failed',e)}}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fallbackShellBoot);else fallbackShellBoot();
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',shell);else shell();
 })();
 
 /* v257-r8-stabilization.js */
@@ -462,7 +459,7 @@ function del(x){if(!confirm(`Hapus Initiative "${x.name||''}"?`))return;const a=
 function bindInitiative(){const box=document.getElementById('initRows');if(!box)return;box.addEventListener('click',e=>{const b=e.target.closest('[data-r8-action]');if(!b)return;const card=b.closest('[data-r8-id]');const x=get(card?.dataset.r8Id);if(!x)return;const a=b.dataset.r8Action;if(a==='detail')detail(x);else if(a==='update')edit(x);else if(a==='delete')del(x)});document.querySelectorAll('.journey-tab').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();window.setJourneyFilter(b.dataset.journey||'')}));['q','ft','fs'].forEach(id=>document.getElementById(id)?.addEventListener('input',render));setJourney(curJourney());render()}
 function stabilizeSidebar(){const side=document.querySelector('body.final-v257 .side');if(!side)return;let toggle=side.querySelector('.ge-sidebar-toggle');let wrap=side.querySelector('.r8-nav-scroll');if(!wrap){wrap=document.createElement('div');wrap.className='r8-nav-scroll';[...side.children].filter(x=>x!==toggle).forEach(x=>wrap.appendChild(x));side.insertBefore(wrap,toggle||null)}if(toggle){toggle.onclick=()=>{const on=!document.body.classList.contains('sidebar-collapsed');document.body.classList.toggle('sidebar-collapsed',on);try{localStorage.setItem('GE_V257_SIDEBAR_COLLAPSED',on?'1':'0')}catch(e){};toggle.setAttribute('aria-expanded',on?'false':'true');const ar=toggle.querySelector('.toggle-arrow');if(ar)ar.textContent=on?'»':'«'};const saved=localStorage.getItem('GE_V257_SIDEBAR_COLLAPSED')==='1';document.body.classList.toggle('sidebar-collapsed',saved);const ar=toggle.querySelector('.toggle-arrow');if(ar)ar.textContent=saved?'»':'«'} }
 function touchpointPreview(){const inp=document.getElementById('tpEditFiles'),box=document.getElementById('tpPhotoPreview');if(!inp||!box)return;inp.addEventListener('change',()=>{const fs=[...inp.files].slice(0,5);box.innerHTML='';fs.forEach((f,i)=>{const r=new FileReader();r.onload=()=>{const d=document.createElement('div');d.className='tp-preview-item';d.innerHTML=`<img src="${r.result}" alt="Preview ${i+1}"><input type="text" data-r8-caption="${i}" placeholder="Keterangan foto ${i+1}">`;box.appendChild(d)};r.readAsDataURL(f)})})}
-function init(){stabilizeSidebar();setTimeout(touchpointPreview,30)}
+function init(){setTimeout(touchpointPreview,30)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 
@@ -509,7 +506,7 @@ function stabilizeSidebar(){const body=document.body,side=document.querySelector
 }
 function replaceBrand(){document.querySelectorAll('.ge-brand-logos .garuda').forEach(img=>img.src='assets/garuda-horizontal-white.png')}
 function enhanceTouchpointView(){const m=document.getElementById('tpViewModal'),photos=document.getElementById('tpViewPhotos');if(!m||!photos)return;let last='';const obs=new MutationObserver(()=>{if(!m.classList.contains('show'))return;const srcs=[...photos.querySelectorAll('img')].map(i=>i.src);const sig=srcs.join('|');if(!srcs.length||sig===last||photos.classList.contains('r9-carousel'))return;last=sig;let idx=0;photos.classList.add('r9-carousel');function paint(){photos.innerHTML=srcs.map((s,i)=>`<div class="r9-slide ${i===idx?'active':''}"><img src="${esc(s)}" alt="Foto Touch Point ${i+1}"></div>`).join('')+`<div class="r9-carousel-bar"><button type="button" id="r9PrevPhoto">‹ Sebelumnya</button><span class="r9-counter">Foto ${idx+1} dari ${srcs.length}</span><button type="button" id="r9NextPhoto">Berikutnya ›</button></div>`;document.getElementById('r9PrevPhoto').onclick=()=>{idx=(idx-1+srcs.length)%srcs.length;paint()};document.getElementById('r9NextPhoto').onclick=()=>{idx=(idx+1)%srcs.length;paint()}}paint()});obs.observe(m,{attributes:true,attributeFilter:['class'],subtree:true,childList:true})}
-function init(){document.documentElement.classList.remove('r9-boot');document.documentElement.classList.add('r9-ready');replaceBrand();stabilizeSidebar();enhanceTouchpointView();if(document.getElementById('initRows')){bindInitiativeCapture();setJourney(getJourney());setTimeout(renderInitiatives,80)}setTimeout(replaceBrand,120)}
+function init(){document.documentElement.classList.remove('r9-boot');document.documentElement.classList.add('r9-ready');document.addEventListener('click',e=>{const a=e.target.closest('a[href]');if(!a||a.target==='_blank'||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey)return;const h=a.getAttribute('href')||'';if(!h||h.startsWith('#')||h.startsWith('javascript:'))return;document.documentElement.classList.add('r9-leaving')},true);replaceBrand();stabilizeSidebar();enhanceTouchpointView();if(document.getElementById('initRows')){bindInitiativeCapture();setJourney(getJourney());setTimeout(renderInitiatives,80)}setTimeout(replaceBrand,120)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 
@@ -550,7 +547,80 @@ function bindMarkerDetail(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(bindMarkerDetail,160));else setTimeout(bindMarkerDetail,160);
 })();
 
-/* P40-R3: R10 app-shell authority retired. Sidebar, navigation lifecycle, and overlay promotion are owned by the final shell + P30 overlay authority. */
+/* app-shell.js */
+(function(){
+  'use strict';
+  var KEY='GE_R10_SHELL_STATE';
+  function read(){try{return JSON.parse(sessionStorage.getItem(KEY)||'{}')}catch(e){return {}}}
+  function write(patch){var s=Object.assign(read(),patch);sessionStorage.setItem(KEY,JSON.stringify(s));return s}
+  function sidebar(){return document.querySelector('.r8-nav-scroll,.ge-final-sidebar nav,.side nav,.side')}
+  function ensureSidebar(){
+    var side=document.querySelector('body.final-v257>.shell>.side');if(!side)return;
+    var toggle=side.querySelector('.ge-sidebar-toggle'),wrap=side.querySelector('.r8-nav-scroll');
+    if(!wrap){wrap=document.createElement('div');wrap.className='r8-nav-scroll';Array.from(side.children).filter(function(x){return x!==toggle}).forEach(function(x){wrap.appendChild(x)});side.insertBefore(wrap,toggle||null)}
+    if(!toggle){toggle=document.createElement('button');toggle.type='button';toggle.className='ge-sidebar-toggle'}
+    var clean=toggle.cloneNode(false);clean.type='button';clean.className='ge-sidebar-toggle';clean.innerHTML='<span class="toggle-arrow">«</span><span class="toggle-label">Collapse</span>';toggle.replaceWith(clean);side.appendChild(clean);
+    var saved=false;try{saved=localStorage.getItem('GE_V257_SIDEBAR_COLLAPSED')==='1'}catch(_){}
+    document.body.classList.toggle('sidebar-collapsed',saved);clean.setAttribute('aria-expanded',saved?'false':'true');clean.querySelector('.toggle-arrow').textContent=saved?'»':'«';
+    clean.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();var on=!document.body.classList.contains('sidebar-collapsed');document.body.classList.toggle('sidebar-collapsed',on);clean.setAttribute('aria-expanded',on?'false':'true');clean.querySelector('.toggle-arrow').textContent=on?'»':'«';try{localStorage.setItem('GE_V257_SIDEBAR_COLLAPSED',on?'1':'0')}catch(_){}});
+  }
+  function restoreSidebar(){
+    var el=sidebar(),s=read();if(!el)return;
+    if(Number.isFinite(s.sidebarScroll))el.scrollTop=s.sidebarScroll;
+    requestAnimationFrame(function(){requestAnimationFrame(function(){if(Number.isFinite(s.sidebarScroll))el.scrollTop=s.sidebarScroll})});
+    el.addEventListener('scroll',function(){write({sidebarScroll:el.scrollTop})},{passive:true});
+  }
+  function linkTransitions(){
+    document.addEventListener('click',function(e){
+      var a=e.target.closest('a[href]');if(!a)return;
+      var href=a.getAttribute('href')||'';
+      if(href.charAt(0)==='#'||/^https?:|^mailto:|^tel:|download/i.test(href)||e.ctrlKey||e.metaKey||e.shiftKey)return;
+      var el=sidebar();if(el)write({sidebarScroll:el.scrollTop});
+      document.body.classList.add('r10-leaving');
+    },true);
+  }
+  function replaceNativePopup(){
+    window.r10Toast=function(message,type){
+      var old=document.querySelector('.r10-toast');if(old)old.remove();
+      var t=document.createElement('div');t.className='r10-toast';t.setAttribute('role','status');
+      t.style.cssText='position:fixed;right:18px;bottom:18px;max-width:360px;padding:12px 15px;border-radius:9px;background:'+(type==='error'?'#a83d3d':'#082d5c')+';color:#fff;box-shadow:0 12px 35px #001b4433;font:600 13px/1.45 Inter,Segoe UI,Arial';
+      t.textContent=message;document.body.appendChild(t);setTimeout(function(){t.remove()},3600);
+    };
+  }
+  function markAchievement(root){
+    (root||document).querySelectorAll('[data-achievement]').forEach(function(el){
+      var v=Number(el.getAttribute('data-achievement'));el.classList.remove('achievement-below','achievement-meet','achievement-exceed','achievement-unavailable');
+      el.classList.add(!Number.isFinite(v)?'achievement-unavailable':v<100?'achievement-below':v===100?'achievement-meet':'achievement-exceed');
+    });
+  }
+  function normalizeModalRoots(){
+    var selectors=['.initiative-dialog','.modal-backdrop','.tp-modal-backdrop','.map-move-modal-backdrop','.r9-portal-dialog','.modal.open','dialog[open]'];
+    var selector=selectors.join(',');
+    function promote(modal){
+      if(!modal||modal.nodeType!==1)return;
+      modal.classList.add('ge-viewport-overlay');
+      if(modal.parentElement!==document.body)document.body.appendChild(modal);
+      modal.scrollTop=0;
+      var card=modal.querySelector('.initiative-dialog-card,.modal-card,.tp-modal,.map-move-modal-card,.r8-modal-card,.r9-dialog-card,.box,[role="dialog"]');
+      if(card)card.scrollTop=0;
+    }
+    function scan(root){
+      if(root.matches&&root.matches(selector))promote(root);
+      if(root.querySelectorAll)root.querySelectorAll(selector).forEach(promote);
+    }
+    scan(document);
+    var observer=new MutationObserver(function(records){
+      records.forEach(function(record){record.addedNodes.forEach(function(node){
+        if(node.nodeType===1)scan(node);
+      })});
+    });
+    observer.observe(document.body,{childList:true,subtree:true});
+    document.addEventListener('click',function(){setTimeout(function(){scan(document)},0)},true);
+  }
+  function init(){document.body.classList.add('r10-ready');setTimeout(function(){document.body.classList.remove('r10-ready')},220);ensureSidebar();setTimeout(restoreSidebar,0);setTimeout(restoreSidebar,90);linkTransitions();replaceNativePopup();markAchievement();normalizeModalRoots();}
+  window.GER10={readShellState:read,saveShellState:write,markAchievement:markAchievement};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
 
 /* R10.13: canonical R10.3 Journey filter for both progress summary and list. */
 (function(){

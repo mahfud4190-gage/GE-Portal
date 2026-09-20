@@ -6726,34 +6726,3 @@ html body.final-v257.final-shell-r5>.footer b{display:inline-block;line-height:1
 @media(max-width:820px){
  .p27-section{padding:12px}.p27-grid,.p27-grid-wide,.p27-form{grid-template-columns:1fr}.p27-form-actions{grid-column:auto;flex-wrap:wrap}.p27-security-row{align-items:flex-start;flex-direction:column}.p27-password-shell{padding:14px}.p27-password-card{padding:16px}.p27-password-actions{justify-content:stretch}.p27-password-actions .ge-btn{flex:1;justify-content:center}
 }
-
-
-/* P40-R5 presentation normalization: shared visual language for legacy page content.
-   Presentation-only. No data/auth/Firebase workflow is changed. */
-html body.final-v257.final-shell-r5 .main{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#153653}
-html body.final-v257.final-shell-r5 .hero{display:flex!important;flex-direction:column!important;gap:4px!important;margin:0 0 16px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
-html body.final-v257.final-shell-r5 .hero h2{font-size:25px!important;line-height:1.15!important;color:#0c2b55!important;margin:0!important;font-weight:750!important}
-html body.final-v257.final-shell-r5 .hero p{font-size:11px!important;line-height:1.55!important;color:#6c8299!important;margin:0!important;max-width:980px!important}
-html body.final-v257.final-shell-r5 .page-header{margin:18px 0 9px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
-html body.final-v257.final-shell-r5 .page-header h2{font-size:17px!important;line-height:1.25!important;color:#103454!important;margin:0!important;font-weight:750!important}
-html body.final-v257.final-shell-r5 .page-header p{font-size:10px!important;line-height:1.5!important;color:#6c8299!important;margin:3px 0 0!important}
-html body.final-v257.final-shell-r5 .title{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin:16px 0 9px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
-html body.final-v257.final-shell-r5 .title h3{font-size:17px!important;line-height:1.25!important;color:#103454!important;margin:0!important;font-weight:750!important}
-html body.final-v257.final-shell-r5 .section-subtitle{font-size:10px!important;color:#71869b!important;margin-top:3px!important;line-height:1.45!important}
-html body.final-v257.final-shell-r5 .card{background:#fff!important;border:1px solid #d9e3ee!important;border-radius:10px!important;box-shadow:0 2px 8px rgba(0,25,67,.025)!important;padding:14px!important}
-html body.final-v257.final-shell-r5 .searchbar{display:grid!important;grid-template-columns:minmax(220px,1.5fr) repeat(2,minmax(150px,1fr)) auto!important;gap:8px!important;align-items:center!important}
-html body.final-v257.final-shell-r5 .searchbar input,html body.final-v257.final-shell-r5 .searchbar select{height:38px!important;border:1px solid #cfdbea!important;border-radius:7px!important;background:#fff!important;color:#173b5e!important;padding:0 10px!important;box-sizing:border-box!important;font:inherit!important}
-html body.final-v257.final-shell-r5 .btn{min-height:38px!important;border-radius:7px!important;border:1px solid #0b4f88!important;background:#0b4f88!important;color:#fff!important;padding:0 13px!important;font-size:10px!important;font-weight:750!important;cursor:pointer!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
-html body.final-v257.final-shell-r5 .btn.secondary{background:#fff!important;color:#0b4f88!important;border-color:#c6d5e5!important}
-html body.final-v257.final-shell-r5 .journey-tabs{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important;margin:0 0 14px!important}
-html body.final-v257.final-shell-r5 .journey-tabs .journey-tab{min-height:42px!important;border:1px solid #c6d6e7!important;border-radius:8px!important;background:#fff!important;color:#31526f!important;font-weight:700!important;font-size:10px!important}
-html body.final-v257.final-shell-r5 .journey-tabs .journey-tab.active{background:#0b4f88!important;color:#fff!important;border-color:#0b4f88!important}
-html body.final-v257.final-shell-r5 .chart-grid{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))!important;gap:10px!important;margin-bottom:14px!important}
-html body.final-v257.final-shell-r5 .initiative-grid-final{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))!important;gap:10px!important}
-html body.final-v257.final-shell-r5 .formgrid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
-html body.final-v257.final-shell-r5 .data-filter-grid{gap:8px!important}
-html body.final-v257.final-shell-r5 .table-scroll{overflow:auto!important}
-html body.final-v257.final-shell-r5 .main table{border-collapse:collapse!important}
-html body.final-v257.final-shell-r5 .main input,html body.final-v257.final-shell-r5 .main select,html body.final-v257.final-shell-r5 .main textarea{max-width:100%}
-@media(max-width:900px){html body.final-v257.final-shell-r5 .searchbar{grid-template-columns:1fr 1fr!important}html body.final-v257.final-shell-r5 .journey-tabs{grid-template-columns:1fr 1fr!important}html body.final-v257.final-shell-r5 .formgrid{grid-template-columns:1fr 1fr!important}}
-@media(max-width:620px){html body.final-v257.final-shell-r5 .searchbar,html body.final-v257.final-shell-r5 .formgrid{grid-template-columns:1fr!important}}

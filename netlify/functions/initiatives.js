@@ -1,44 +1,10 @@
 'use strict';
-
-const { bad, ok, bearer, firebase, safeProfile } = require('./_firebase');
-
-exports.handler = async (event) => {
-  if (event.httpMethod !== 'GET') return bad(405, 'METHOD_NOT_ALLOWED', 'Method not allowed.');
-  try {
-    const token = bearer(event);
-    if (!token) return bad(401, 'AUTH_REQUIRED', 'Authentication required.');
-    const { auth, db } = firebase();
-    const decoded = await auth.verifyIdToken(token, true);
-    const profileSnap = await db.collection('users').doc(decoded.uid).get();
-    if (!profileSnap.exists) return bad(403, 'PROFILE_NOT_FOUND', 'User profile tidak ditemukan.');
-    const profile = safeProfile({ id: profileSnap.id, ...profileSnap.data() });
-    if (String(profile.status || 'Active').trim().toLowerCase() === 'inactive') return bad(403, 'ACCOUNT_INACTIVE', 'Akun tidak aktif.');
-
-    const snap = await db.collection('initiatives').get();
-    let initiatives = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    // Preserve the existing external-user sharing contract. Internal authorized
-    // roles retain the existing broad initiative workspace behavior.
-    const role = String(profile.role || '');
-    if (['External User', 'External', 'Collaborator'].includes(role)) {
-      const uid = String(decoded.uid);
-      initiatives = initiatives.filter(x => {
-        const shared = Array.isArray(x.sharedWithUserIds) && x.sharedWithUserIds.map(String).includes(uid);
-        const mentioned = Array.isArray(x.mentionedUserIds) && x.mentionedUserIds.map(String).includes(uid);
-        return shared || mentioned;
-      });
-    } else if (role === 'Branch Office' && Array.isArray(profile.airports) && profile.airports.length) {
-      const allowed = new Set(profile.airports.map(x => String(x).trim().toUpperCase()).filter(Boolean));
-      initiatives = initiatives.filter(x => {
-        const airport = String(x.airport || x.station || '').trim().toUpperCase();
-        return !airport || allowed.has(airport);
-      });
-    }
-
-    return ok({ initiatives, meta: { source: 'Firestore', collection: 'initiatives' } });
-  } catch (e) {
-    const status = Number(e?.code) === 7 ? 403 : 500;
-    if (status === 403) return bad(403, 'FORBIDDEN', 'Initiative data tidak dapat diakses oleh akun ini.');
-    return bad(500, 'INITIATIVES_UNAVAILABLE', 'Initiative data belum dapat dimuat dari Firestore.');
-  }
-};
+const { bad, ok, bearer, firebase } = require('./_firebase');
+const READ_ROLES=['Super Admin','Admin','Management','Head Office','GE Team','Branch Office'];
+function canRead(a){return READ_ROLES.includes(a?.role)&&String(a?.status||'Active').toLowerCase()==='active'}
+function canEdit(a){return canRead(a)&&(a.role==='Super Admin'||(a.role==='Admin'&&['Editor','Admin'].includes(String(a.accessLevel||'Viewer'))))}
+function external(a){return ['External User','External','Collaborator'].includes(a?.role)}
+function clean(v,max=1000){const s=String(v??'').trim();if(s.length>max)throw Object.assign(new Error('Input terlalu panjang.'),{statusCode:400,code:'INVALID_INPUT'});return s}
+function normalize(body){const out={};for(const k of ['name','tp','airport','pic','dueDate','journey','remark','visibility','status'])if(Object.prototype.hasOwnProperty.call(body,k))out[k]=clean(body[k],k==='remark'?2000:240);for(const k of ['plan','real'])if(Object.prototype.hasOwnProperty.call(body,k))out[k]=Number(body[k]||0);for(const k of ['workflow','timeline','milestones','triggerDocuments','supportingDocuments','sharedWithUserIds','mentionedUserIds'])if(Object.prototype.hasOwnProperty.call(body,k))out[k]=Array.isArray(body[k])?body[k]:[];return out}
+async function actorFor(event){const token=bearer(event);if(!token)throw Object.assign(new Error('Authentication required.'),{statusCode:401,code:'AUTH_REQUIRED'});const {auth,db}=firebase();let decoded;try{decoded=await auth.verifyIdToken(token,true)}catch{throw Object.assign(new Error('Session tidak valid.'),{statusCode:401,code:'AUTH_INVALID'})}const snap=await db.collection('users').doc(decoded.uid).get();if(!snap.exists)throw Object.assign(new Error('Profile tidak ditemukan.'),{statusCode:403,code:'PROFILE_NOT_FOUND'});const actor={id:decoded.uid,...snap.data()};if(!canRead(actor))throw Object.assign(new Error('Akses ditolak.'),{statusCode:403,code:'FORBIDDEN'});return {db,actor}}
+exports.handler=async event=>{try{if(!['GET','POST'].includes(event.httpMethod))return bad(405,'METHOD_NOT_ALLOWED','Method not allowed.');const {db,actor}=await actorFor(event);if(event.httpMethod==='GET'){const snap=await db.collection('initiatives').get();let rows=snap.docs.map(d=>{const x=d.data()||{};return {firestoreId:d.id,id:x.id??d.id,name:x.name??x.title??x.initiativeName??'',tp:x.tp??x.touchpoint??x.touchPoint??'',airport:x.airport??x.station??'',pic:x.pic??x.picName??'',dueDate:x.dueDate??x.due??'',plan:x.plan??x.target??x.targetPercent??x.targetPercentage??0,real:x.real??x.actual??x.realization??x.realizationPercent??0,remark:x.remark??x.remarks??'',journey:x.journey??x.journeyScope??'',...x}});if(external(actor))rows=rows.filter(x=>(x.sharedWithUserIds||[]).map(String).includes(String(actor.id))||(x.mentionedUserIds||[]).map(String).includes(String(actor.id)));return ok({initiatives:rows,meta:{source:'Firestore',collection:'initiatives'}})}if(!canEdit(actor))return bad(403,'FORBIDDEN','Initiative memerlukan Access Level Editor atau Admin.');let body={};try{body=JSON.parse(event.body||'{}')}catch{return bad(400,'INVALID_JSON','Request body tidak valid.')}const action=String(body.action||'').toUpperCase();if(action==='NOTIFY_MENTION'){const ref=db.collection('inbox').doc();await ref.set({type:'INITIATIVE_MENTION',actorId:clean(body.actorId,180),actorName:clean(body.actorName,180),recipientId:clean(body.recipientId,180),initiativeId:clean(body.initiativeId,180),initiativeName:clean(body.initiativeName,240),subject:'Mention pada initiative',message:clean(body.message,2000),createdAt:new Date().toISOString(),read:false,status:'UNREAD'});return ok({id:ref.id})}const data=normalize(body);if(action==='CREATE'){data.createdAt=new Date().toISOString();data.updatedAt=data.createdAt;data.updatedBy=actor.id;const ref=db.collection('initiatives').doc();await ref.set(data);return ok({initiative:{firestoreId:ref.id,id:Date.now(),...data}})}if(action==='UPDATE'){const id=clean(body.firestoreId||body.id,180);if(!id)return bad(400,'INVALID_ID','Initiative ID wajib diisi.');const ref=db.collection('initiatives').doc(id);const snap=await ref.get();if(!snap.exists)return bad(404,'NOT_FOUND','Initiative tidak ditemukan.');data.updatedAt=new Date().toISOString();data.updatedBy=actor.id;await ref.set(data,{merge:true});return ok({initiative:{firestoreId:ref.id,id:snap.data()?.id??Date.now(),...snap.data(),...data}})}if(action==='DELETE'){const id=clean(body.firestoreId||body.id,180);await db.collection('initiatives').doc(id).delete();return ok({deleted:id})}return bad(400,'INVALID_ACTION','Action tidak didukung.')}catch(e){return bad(e.statusCode||500,e.code||'INITIATIVES_FAILED',e.statusCode?e.message:'Initiative request gagal.')}};

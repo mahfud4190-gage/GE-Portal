@@ -69,9 +69,14 @@ async function gxBootstrapProtectedPage(){
     }else{
       gxAuthDiagnostic('SESSION_PROFILE_REQUIRED',{uid:String(authUser.uid),redirect:'login.html'});gxClearSession();const next=gxRememberReturnTo();location.replace(`login.html${next?`?next=${encodeURIComponent(next)}`:''}`);return;
     }
-    if(gxIsExternal()&&window.GXFirebase.syncAccessibleInitiativesToLegacyStore){
-      const syncDone=sessionStorage.getItem(GX_SYNC_KEY)==='1';
-      if(!syncDone){try{await GXFirebase.syncAccessibleInitiativesToLegacyStore(gxGetSession());sessionStorage.setItem(GX_SYNC_KEY,'1');}catch(e){gxAuthDiagnostic('EXTERNAL_SCOPE_SYNC_FAILED',{uid:String(authUser.uid),errorName:e?.name||'Error',errorMessage:e?.message||''});console.warn('Firebase scope sync failed',e)}}
+    if(window.GXFirebase?.syncEdition1Masters){
+      try{
+        await window.GXFirebase.syncEdition1Masters(gxGetSession());
+        window.GERefreshData?.();
+      }catch(e){
+        gxAuthDiagnostic('EDITION1_MASTER_SYNC_FAILED',{uid:String(authUser.uid),errorName:e?.name||'Error',errorMessage:e?.message||''});
+        console.warn('Edition 1 Firestore master sync failed; retaining existing local data.',e);
+      }
     }
     const pov=window.GXDashboardPOV?window.GXDashboardPOV(gxGetSession()):'unresolved';
     gxAuthDiagnostic('SESSION_AUTHORIZATION_RESOLVED',{uid:String(authUser.uid),rawRole:profile?.role??cached?.role??null,normalizedRole:gxGetSession()?.role??null,accessLevel:gxGetSession()?.accessLevel??null,scopeType:gxGetSession()?.scopeType??null,redirectTarget:gxDefaultPage(),dashboardPOV:pov});
@@ -80,4 +85,4 @@ async function gxBootstrapProtectedPage(){
   if(!gxGetSession()){gxAuthDiagnostic('SESSION_NO_FIREBASE_NO_CACHE',{redirect:'login.html'});const next=gxRememberReturnTo();location.replace(`login.html${next?`?next=${encodeURIComponent(next)}`:''}`);return}
   gxEnforcePageAccess();gxApplyRole();gxApplyNavigation();
 }
-gxBootstrapProtectedPage();
+window.GX_AUTH_READY=gxBootstrapProtectedPage();

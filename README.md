@@ -1,21 +1,20 @@
-# Ground Experience Portal — CLEAN DRAFT R2
+# Ground Experience Portal — R3 Functional Clean
 
-Ini **bukan turunan runtime P40**. P40 hanya dipakai sebagai referensi fungsi/data. Tidak ada `e1-*.html`, legacy page, old theme, patch chain, override chain, atau redirect ke HTML lama.
+Fokus R3 hanya satu: mempertahankan fungsi/data/design product P40 sambil menghapus jalur runtime lama yang saling menimpa.
 
-## Arsitektur
-- `index.html` — satu entry point.
-- `assets/app.js` — shell + hash router SPA.
-- `assets/modules.js` — page modules/functionality.
-- `assets/api.js` — session + API client.
-- `assets/ui.js` — modal, toast, CSV.
-- `assets/app.css` — satu theme.
-- `netlify/functions/*` — Firebase Auth + Firestore API baru.
+## Firestore contract yang dipakai
+- User profile: `users/{uid}`
+- Business data: `portalData/{group}/records/{recordId}`
+- Metadata: `portalMetadata/...` (disiapkan untuk modul metadata berikutnya)
 
-## Dampak
-Transisi page terjadi di dalam SPA (`#initiatives`, `#planning`, `#lounge`), sehingga browser tidak pernah merender old HTML/theme di antara page.
+R3 TIDAK membaca business collection dari root Firestore. Ini disesuaikan dengan database aktual dan rules yang diberikan.
 
-## Firebase
-Menggunakan project Firebase yang sama dan collection names yang ditemukan dari P40. Netlify membutuhkan credential Firebase Admin yang sama seperti deployment sebelumnya.
+## Runtime
+- Satu `index.html`
+- Satu router/shell, tidak berpindah ke HTML lama
+- Tidak ada legacy theme fallback
+- Modal global fixed/centered
+- Module pages membaca group Firestore yang sesuai
 
-## Status
-Draft foundation untuk branch testing. Fungsi inti yang sudah dibuat: login email/username, dashboard Firebase counts, initiatives filter/search/add/edit/delete/export/import CSV+template, Lounge/Tenant CRUD/import/export, Planning Workspace direct navigation, user profile management, generic Firebase views, proper modal/backdrop/Esc/cancel.
+## Deploy
+Gunakan branch testing. Netlify Functions membutuhkan Firebase service account environment variables yang sama dengan deployment sebelumnya.

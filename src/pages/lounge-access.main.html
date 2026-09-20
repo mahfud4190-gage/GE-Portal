@@ -1,0 +1,88 @@
+<section class="lounge-open-heading-v237">
+  <div class="lounge-open-kicker-v237">OPERASIONAL AKSES</div>
+  <h1>Lounge/Tenant Access</h1>
+  <p>Scan dan verifikasi boarding pass menggunakan kamera smartphone, scanner USB/Bluetooth, string code, QR, atau input manual.</p>
+</section>
+
+<div class="lounge-access-grid-v236">
+  <section class="card lounge-scan-card-v236">
+    <div class="lounge-section-head-v236">
+      <div><span class="lounge-kicker-v236">STEP 01</span><h3>Scan Boarding Pass</h3>
+      <p>Parser membaca nama, rute, flight, cabin, seat, sequence, ticket number, dan indicator eligibility.</p></div>
+      <span class="scanner-ready-v236">Scanner Ready</span>
+    </div>
+
+    <div class="formgrid lounge-access-selector-v236">
+      <label>Airport<select id="scanAirport" onchange="refreshScanLoungeOptions()"></select></label>
+      <label>Lounge / Tenant<select id="scanLounge"></select></label>
+    </div>
+
+    <label>Hasil Scan / String Code</label>
+    <textarea id="boardingScan" class="lounge-scan-input-v236" rows="4" placeholder="Arahkan scanner atau paste string boarding pass di sini..." autofocus></textarea>
+
+    <div class="scan-actions lounge-scan-actions-v236">
+      <button class="btn lounge-primary-v236" onclick="verifyBoardingPass()">Verifikasi</button>
+      <button class="btn secondary" onclick="startCameraScanner()">Mulai Scan Kamera</button>
+      <button class="btn secondary" onclick="toggleManualEntry()">Input Manual</button>
+      <button class="btn secondary" onclick="resetLoungeAccess()">Bersihkan</button>
+    </div>
+
+    <div id="cameraPanel" class="camera-panel lounge-camera-panel-v236">
+      <div class="camera-frame">
+        <video id="cameraVideo" playsinline muted></video>
+        <div class="camera-guide lounge-camera-guide-v236"></div>
+      </div>
+      <div id="cameraStatus" class="camera-status">Kamera belum aktif.</div>
+      <div class="scan-actions"><button class="btn secondary" onclick="stopCameraScanner()">Hentikan Kamera</button></div>
+    </div>
+
+
+    <div class="scanner-note lounge-note-v236">
+      <b>Scanner eksternal:</b> scanner USB/Bluetooth yang bekerja sebagai keyboard tidak perlu mengaktifkan kamera. Arahkan ke field di atas dan scanner akan diproses otomatis saat mengirim Enter.
+      <br><b>Kamera:</b> menggunakan ZXing cross-browser bila tersedia, dengan fallback BarcodeDetector browser. Format utama: PDF417, QR, Aztec, Data Matrix, Code 128/EAN.
+    </div>
+  </section>
+
+  <section class="card lounge-result-card-v236" id="eligibilityPanel">
+    <div class="eligibility-idle lounge-idle-v236">
+      <div class="lounge-idle-icon-v236">⌁</div>
+      <b>Menunggu Boarding Pass</b>
+      <span>Data hasil parsing dan status eligibility akan tampil di sini.</span>
+    </div>
+    <div id="manualEntry" class="manual-entry lounge-manual-v236 lounge-manual-right-v238">
+      <div class="lounge-section-head-v236"><div><span class="lounge-kicker-v236">FALLBACK</span><h3>Input Manual</h3>
+      <p>Digunakan bila barcode/string tidak dapat dibaca. Eligibility tidak diisi manual.</p></div></div>
+      <div class="formgrid">
+        <label>Nama Penumpang<input id="manualName" placeholder="Nama Penumpang"></label>
+        <label>Flight Number<input id="manualFlight" placeholder="GA127"></label>
+        <label>From<input id="manualFrom" maxlength="3" placeholder="DJB"></label>
+        <label>To<input id="manualTo" maxlength="3" placeholder="CGK"></label>
+        <label>Cabin
+          <select id="manualCabin"><option value="">Pilih Cabin</option><option value="C">C / Business</option><option value="Y">Y / Economy</option></select>
+        </label>
+        <label>Seat<input id="manualSeat" placeholder="7A"></label>
+        <label>Sequence Check-in<input id="manualSeq" placeholder="107"></label>
+        <label>Ticket Number<input id="manualTicket" placeholder="126xxxxxxxxxxx"></label>
+        <label>Member
+          <select id="manualMember"><option value="">Tidak Ada / Lainnya</option><option>Platinum</option><option>Elite Plus</option></select>
+        </label>
+      </div>
+      <div class="scanner-note lounge-note-v236">
+        Eligibility manual dihitung otomatis: Cabin C/Business = Eligible. Cabin Y/Economy = Eligible untuk Platinum atau Elite Plus; kombinasi lain = Tidak Eligible.
+      </div>
+      <div class="scan-actions"><button class="btn lounge-primary-v236" onclick="verifyManualPassenger()">Verifikasi Data Manual</button></div>
+    </div>
+
+  </section>
+</div>
+
+<div id="eligibilityModal" class="modal-backdrop">
+  <div class="modal-card lounge-eligibility-modal-v236">
+    <button class="modal-x" onclick="closeEligibilityModal()">×</button>
+    <div id="eligibilityModalBody"></div>
+  </div>
+</div>
+</main></div>
+<footer class="footer"><b>GROUND EXPERIENCE — GARUDA INDONESIA</b><br>Portal Service Experience • Internal Ground Services Workspace</footer>
+<button id="backToTop" class="back-to-top" aria-label="Kembali ke atas" title="Kembali ke atas">↑</button>
+<script src="assets/v2554-stability.js?v=2.55.5" defer></script><script src="assets/overlay-v30.js?v=30.1" defer></script><script src="assets/access-assistance-p32.js?v=32.1" defer></script><script src="assets/p33-p37-presentation.js?v=37.1" defer></script><script src="assets/portal-shell.js?v=10.5" defer></script>

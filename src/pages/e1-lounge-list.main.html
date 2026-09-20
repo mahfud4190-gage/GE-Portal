@@ -1,0 +1,96 @@
+<section class="lounge-open-heading-v237">
+<div class="lounge-open-kicker-v237">SERVICE PLANNING</div>
+<h2>Lounge/Tenant Planning</h2>
+<p>Planning reference Lounge/Tenant seluruh Branch Office, termasuk Lounge, Tenant, dan Snack Box.</p>
+</section>
+<div class="title lounge-master-title-v230">
+<div><h3>Lounge/Tenant Master</h3><div class="section-subtitle">Kelola layanan, provider, kontrak, harga, periode, dan dokumen pendukung sebagai bagian dari Service Planning.</div></div>
+<div class="bulk-action-group" data-admin-only="">
+<button class="btn" onclick="openLoungeAddModalV230()">Tambah Layanan Lounge</button>
+<button class="btn secondary" onclick="downloadLoungeTemplateV230()">Download CSV Template</button>
+<button class="btn secondary" onclick="openBulkImportV223('lounge')">Upload Data</button>
+</div>
+</div>
+<div id="loungeExpiryAlert"></div>
+<div class="card">
+<div class="filter-grid lounge-filter-grid-ref">
+<select id="loungeRegionFilter">
+<option value="">Semua Region</option>
+<option>WEST</option><option>EAST</option><option>INT</option>
+</select>
+<select id="loungeAirportFilter"><option value="">Semua Station</option></select>
+<select id="loungeNameFilter" onchange="renderLounges()"><option value="">Semua Nama Layanan / Provider</option></select>
+<select id="loungeStatusFilter"><option value="">Semua Status Dokumen</option></select>
+<button class="btn" onclick="renderLounges()">Submit</button>
+<button class="btn secondary" onclick="downloadLoungesCSV()">Unduh CSV</button>
+</div>
+</div>
+<div class="lounge-master-toolbar-v237">
+<div class="lounge-master-view-label-v237"><b>Lounge/Tenant Planning</b><span>Tampilan kartu • 12 data per halaman</span></div>
+<div class="lounge-master-pager-v237">
+<button class="btn secondary compact-btn" id="loungeCardPrevV237" onclick="changeLoungeCardPageV237(-1)">‹ Sebelumnya</button>
+<span id="loungeCardPageInfoV237">Halaman 1</span>
+<button class="btn secondary compact-btn" id="loungeCardNextV237" onclick="changeLoungeCardPageV237(1)">Berikutnya ›</button>
+</div>
+</div>
+<div class="lounge-master-grid-v237" id="loungeCardGridV237"></div>
+<section class="card lounge-price-summary-v243">
+<div class="lounge-price-summary-head-v243">
+<div>
+<span>PRICE INSIGHT</span>
+<h3>Ringkasan Harga Lounge/Tenant</h3>
+<p>Mengikuti filter aktif dan dipisahkan berdasarkan mata uang.</p>
+</div>
+<div class="lounge-price-summary-count-v243" id="loungePriceSummaryCountV243">0 layanan</div>
+</div>
+<div class="lounge-price-summary-grid-v243" id="loungePriceSummaryV243"></div>
+</section>
+<div class="card table-scroll lounge-table-fallback-v237">
+<table class="lounge-master-table lounge-reference-table">
+<thead><tr>
+<th>No</th>
+<th>Region</th>
+<th>Station</th>
+<th>Nama Layanan / Provider</th>
+<th>Jenis Layanan</th>
+<th>Harga Per Pax</th>
+<th>Mulai</th>
+<th>Berakhir</th>
+<th>Nomor Dokumen</th>
+<th>Jenis</th>
+<th>Status Dokumen</th>
+<th>Remarks</th>
+<th>Lampiran Dokumen</th>
+<th data-role-min="Admin">Kelola</th>
+</tr></thead>
+<tbody id="loungeRows"></tbody>
+</table>
+</div>
+<div class="modal-backdrop" id="loungeEditModal">
+<div class="modal-card lounge-edit-card"><div class="ge-p29-modal-placeholder">Update Layanan Lounge/Tenant</div></div>
+</div>
+<div class="modal-backdrop" id="loungeAddModalV221">
+<div class="modal-card lounge-add-modal-v221"><div class="ge-p29-modal-placeholder">Tambah Layanan Lounge/Tenant</div></div>
+</div>
+<div class="modal-backdrop" id="bulkImportModalV223">
+<div class="modal-card bulk-import-modal-v223">
+<button class="modal-x" onclick="closeBulkImportV223()">×</button>
+<span class="bulk-import-eyebrow">Bulk Data Import</span>
+<h2 id="bulkImportTitleV223">Upload Data</h2>
+<p class="section-subtitle" id="bulkImportHelpV223"></p>
+<div class="bulk-import-dropzone">
+<input accept=".xlsx,.csv" id="bulkImportFileV223" onchange="previewBulkImportV223(this.files[0])" type="file"/>
+<div>
+<b>Pilih file Excel (.xlsx) atau CSV</b>
+<span>Gunakan template agar nama kolom dapat dikenali otomatis.</span>
+</div>
+</div>
+<div class="bulk-import-preview-v223" id="bulkImportPreviewV223"></div>
+<div class="modal-actions sticky-actions">
+<button class="btn" disabled="" id="bulkImportConfirmV223" onclick="confirmBulkImportV231()">Import Data</button>
+<button class="btn secondary" onclick="closeBulkImportV223()" type="button">Batal</button>
+</div>
+</div>
+</div>
+<div class="modal-backdrop" id="geP29PriceScheduleModal"><div class="modal-card ge-p29-schedule-modal"></div></div>
+</main></div><footer class="footer"><b>GROUND EXPERIENCE — GARUDA INDONESIA</b><br/>Portal Service Experience • Firebase / Firestore Production Data</footer><button aria-label="Kembali ke atas" class="back-to-top" id="backToTop">↑</button><script src="assets/firebase-config.js?v=e1"></script><script src="assets/firebase-client.js?v=e1"></script><script src="assets/auth.js?v=e1"></script><script src="assets/edition1-store.js?v=1"></script><script defer="defer" src="assets/edition1-files.js?v=1"></script><script defer="defer" src="assets/edition1-business-runtime.js?v=1"></script><script defer="defer" src="assets/access-assistance-p32.js?v=32.1"></script><script defer="defer" src="assets/edition1-portal-shell-entry.js?v=1"></script><script defer="defer" src="assets/edition1-portal-route-adapter.js?v=1"></script><script defer="defer" src="assets/edition1-overlay-manager.js?v=1"></script><script defer="defer" src="assets/edition1-page-boot.js?v=1"></script>

@@ -1,0 +1,64 @@
+<section class="lounge-open-heading-v237">
+<div class="lounge-open-kicker-v237">TRANSAKSI LOUNGE / TENANT</div>
+  <h2>Pembelian Akses Lounge/Tenant</h2>
+  <p>Workspace pencatatan pembelian akses Lounge/Tenant. Prototype ini menyiapkan data transaksi lokal dan dapat dikembangkan menuju payment/EMD integration.</p>
+</section>
+
+<div class="planning-snapshot-grid lounge-purchase-kpi-v232">
+  <div class="card snapshot-kpi"><span>Total Transaksi</span><b id="purchaseTotalV232">0</b><small>Record pembelian</small></div>
+  <div class="card snapshot-kpi"><span>Paid</span><b id="purchasePaidV232">0</b><small>Transaksi paid</small></div>
+  <div class="card snapshot-kpi"><span>Pending</span><b id="purchasePendingV232">0</b><small>Menunggu penyelesaian</small></div>
+  <div class="card snapshot-kpi"><span>Airport</span><b id="purchaseAirportCountV232">0</b><small>Airport tercatat</small></div>
+</div>
+
+<div class="title">
+  <div><h3>Daftar Pembelian Akses</h3><div class="section-subtitle">Data transaksi akses Lounge/Tenant.</div></div>
+  <button class="btn" onclick="openPurchaseModalV232()">Tambah Pembelian</button>
+</div>
+
+<div class="card data-filter-card">
+  <div class="data-filter-grid">
+    <input id="purchaseSearchV232" placeholder="Cari penumpang / flight / reference" oninput="renderPurchaseV232()">
+    <select id="purchaseAirportFilterV232" onchange="renderPurchaseV232()"><option value="">Semua Airport</option></select>
+    <select id="purchaseStatusFilterV232" onchange="renderPurchaseV232()"><option value="">Semua Status</option><option>Paid</option><option>Pending</option><option>Cancelled</option></select>
+  </div>
+</div>
+
+<div class="card table-scroll">
+  <table class="planning-table">
+    <thead><tr>
+      <th>No</th><th>Tanggal</th><th>Waktu</th><th>Penumpang</th><th>Flight</th><th>Airport</th><th>Lounge/Tenant</th>
+      <th>Access Type</th><th>Reference / EMD</th><th>Amount</th><th>Status</th><th>Kelola</th>
+    </tr></thead>
+    <tbody id="purchaseRowsV232"></tbody>
+  </table>
+  <div id="purchaseEmptyV232"></div>
+</div>
+
+<div id="purchaseModalV232" class="modal-backdrop">
+  <div class="modal-card lounge-purchase-modal-v232">
+    <button class="modal-x" onclick="closePurchaseModalV232()">×</button>
+    <h2 id="purchaseModalTitleV232">Tambah Pembelian Akses</h2>
+    <input id="purchaseEditIdV232" type="hidden">
+    <div class="formgrid">
+      <label>Nama Penumpang<input id="purchaseNameV232" required></label>
+      <label>Flight Number<input id="purchaseFlightV232" placeholder="GA204"></label>
+      <label>Airport<select id="purchaseAirportV232" onchange="refreshPurchaseServicesV232()"></select></label>
+      <label>Lounge / Tenant<select id="purchaseServiceV232"></select></label>
+      <label>Access Type<select id="purchaseTypeV232"><option>Walk-in</option><option>EMD</option><option>Partnership</option><option>Complimentary</option></select></label>
+      <label>Reference / EMD<input id="purchaseReferenceV232"></label>
+      <label>Currency<input id="purchaseCurrencyV232" value="IDR"></label>
+      <label>Amount<input id="purchaseAmountV232" type="number" min="0" step="0.01"></label>
+      <label>Status<select id="purchaseStatusV232"><option>Paid</option><option>Pending</option><option>Cancelled</option></select></label>
+      <label>Remark<input id="purchaseRemarkV232"></label>
+    </div>
+    <div class="modal-actions sticky-actions">
+      <button class="btn" onclick="savePurchaseV232()">Simpan</button>
+      <button class="btn secondary" onclick="closePurchaseModalV232()">Batal</button>
+    </div>
+  </div>
+</div>
+</main></div>
+<footer class="footer"><b>GROUND EXPERIENCE — GARUDA INDONESIA</b><br>Portal Service Experience • Internal Ground Services Workspace</footer>
+<button id="backToTop" class="back-to-top" aria-label="Kembali ke atas" title="Kembali ke atas">↑</button>
+<script src="assets/v2554-stability.js?v=2.55.5" defer></script><script src="assets/overlay-v30.js?v=30.1" defer></script><script src="assets/access-assistance-p32.js?v=32.1" defer></script><script src="assets/p33-p37-presentation.js?v=37.1" defer></script><script src="assets/portal-shell.js?v=10.5" defer></script>

@@ -1,0 +1,111 @@
+<section class="lounge-open-heading-v237">
+      <div class="hero-title-actions">
+        <div><div class="lounge-open-kicker-v237">MONITORING VISITOR</div><h2>Lounge/Tenant Visitor</h2><p>Monitoring visitor Lounge/Tenant seluruh Branch Office berdasarkan hasil verifikasi Lounge/Tenant Access.</p></div>
+        <div id="loungeVisitorBulkActionsV223" class="bulk-action-group bulk-visitor-actions-v225" style="display:none">
+          <button type="button" class="btn secondary bulk-visitor-btn-v225" onclick="downloadLoungeVisitorTemplateV225()">Unduh Template</button>
+          <button type="button" class="btn bulk-visitor-btn-v225" onclick="openBulkImportV223('visitor')">Upload Visitor</button>
+        </div>
+      </div>
+    </section>
+<div class="card">
+ <div class="filter-grid">
+  <input id="visitorStart" type="date"><input id="visitorEnd" type="date">
+  <select id="visitorAirport"><option value="">Semua Airport</option></select>
+  <select id="visitorCategory"><option value="">Semua Kategori</option><option>Business Class</option><option>Platinum</option><option>Elite Plus</option><option>Gold Privilege</option><option>Elite</option><option>GPS</option><option>Kerjasama MPA</option><option>EMD</option></select>
+  <button class="btn lounge-primary-v240" onclick="renderLoungeVisitors()">Submit</button><button class="btn secondary lounge-secondary-v240" onclick="downloadLoungeVisitorsCSV()">Unduh CSV Visitor</button><button class="btn secondary lounge-secondary-v240" onclick="openVisitorReportModalV239()">Laporan PDF</button>
+ </div>
+</div>
+<div class="grid visitor-summary">
+ <div class="card kpi"><b id="visitorCount">0</b><span>Total Visitor</span></div>
+ <div class="card kpi"><b id="visitorBusiness">0</b><span>Business Class</span></div>
+ <div class="card kpi"><b id="visitorTier">0</b><span>Loyalty / Partnership / EMD</span></div>
+</div>
+
+<section class="card visitor-traffic-card-v232">
+  <div class="visitor-traffic-head-v232">
+    <div>
+      <h3>Traffic Visitor per Jam</h3>
+      <p>Distribusi Lounge/Tenant Visitor selama 24 jam berdasarkan periode dan filter yang dipilih.</p>
+    </div>
+    <div class="visitor-traffic-summary-v232">
+      <span>Peak Hour</span><b id="visitorPeakHourV232">-</b>
+    </div>
+  </div>
+  <div id="visitorTrafficChartV232" class="visitor-traffic-chart-v232"></div>
+</section>
+
+<div class="card table-scroll"><table><thead><tr><th>No</th><th>Tanggal</th><th>Waktu</th><th>Nama Penumpang</th><th>Rute</th><th>Flight Number</th><th>Cabin / Seat</th><th>Sequence</th><th>Airport</th><th>Nama Lounge/Tenant</th><th>Kategori Penumpang</th><th>Referensi Eligibility</th><th>Harga / Pax</th><th data-role-min="Admin">Kelola</th></tr></thead><tbody id="loungeVisitorRows"></tbody></table></div>
+<section class="visitor-cost-summary visitor-cost-summary-v240">
+  <div class="visitor-cost-block-v240"><span>Total Visitor Terfilter</span><b id="visitorFilteredTotal">0</b></div>
+  <div class="visitor-cost-block-v240 visitor-cost-main-v240"><span>Estimasi Biaya Lounge/Tenant</span><div id="visitorEstimatedCost" class="visitor-estimated-cost-v240"><strong>Belum tersedia</strong></div></div>
+  <div class="visitor-cost-note-v240"><span>Basis Perhitungan</span><p>Harga mengikuti Lounge/Tenant Master dan local currency. Visitor historis dicocokkan berdasarkan lounge, airport, tanggal kunjungan, dan periode kerja sama.</p></div>
+</section>
+
+
+<div id="visitorReportModalV239" class="modal-backdrop">
+ <div class="modal-card visitor-report-modal-v239">
+  <button class="modal-x" onclick="closeVisitorReportModalV239()">×</button>
+  <span class="lounge-open-kicker-v237">LAPORAN VISITOR</span>
+  <h2>Download Laporan Visitor</h2>
+  <p class="section-subtitle">Buat rekap harian atau bulanan dalam PDF berdasarkan Branch Office dan Lounge/Tenant.</p>
+  <div class="formgrid">
+   <label>Periode Laporan<select id="visitorReportTypeV239" onchange="visitorReportTypeChangedV239()"><option value="daily">Harian</option><option value="monthly">Bulanan</option></select></label>
+   <label id="visitorReportDailyWrapV239">Tanggal<input id="visitorReportDateV239" type="date"></label>
+   <label id="visitorReportMonthlyWrapV239" style="display:none">Bulan<input id="visitorReportMonthV239" type="month"></label>
+   <label>Branch Office<select id="visitorReportAirportV239"><option value="">Pilih Branch Office</option></select></label>
+   <label>Lounge/Tenant<select id="visitorReportLoungeV239"><option value="">Pilih Lounge/Tenant</option></select></label>
+  </div>
+  <div class="modal-actions sticky-actions"><button class="btn" onclick="downloadVisitorReportPDFV239()">Download PDF</button><button type="button" class="btn secondary" onclick="closeVisitorReportModalV239()">Batal</button></div>
+ </div>
+</div>
+
+<div id="visitorEditModal" class="modal-backdrop">
+<div class="modal-card visitor-edit-modal-card">
+<button class="modal-x" onclick="closeVisitorEditModal()">×</button>
+<h2>Update Lounge Visitor</h2>
+<p class="section-subtitle">Perbarui data visitor. Perubahan hanya tersedia untuk Super Admin dan Admin.</p>
+<form id="visitorEditForm" onsubmit="event.preventDefault();saveVisitorEditModal()">
+<input id="visitorEditId" type="hidden">
+<div class="formgrid">
+<label>Nama Penumpang<input id="visitorEditName" required></label>
+<label>Flight Number<input id="visitorEditFlight" required></label>
+<label>Sequence Check-in<input id="visitorEditSeq" required></label>
+<label>Airport<input id="visitorEditAirport" required></label>
+<label>Kategori Penumpang<select id="visitorEditCategory" onchange="visitorEditCategoryChanged()"></select></label>
+<label id="visitorEditReferenceWrap">Referensi Eligibility<input id="visitorEditReference"></label>
+</div>
+<div class="modal-actions sticky-actions">
+<button class="btn">Simpan Perubahan</button>
+<button type="button" class="btn secondary" onclick="closeVisitorEditModal()">Batal</button>
+</div>
+</form>
+</div>
+</div>
+
+<div id="bulkImportModalV223" class="modal-backdrop">
+  <div class="modal-card bulk-import-modal-v223">
+    <button class="modal-x" onclick="closeBulkImportV223()">×</button>
+    <span class="bulk-import-eyebrow">Bulk Data Import</span>
+    <h2 id="bulkImportTitleV223">Upload Data</h2>
+    <p id="bulkImportHelpV223" class="section-subtitle"></p>
+
+    <div class="bulk-import-dropzone">
+      <input id="bulkImportFileV223" type="file" accept=".xlsx,.csv" onchange="previewBulkImportV223(this.files[0])">
+      <div>
+        <b>Pilih file Excel (.xlsx) atau CSV</b>
+        <span>Gunakan template agar nama kolom dapat dikenali otomatis.</span>
+      </div>
+    </div>
+
+    <div id="bulkImportPreviewV223" class="bulk-import-preview-v223"></div>
+
+    <div class="modal-actions sticky-actions">
+      <button id="bulkImportConfirmV223" class="btn" onclick="confirmBulkImportV231()" disabled>Import Data</button>
+      <button type="button" class="btn secondary" onclick="closeBulkImportV223()">Batal</button>
+    </div>
+  </div>
+</div>
+</main></div>
+<footer class="footer"><b>GROUND EXPERIENCE — GARUDA INDONESIA</b><br>Portal Service Experience • Internal Ground Services Workspace</footer>
+<button id="backToTop" class="back-to-top" aria-label="Kembali ke atas" title="Kembali ke atas">↑</button>
+<script src="assets/v2554-stability.js?v=2.55.5" defer></script><script src="assets/overlay-v30.js?v=30.1" defer></script><script src="assets/access-assistance-p32.js?v=32.1" defer></script><script src="assets/p33-p37-presentation.js?v=37.1" defer></script><script src="assets/portal-shell.js?v=10.5" defer></script>

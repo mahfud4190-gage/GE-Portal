@@ -1,0 +1,98 @@
+<section class="hero">
+<h2>GASO Planning</h2>
+<p>Planning workspace untuk Garuda Sales Office: master office, service support, dan planning service.</p>
+</section>
+<div class="grid3 gaso-planning-grid gaso-selector-grid-v231">
+<button class="card gaso-placeholder-card gaso-selector-v231 active" onclick="showGasoPanelV231('master',this)">
+<span>GASO Master</span><h3>Office &amp; Location</h3>
+<p>Office profile, location, status, PIC, contact, dan reference dasar GASO.</p>
+<b class="selector-action">Lihat GASO Master</b>
+</button>
+<button class="card gaso-placeholder-card gaso-selector-v231" onclick="showGasoPanelV231('support',this)">
+<span>Service Support</span><h3>Facility &amp; Resources</h3>
+<p>Facility/service, provider, periode layanan, status, dokumen, dan remarks.</p>
+<b class="selector-action">Lihat Service Support</b>
+</button>
+<button class="card gaso-placeholder-card gaso-selector-v231" onclick="showGasoPanelV231('planning',this)">
+<span>Planning Service</span><h3>Planning &amp; Contract</h3>
+<p>Planning item, vendor/partner, budget, due date, status, dan supporting document.</p>
+<b class="selector-action">Lihat Planning Service</b>
+</button>
+</div>
+<section class="gaso-panel-v231" id="gasoPanelMasterV231">
+<div class="title">
+<div><h3>GASO Master</h3><div class="section-subtitle">Master Garuda Sales Office.</div></div>
+<div class="bulk-action-group" data-admin-only="">
+<button class="btn" onclick="openGasoModalV231('master')">Tambah GASO</button>
+<a class="btn secondary" download="" href="templates/Template_GASO_Master.xlsx">Unduh Template</a>
+<button class="btn secondary" onclick="openBulkImportV223('gaso-master')">Upload Data</button>
+</div>
+</div>
+<div class="card data-filter-card"><div class="data-filter-grid">
+<input id="gasoMasterSearchV231" oninput="renderGasoMasterV231()" placeholder="Cari GASO / kota / PIC"/>
+<select id="gasoMasterRegionV231" onchange="renderGasoMasterV231()"><option value="">Semua Region</option></select>
+<select id="gasoMasterStatusV231" onchange="renderGasoMasterV231()"><option value="">Semua Status</option><option>Active</option><option>Inactive</option></select>
+</div></div>
+<div class="card table-scroll"><table class="planning-table"><thead><tr>
+<th>No</th><th>GASO Code</th><th>Office Name</th><th>City</th><th>Region</th><th>Address</th><th>Status</th><th>PIC</th><th>Contact</th><th>Remarks</th><th data-admin-only="">Kelola</th>
+</tr></thead><tbody id="gasoMasterRowsV231"></tbody></table><div id="gasoMasterEmptyV231"></div></div>
+</section>
+<section class="gaso-panel-v231" id="gasoPanelSupportV231" style="display:none">
+<div class="title">
+<div><h3>Service Support</h3><div class="section-subtitle">Facility &amp; resources yang mendukung operasi GASO.</div></div>
+<div class="bulk-action-group" data-admin-only="">
+<button class="btn" onclick="openGasoModalV231('support')">Tambah Service Support</button>
+<a class="btn secondary" download="" href="templates/Template_GASO_Service_Support.xlsx">Unduh Template</a>
+<button class="btn secondary" onclick="openBulkImportV223('gaso-support')">Upload Data</button>
+</div>
+</div>
+<div class="card data-filter-card"><div class="data-filter-grid">
+<input id="gasoSupportSearchV231" oninput="renderGasoSupportV231()" placeholder="Cari GASO / facility / provider"/>
+<select id="gasoSupportStatusV231" onchange="renderGasoSupportV231()"><option value="">Semua Status</option></select>
+<input id="gasoSupportProviderV231" oninput="renderGasoSupportV231()" placeholder="Provider"/>
+</div></div>
+<div class="card table-scroll"><table class="planning-table"><thead><tr>
+<th>No</th><th>GASO Code</th><th>Facility / Service</th><th>Provider</th><th>Start</th><th>End</th><th>Status</th><th>Document / Reference</th><th>Remarks</th><th data-admin-only="">Kelola</th>
+</tr></thead><tbody id="gasoSupportRowsV231"></tbody></table><div id="gasoSupportEmptyV231"></div></div>
+</section>
+<section class="gaso-panel-v231" id="gasoPanelPlanningV231" style="display:none">
+<div class="title">
+<div><h3>Planning Service</h3><div class="section-subtitle">Planning item, budget, vendor/partner, due date, dan supporting document.</div></div>
+<div class="bulk-action-group" data-admin-only="">
+<button class="btn" onclick="openGasoModalV231('planning')">Tambah Planning Service</button>
+<a class="btn secondary" download="" href="templates/Template_GASO_Planning_Service.xlsx">Unduh Template</a>
+<button class="btn secondary" onclick="openBulkImportV223('gaso-planning')">Upload Data</button>
+</div>
+</div>
+<div class="card data-filter-card"><div class="data-filter-grid">
+<input id="gasoPlanningSearchV231" oninput="renderGasoPlanningV231()" placeholder="Cari planning item / GASO / vendor"/>
+<select id="gasoPlanningCategoryV231" onchange="renderGasoPlanningV231()"><option value="">Semua Category</option></select>
+<select id="gasoPlanningStatusV231" onchange="renderGasoPlanningV231()"><option value="">Semua Status</option></select>
+</div></div>
+<div class="card table-scroll"><table class="planning-table"><thead><tr>
+<th>No</th><th>GASO Code</th><th>Planning Item</th><th>Category</th><th>Vendor / Partner</th><th>Budget</th><th>Due Date</th><th>Status</th><th>Document / Reference</th><th>Remarks</th><th data-admin-only="">Kelola</th>
+</tr></thead><tbody id="gasoPlanningRowsV231"></tbody></table><div id="gasoPlanningEmptyV231"></div></div>
+</section>
+<div class="modal-backdrop" id="gasoModalV231"><div class="modal-card gaso-modal-v231">
+<button class="modal-x" onclick="closeGasoModalV231()">×</button>
+<h2 id="gasoModalTitleV231">GASO Record</h2>
+<div id="gasoModalFormV231"></div>
+</div></div>
+<div class="modal-backdrop" id="bulkImportModalV223">
+<div class="modal-card bulk-import-modal-v223">
+<button class="modal-x" onclick="closeBulkImportV223()">×</button>
+<span class="bulk-import-eyebrow">Bulk Data Import</span>
+<h2 id="bulkImportTitleV223">Upload Data</h2>
+<p class="section-subtitle" id="bulkImportHelpV223"></p>
+<div class="bulk-import-dropzone">
+<input accept=".xlsx,.csv" id="bulkImportFileV223" onchange="previewBulkImportV223(this.files[0])" type="file"/>
+<div><b>Pilih file Excel (.xlsx) atau CSV</b><span>Gunakan template agar nama kolom dikenali otomatis.</span></div>
+</div>
+<div class="bulk-import-preview-v223" id="bulkImportPreviewV223"></div>
+<div class="modal-actions sticky-actions">
+<button class="btn" disabled="" id="bulkImportConfirmV223" onclick="confirmBulkImportV231()">Import Data</button>
+<button class="btn secondary" onclick="closeBulkImportV223()" type="button">Batal</button>
+</div>
+</div>
+</div>
+</main></div><footer class="footer"><b>GROUND EXPERIENCE — GARUDA INDONESIA</b><br/>Portal Service Experience • Firebase / Firestore Production Data</footer><button aria-label="Kembali ke atas" class="back-to-top" id="backToTop">↑</button><script src="assets/firebase-config.js?v=e1"></script><script src="assets/firebase-client.js?v=e1"></script><script src="assets/auth.js?v=e1"></script><script src="assets/edition1-store.js?v=1"></script><script defer="defer" src="assets/edition1-files.js?v=1"></script><script defer="defer" src="assets/edition1-business-runtime.js?v=1"></script><script defer="defer" src="assets/access-assistance-p32.js?v=32.1"></script><script defer="defer" src="assets/edition1-portal-shell-entry.js?v=1"></script><script defer="defer" src="assets/edition1-portal-route-adapter.js?v=1"></script><script defer="defer" src="assets/edition1-overlay-manager.js?v=1"></script><script defer="defer" src="assets/edition1-page-boot.js?v=1"></script>

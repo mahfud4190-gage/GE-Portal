@@ -1,0 +1,95 @@
+<section class="hero">
+<h2>Berita &amp; Informasi</h2>
+<p>Central information hub Ground Experience untuk artikel, pengumuman, dan referensi tanya jawab.</p>
+</section>
+<div class="grid3 content-selector-grid">
+<button class="card content-selector active" onclick="showContentPanel('articles',this)">
+<h3>Artikel &amp; Tulisan</h3><p>Insight dan knowledge sharing Ground Experience.</p><span>Buka Artikel</span>
+</button>
+<button class="card content-selector" onclick="showContentPanel('announcements',this)">
+<h3>Pengumuman</h3><p>Informasi operasional dan corporate announcement.</p><span>Buka Pengumuman</span>
+</button>
+<button class="card content-selector" onclick="showContentPanel('faqs',this)">
+<h3>FAQ</h3><p>Tanya jawab umum untuk tim dan stakeholder.</p><span>Buka FAQ</span>
+</button>
+</div>
+<section class="content-panel" id="contentPanelArticles">
+<div class="title">
+<div><h3>Artikel &amp; Tulisan</h3><div class="section-subtitle">Knowledge sharing dari Head Office dan Branch Office.</div></div>
+<div class="content-actions">
+<button class="btn" data-admin-only="" onclick="openArticleEditor()">Tulis Artikel</button>
+<button class="btn secondary branch-proposal-only" onclick="openArticleProposal()">Propose Artikel</button>
+</div>
+</div>
+<div id="featuredArticle"></div>
+<div class="article-grid" id="articleGrid"></div>
+</section>
+<section class="content-panel" id="contentPanelAnnouncements" style="display:none">
+<div class="title">
+<div><h3>Pengumuman</h3><div class="section-subtitle">Informasi operasional dan corporate announcement.</div></div>
+<button class="btn" data-admin-only="" onclick="openAnnouncementEditor()">Tambah Pengumuman</button>
+</div>
+<div class="announcement-list" id="announcementList"></div>
+</section>
+<section class="content-panel" id="contentPanelFaqs" style="display:none">
+<div class="title">
+<div><h3>FAQ</h3><div class="section-subtitle">Referensi pertanyaan dan jawaban umum.</div></div>
+<button class="btn" data-admin-only="" onclick="openFaqEditor()">Tambah FAQ</button>
+</div>
+<div class="faq-list" id="faqList"></div>
+</section>
+<div class="modal-backdrop" id="articleViewModal">
+<div class="modal-card article-view-modal">
+<button class="modal-x" onclick="closeArticleView()">×</button>
+<div id="articleViewBody"></div>
+</div>
+</div>
+<div class="modal-backdrop" id="articleEditorModal">
+<div class="modal-card content-editor-modal">
+<button class="modal-x" onclick="closeArticleEditor()">×</button>
+<h2 id="articleEditorTitle">Tulis Artikel</h2>
+<input id="articleEditId" type="hidden"/>
+<label>Judul Artikel<input id="articleTitle" required=""/></label>
+<label>Inisial Penulis<input id="articleAuthorInitial" maxlength="12" placeholder="Contoh: GX"/></label>
+<label>Cover Image<input accept="image/*" id="articleCover" type="file"/></label>
+<label>Isi Artikel
+      <div class="rich-editor" contenteditable="true" data-placeholder="Copy-paste isi dari Word di sini. Teks dan gambar dari clipboard didukung pada prototype offline." id="articleContentEditor" onpaste="geRichPaste(event)"></div>
+</label>
+<div class="editor-note">Created by akan mengikuti akun yang sedang login. Gambar yang dipaste disimpan sebagai bagian konten browser; untuk production disarankan menggunakan document/image storage backend.</div>
+<div class="modal-actions sticky-actions"><button class="btn" onclick="saveArticle()">Publish</button><button class="btn secondary" onclick="closeArticleEditor()">Batal</button></div>
+</div>
+</div>
+<div class="modal-backdrop" id="articleProposalModal">
+<div class="modal-card content-editor-modal">
+<button class="modal-x" onclick="closeArticleProposal()">×</button>
+<h2>Propose Artikel</h2>
+<label>Judul Artikel<input id="proposalTitle"/></label>
+<label>Inisial Penulis<input id="proposalAuthorInitial" maxlength="12"/></label>
+<label>Isi Artikel
+      <div class="rich-editor" contenteditable="true" id="proposalContentEditor" onpaste="geRichPaste(event)"></div>
+</label>
+<div class="editor-note">Proposal tidak langsung dipublikasikan. Proposal akan masuk ke Pesan Masuk Admin/Super Admin untuk direview.</div>
+<div class="modal-actions sticky-actions"><button class="btn" onclick="submitArticleProposal()">Kirim Proposal</button><button class="btn secondary" onclick="closeArticleProposal()">Batal</button></div>
+</div>
+</div>
+<div class="modal-backdrop" id="announcementEditorModal">
+<div class="modal-card content-editor-modal compact-content-modal">
+<button class="modal-x" onclick="closeAnnouncementEditor()">×</button>
+<h2 id="announcementEditorTitle">Tambah Pengumuman</h2>
+<input id="announcementEditId" type="hidden"/>
+<label>Judul<input id="announcementTitle"/></label>
+<label>Isi<div class="rich-editor small" contenteditable="true" id="announcementContent" onpaste="geRichPaste(event)"></div></label>
+<div class="modal-actions sticky-actions"><button class="btn" onclick="saveAnnouncement()">Publish</button><button class="btn secondary" onclick="closeAnnouncementEditor()">Batal</button></div>
+</div>
+</div>
+<div class="modal-backdrop" id="faqEditorModal">
+<div class="modal-card content-editor-modal compact-content-modal">
+<button class="modal-x" onclick="closeFaqEditor()">×</button>
+<h2 id="faqEditorTitle">Tambah FAQ</h2>
+<input id="faqEditId" type="hidden"/>
+<label>Pertanyaan<input id="faqQuestion"/></label>
+<label>Jawaban<textarea id="faqAnswer" rows="6"></textarea></label>
+<div class="modal-actions sticky-actions"><button class="btn" onclick="saveFaq()">Publish</button><button class="btn secondary" onclick="closeFaqEditor()">Batal</button></div>
+</div>
+</div>
+</main></div><footer class="footer"><b>GROUND EXPERIENCE — GARUDA INDONESIA</b><br/>Portal Service Experience • Firebase / Firestore Production Data</footer><button aria-label="Kembali ke atas" class="back-to-top" id="backToTop">↑</button><script src="assets/firebase-config.js?v=e1"></script><script src="assets/firebase-client.js?v=e1"></script><script src="assets/auth.js?v=e1"></script><script src="assets/edition1-store.js?v=1"></script><script defer="defer" src="assets/edition1-files.js?v=1"></script><script defer="defer" src="assets/edition1-business-runtime.js?v=1"></script><script defer="defer" src="assets/access-assistance-p32.js?v=32.1"></script><script defer="defer" src="assets/edition1-portal-shell-entry.js?v=1"></script><script defer="defer" src="assets/edition1-portal-route-adapter.js?v=1"></script><script defer="defer" src="assets/edition1-overlay-manager.js?v=1"></script><script defer="defer" src="assets/edition1-page-boot.js?v=1"></script>

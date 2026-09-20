@@ -22,6 +22,18 @@ const MODULE_BY_COLLECTION = {
   portalManager:'admin', auditLogs:'admin', users:'admin',
   events:'calendar'
 };
+function normalizeRole(role){
+  const raw=String(role||'').trim();
+  const key=raw.toLowerCase().replace(/[ _-]+/g,'');
+  const map={superadmin:'Super Admin',admin:'Admin',management:'Management',headoffice:'Head Office',geteam:'GE Team',branchoffice:'Branch Office',staff:'Staff',viewer:'Viewer',approver:'Approver',editor:'Editor',externaluser:'External User',external:'External',collaborator:'Collaborator',loungestaff:'Lounge Staff',loungeluarbiasa:'Lounge Luar Biasa'};
+  return map[key]||raw;
+}
+function normalizeActor(actor){
+  if(!actor)return actor;
+  const airports=Array.isArray(actor.airports)&&actor.airports.length?actor.airports:(Array.isArray(actor.assignedStations)?actor.assignedStations:[]);
+  const loungeIds=Array.isArray(actor.loungeIds)&&actor.loungeIds.length?actor.loungeIds:(Array.isArray(actor.assignedLounges)?actor.assignedLounges:[]);
+  return {...actor,role:normalizeRole(actor.role),airports,loungeIds};
+}
 function active(actor){return actor && String(actor.status || 'Active').toLowerCase() !== 'inactive';}
 function canModule(actor, collection){
   if (actor.role === 'Super Admin') return true;
@@ -77,7 +89,7 @@ async function actorFor(event){
   let decoded; try{decoded=await auth.verifyIdToken(token,true)}catch{throw Object.assign(new Error('Invalid or expired authentication token.'),{statusCode:401,code:'AUTH_INVALID'})}
   const snap=await db.collection('users').doc(decoded.uid).get();
   if(!snap.exists) throw Object.assign(new Error('User profile not found.'),{statusCode:403,code:'PROFILE_NOT_FOUND'});
-  const actor={id:decoded.uid,...snap.data()};
+  const actor=normalizeActor({id:decoded.uid,...snap.data()});
   if(!active(actor)) throw Object.assign(new Error('Account inactive.'),{statusCode:403,code:'ACCOUNT_INACTIVE'});
   return {db,actor};
 }

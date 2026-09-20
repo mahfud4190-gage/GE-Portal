@@ -4,10 +4,8 @@ import { createReadStream, existsSync, statSync } from 'node:fs';
 import { extname, join, normalize, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const root = fileURLToPath(new URL('../', import.meta.url)).replace(/[\\/]$/, '');
 const args = process.argv.slice(2);
-const defaultRoot = fileURLToPath(new URL('../', import.meta.url)).replace(/[\\/]$/, '');
-const rootArg = args.indexOf('--root');
-const root = rootArg >= 0 ? normalize(join(defaultRoot, args[rootArg + 1] || '.')) : defaultRoot;
 const portArg = args.indexOf('--port');
 const port = Number(portArg >= 0 ? args[portArg + 1] : 5173) || 5173;
 const host = '127.0.0.1';

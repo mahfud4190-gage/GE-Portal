@@ -54,7 +54,9 @@ async function boot(){
   showStatus('Mengambil data dari Firebase / Firestore…');
   await window.GEStore.hydrate(cfg.collections);
   rerender();
-  showStatus('');
+  const d=window.GEStore.get();
+  const total=cfg.collections.reduce((n,k)=>{const v=d[k];return n+(Array.isArray(v)?v.length:(v&&typeof v==='object'?1:0))},0);
+  showStatus(`Terhubung • Firestore • ${window.GEStore.projectId||window.GX_FIREBASE_CONFIG?.projectId||'ground-experience-portal'} • ${total} record terhidrasi`);
  }catch(e){console.error('[P40 Edition1 boot]',e);showStatus(e?.message||'Firebase / Firestore tidak dapat diakses.',true)}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();

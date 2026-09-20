@@ -3,6 +3,10 @@
  * Page boot is owned by edition1-page-boot.js after Firestore hydration.
  */
 (function(){
+  const UI_STATE=window.__GE_EDITION1_UI_STATE||(window.__GE_EDITION1_UI_STATE={});
+  const geUiGet=(key)=>Object.prototype.hasOwnProperty.call(UI_STATE,key)?UI_STATE[key]:null;
+  const geUiSet=(key,value)=>{UI_STATE[key]=String(value);return value};
+  const geUiRemove=(key)=>{delete UI_STATE[key]};
   const _w=window.addEventListener.bind(window);
   const _d=document.addEventListener.bind(document);
   window.addEventListener=function(type,fn,opt){ if(type==='DOMContentLoaded') return; return _w(type,fn,opt); };
@@ -244,28 +248,28 @@ function airportPanel(a){
 /* Navigation: deliberately isolated from authentication */
 function toggleSidebar(){
  document.body.classList.toggle('side-hidden');
- localStorage.setItem('GE_SIDE_HIDDEN',document.body.classList.contains('side-hidden')?'true':'false');
+ geUiSet('GE_SIDE_HIDDEN',document.body.classList.contains('side-hidden')?'true':'false');
 }
 function toggleServices(event){
  event?.preventDefault();
  const nav=document.getElementById('serviceNav');if(!nav)return false;
  nav.classList.toggle('collapsed');
- localStorage.setItem('GE_SERVICE_COLLAPSED',nav.classList.contains('collapsed')?'true':'false');
+ geUiSet('GE_SERVICE_COLLAPSED',nav.classList.contains('collapsed')?'true':'false');
  return false;
 }
 function toggleInitiatives(event){
  event?.preventDefault();
  const nav=document.getElementById('initiativeNav');if(!nav)return false;
  nav.classList.toggle('collapsed');
- localStorage.setItem('GE_INIT_COLLAPSED',nav.classList.contains('collapsed')?'true':'false');
+ geUiSet('GE_INIT_COLLAPSED',nav.classList.contains('collapsed')?'true':'false');
  return false;
 }
 function restoreNavigationState(){
- document.body.classList.toggle('side-hidden',localStorage.getItem('GE_SIDE_HIDDEN')==='true');
+ document.body.classList.toggle('side-hidden',geUiGet('GE_SIDE_HIDDEN')==='true');
  const s=document.getElementById('serviceNav');
  const i=document.getElementById('initiativeNav');
- if(s)s.classList.toggle('collapsed',localStorage.getItem('GE_SERVICE_COLLAPSED')==='true');
- if(i)i.classList.toggle('collapsed',localStorage.getItem('GE_INIT_COLLAPSED')==='true');
+ if(s)s.classList.toggle('collapsed',geUiGet('GE_SERVICE_COLLAPSED')==='true');
+ if(i)i.classList.toggle('collapsed',geUiGet('GE_INIT_COLLAPSED')==='true');
 }
 function setupBackToTop(){
  const btn=document.getElementById('backToTop');if(!btn)return;
@@ -341,8 +345,8 @@ function filterAirportMap(region,button){
 }
 
 /* V2.8 Dashboard, Documents, Lounge */
-function toggleLounge(event){event?.preventDefault();const n=document.getElementById('loungeNav');if(!n)return false;n.classList.toggle('collapsed');localStorage.setItem('GE_LOUNGE_COLLAPSED',n.classList.contains('collapsed')?'true':'false');return false}
-function restoreLoungeState(){const n=document.getElementById('loungeNav');if(n)n.classList.toggle('collapsed',localStorage.getItem('GE_LOUNGE_COLLAPSED')==='true')}
+function toggleLounge(event){event?.preventDefault();const n=document.getElementById('loungeNav');if(!n)return false;n.classList.toggle('collapsed');geUiSet('GE_LOUNGE_COLLAPSED',n.classList.contains('collapsed')?'true':'false');return false}
+function restoreLoungeState(){const n=document.getElementById('loungeNav');if(n)n.classList.toggle('collapsed',geUiGet('GE_LOUNGE_COLLAPSED')==='true')}
 
 function initDashboard(){
  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
@@ -3325,8 +3329,8 @@ geOpenAirportDetail217=function(code,marker){
 };
 
 /* Navigation group */
-function togglePlanning(event){event?.preventDefault();const n=document.getElementById('planningNav');if(!n)return false;n.classList.toggle('collapsed');localStorage.setItem('GE_PLANNING_COLLAPSED',n.classList.contains('collapsed')?'true':'false');return false}
-window.addEventListener('DOMContentLoaded',()=>{const n=document.getElementById('planningNav');if(n)n.classList.toggle('collapsed',localStorage.getItem('GE_PLANNING_COLLAPSED')==='true')});
+function togglePlanning(event){event?.preventDefault();const n=document.getElementById('planningNav');if(!n)return false;n.classList.toggle('collapsed');geUiSet('GE_PLANNING_COLLAPSED',n.classList.contains('collapsed')?'true':'false');return false}
+window.addEventListener('DOMContentLoaded',()=>{const n=document.getElementById('planningNav');if(n)n.classList.toggle('collapsed',geUiGet('GE_PLANNING_COLLAPSED')==='true')});
 
 /* Final V2.20 RBAC nav — explicit planning tab support */
 function gxApplyNavigationV220(){
@@ -5272,7 +5276,7 @@ function geSetNavCollapsedV233(group,collapsed,persist=true){
   nav.classList.toggle('collapsed',!!collapsed);
   const toggle=nav.querySelector('[data-nav-toggle]');
   if(toggle)toggle.setAttribute('aria-expanded',collapsed?'false':'true');
-  if(persist)try{localStorage.setItem(cfg.key,collapsed?'true':'false')}catch(e){}
+  if(persist)try{geUiSet(cfg.key,collapsed?'true':'false')}catch(e){}
 }
 function geToggleNavGroupV233(group){
   const cfg=GE_NAV_GROUPS_V233[group],nav=cfg?document.getElementById(cfg.id):null;
@@ -5282,7 +5286,7 @@ function geToggleNavGroupV233(group){
 function geRestoreNavGroupsV233(){
   Object.entries(GE_NAV_GROUPS_V233).forEach(([group,cfg])=>{
     let collapsed=false;
-    try{collapsed=localStorage.getItem(cfg.key)==='true'}catch(e){}
+    try{collapsed=geUiGet(cfg.key)==='true'}catch(e){}
     geSetNavCollapsedV233(group,collapsed,false);
   });
 }
@@ -5301,7 +5305,7 @@ toggleSidebar=function(){
     return;
   }
   document.body.classList.toggle('side-hidden');
-  try{localStorage.setItem('GE_SIDE_HIDDEN',document.body.classList.contains('side-hidden')?'true':'false')}catch(e){}
+  try{geUiSet('GE_SIDE_HIDDEN',document.body.classList.contains('side-hidden')?'true':'false')}catch(e){}
 };
 toggleServices=function(){geToggleNavGroupV233('service');return false};
 toggleInitiatives=function(){geToggleNavGroupV233('initiative');return false};
@@ -5316,7 +5320,7 @@ function geInitNavigationV233(){
     document.body.classList.remove('side-hidden');
     geSetMobileDrawerV233(false);
   }else{
-    try{document.body.classList.toggle('side-hidden',localStorage.getItem('GE_SIDE_HIDDEN')==='true')}catch(e){}
+    try{document.body.classList.toggle('side-hidden',geUiGet('GE_SIDE_HIDDEN')==='true')}catch(e){}
   }
 
   document.getElementById('mobileNavTriggerV233')?.addEventListener('click',e=>{
@@ -5604,7 +5608,7 @@ deletePurchaseV232 = async function(id){
   const VERSION='2.51.2';
   const KEY='GE_UI_DEPLOY_VERSION';
   try{
-    const previous=localStorage.getItem(KEY);
+    const previous=geUiGet(KEY);
     if(previous!==VERSION){
       [
         'GE_SERVICE_COLLAPSED',
@@ -5612,8 +5616,8 @@ deletePurchaseV232 = async function(id){
         'GE_LOUNGE_COLLAPSED',
         'GE_PLANNING_COLLAPSED',
         'GE_SIDE_HIDDEN'
-      ].forEach(k=>localStorage.removeItem(k));
-      localStorage.setItem(KEY,VERSION);
+      ].forEach(k=>geUiRemove(k));
+      geUiSet(KEY,VERSION);
     }
   }catch(e){}
 })();
@@ -7154,8 +7158,8 @@ async function geDeleteAnnouncementV248(id){if(!geIsStandardAdminV248())return;c
 window.addEventListener('DOMContentLoaded',()=>{geEnsureStandardContentV248();geEnsureStandardModalV248();geApplyStandardContentV248();renderAnnouncementLibraryV246()});
 
 /* ========================= V2.50 Portal Management Foundation ========================= */
-function pmState(){try{return JSON.parse(localStorage.getItem('gxPortalManagementV250')||'{}')}catch(e){return{}}}
-function pmWrite(x){localStorage.setItem('gxPortalManagementV250',JSON.stringify(x));}
+function pmState(){const x=data.portalManagerR2;return x&&typeof x==='object'&&!Array.isArray(x)?x:{}}
+function pmWrite(x){data.portalManagerR2={...(x&&typeof x==='object'?x:{})};save();}
 function pmActivity(msg){const e=document.getElementById('pmActivity');if(e)e.textContent=msg;const s=document.getElementById('portalPublishState');if(s)s.textContent='Draft changed';}
 function pmSaveDraft(area){const x=pmState();x.updatedAt=new Date().toISOString();x.area=area;x.page=document.getElementById('pmPage')?.value;x.title=document.getElementById('pmTitle')?.value;x.description=document.getElementById('pmDescription')?.value;x.chart=document.getElementById('pmChart')?.value;x.status='Draft';pmWrite(x);pmActivity(area+' disimpan sebagai draft.');}
 function pmPreview(){const x=pmState();pmActivity('Preview siap • '+(x.title||'perubahan portal')+'. Pada production preview akan dibuka pada staging route sebelum Publish.');}
@@ -7407,7 +7411,7 @@ function geV251OpenEvent(id=null){if(!geV251Admin())return;const e=id?(geV251Ens
 function geV251SaveEventR2(){const title=geV251EventTitle.value.trim(),date=geV251EventDate.value;if(!title||!date)return geStorageNoticeV223('Data belum lengkap','Judul dan tanggal wajib diisi.');const s=geV251Ensure(),id=geV251EventIdR2.value,obj={id:id?Number(id):Date.now(),title,date,time:geV251EventTime.value,airport:geV251EventAirport.value.trim().toUpperCase(),pic:geV251EventPicR2.value.trim(),touchpoint:geV251EventTouchpointR2.value.trim(),category:geV251EventCategory.value,priority:geV251EventPriorityR2.value,reminder:Number(geV251EventReminderR2.value||0),remark:geV251EventRemark.value.trim(),source:'Manual'};const old=(s.events||[]).find(x=>String(x.id)===String(id));if(old)Object.assign(old,obj);else s.events.push(obj);save();geV251EventModal.classList.remove('show');geV251RenderCalendar()}
 async function geV251DeleteEventR2(){const id=geV251EventIdR2.value;if(!id)return;const ok=typeof geConfirmDeleteV234==='function'?await geConfirmDeleteV234({title:'Hapus Kegiatan?',item:geV251EventTitle.value,message:'Kegiatan manual akan dihapus dari kalender.'}):confirm('Hapus kegiatan?');if(!ok)return;const s=geV251Ensure();s.events=s.events.filter(x=>String(x.id)!==String(id));save();geV251EventModal.classList.remove('show');geV251RenderCalendar()}
 function geV251OpenEventDetailR2(id){const e=geV251AllEvents().find(x=>String(x.id)===String(id));if(!e)return;if(e.readOnly){if(e.initiativeId&&typeof openInitiativeTimelineV224==='function')openInitiativeTimelineV224(e.initiativeId);return}geV251OpenEvent(e.id)}
-function geV251CheckRemindersR2(){const now=new Date();geV251AllEvents().filter(e=>e.source==='Manual'&&e.date).forEach(e=>{const due=new Date(`${e.date}T${e.time||'09:00'}:00`),minutes=Number(e.reminder||0),alertAt=new Date(due.getTime()-minutes*60000),key=`calrem_${e.id}_${e.date}_${e.time}_${minutes}`;if(now>=alertAt&&now<due&&sessionStorage.getItem(key)!=='1'){sessionStorage.setItem(key,'1');if('Notification'in window&&Notification.permission==='granted')new Notification('Ground Experience Calendar',{body:`${e.title} • ${e.airport||''} ${e.time||''}`});else geStorageNoticeV223('Calendar Reminder',`${e.title} • ${e.date} ${e.time||''}`,'warning')}})}
+function geV251CheckRemindersR2(){const now=new Date();geV251AllEvents().filter(e=>e.source==='Manual'&&e.date).forEach(e=>{const due=new Date(`${e.date}T${e.time||'09:00'}:00`),minutes=Number(e.reminder||0),alertAt=new Date(due.getTime()-minutes*60000),key=`calrem_${e.id}_${e.date}_${e.time}_${minutes}`;if(now>=alertAt&&now<due&&geUiGet(key)!=='1'){geUiSet(key,'1');if('Notification'in window&&Notification.permission==='granted')new Notification('Ground Experience Calendar',{body:`${e.title} • ${e.airport||''} ${e.time||''}`});else geStorageNoticeV223('Calendar Reminder',`${e.title} • ${e.date} ${e.time||''}`,'warning')}})}
 window.addEventListener('DOMContentLoaded',()=>{if(document.getElementById('geCalendarV251')){geV251RenderCalendar();setInterval(geV251CheckRemindersR2,60000);geV251CheckRemindersR2()}});
 
 
@@ -9430,100 +9434,6 @@ window.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{installInitiative
   window.addEventListener('DOMContentLoaded',()=>setTimeout(setup,0));
 })();
 
-
-  // P40 functional bridge: legacy page handlers must remain callable by HTML event attributes.
-  // These are existing business functions; this does not create alternate/fake implementations.
-  window.changeLoungeCardPageV237=changeLoungeCardPageV237;
-  window.closeAirportModalV231=closeAirportModalV231;
-  window.closeAirportSystemModalV231=closeAirportSystemModalV231;
-  window.closeAnnouncementEditor=closeAnnouncementEditor;
-  window.closeAnnouncementReferenceV246=closeAnnouncementReferenceV246;
-  window.closeArticleEditor=closeArticleEditor;
-  window.closeArticleProposal=closeArticleProposal;
-  window.closeArticleView=closeArticleView;
-  window.closeBulkImportV223=closeBulkImportV223;
-  window.closeFaqEditor=closeFaqEditor;
-  window.closeGasoModalV231=closeGasoModalV231;
-  window.closeInboxDetail=closeInboxDetail;
-  window.closeInitiativeDocumentV227=closeInitiativeDocumentV227;
-  window.closeInitiativeModalV224=closeInitiativeModalV224;
-  window.closeInitiativeProgressV224=closeInitiativeProgressV224;
-  window.closeInitiativeStepV224=closeInitiativeStepV224;
-  window.closeInitiativeTimelineV224=closeInitiativeTimelineV224;
-  window.closePersonnelModal=closePersonnelModal;
-  window.closePlanningRecordModal=closePlanningRecordModal;
-  window.closeServiceProcurementModalV243=closeServiceProcurementModalV243;
-  window.confirmBulkImportV231=confirmBulkImportV231;
-  window.confirmBulkImportV243=confirmBulkImportV243;
-  window.downloadAuditCSV=downloadAuditCSV;
-  window.downloadLoungeTemplateV230=downloadLoungeTemplateV230;
-  window.downloadLoungesCSV=downloadLoungesCSV;
-  window.exportCSV=exportCSV;
-  window.geCalDeleteActivityV2535=geCalDeleteActivityV2535;
-  window.geCalMoveV2533=geCalMoveV2533;
-  window.geCalRenderKPIV2534=geCalRenderKPIV2534;
-  window.geCalSetViewV2533=geCalSetViewV2533;
-  window.geRequestNotificationV253=geRequestNotificationV253;
-  window.openAirportModalV231=openAirportModalV231;
-  window.openAirportSystemModalV231=openAirportSystemModalV231;
-  window.openAnnouncementEditor=openAnnouncementEditor;
-  window.openArticleEditor=openArticleEditor;
-  window.openArticleProposal=openArticleProposal;
-  window.openBulkImportV223=openBulkImportV223;
-  window.openFaqEditor=openFaqEditor;
-  window.openGasoModalV231=openGasoModalV231;
-  window.openInitiativeModalV224=openInitiativeModalV224;
-  window.openLoungeAddModalV230=openLoungeAddModalV230;
-  window.openPersonnelModal=openPersonnelModal;
-  window.openPlanningRecordModal=openPlanningRecordModal;
-  window.openServiceProcurementModalV243=openServiceProcurementModalV243;
-  window.pmAssetListR2=pmAssetListR2;
-  window.pmLoadPageR2=pmLoadPageR2;
-  window.pmNewPage=pmNewPage;
-  window.pmPreviewR2=pmPreviewR2;
-  window.pmPublishR2=pmPublishR2;
-  window.pmRegisterAssetsR2=pmRegisterAssetsR2;
-  window.pmResetSectionsR2=pmResetSectionsR2;
-  window.pmSaveDraft=pmSaveDraft;
-  window.pmSaveMenusR2=pmSaveMenusR2;
-  window.pmSavePageR2=pmSavePageR2;
-  window.pmSaveSectionsR2=pmSaveSectionsR2;
-  window.previewBulkImportV223=previewBulkImportV223;
-  window.renderAdminInbox=renderAdminInbox;
-  window.renderAirportSystems=renderAirportSystems;
-  window.renderAirports=renderAirports;
-  window.renderAnnouncementLibraryV246=renderAnnouncementLibraryV246;
-  window.renderAuditLogs=renderAuditLogs;
-  window.renderBOSpaces=renderBOSpaces;
-  window.renderDocumentsAdmin=renderDocumentsAdmin;
-  window.renderGasoMasterV231=renderGasoMasterV231;
-  window.renderGasoPlanningV231=renderGasoPlanningV231;
-  window.renderGasoSupportV231=renderGasoSupportV231;
-  window.renderInitiatives=renderInitiatives;
-  window.renderLoungeProcurement=renderLoungeProcurement;
-  window.renderLounges=renderLounges;
-  window.renderPersonnel=renderPersonnel;
-  window.renderPersonnelReadiness=renderPersonnelReadiness;
-  window.renderPlanningDocuments=renderPlanningDocuments;
-  window.renderSkyPriority=renderSkyPriority;
-  window.renderTouchpointStandards=renderTouchpointStandards;
-  window.saveAirportSystemV231=saveAirportSystemV231;
-  window.saveAirportV231=saveAirportV231;
-  window.saveAnnouncement=saveAnnouncement;
-  window.saveArticle=saveArticle;
-  window.saveFaq=saveFaq;
-  window.saveInitiativeDocumentV227=saveInitiativeDocumentV227;
-  window.saveInitiativeProgressV224=saveInitiativeProgressV224;
-  window.saveInitiativeStepV224=saveInitiativeStepV224;
-  window.saveInitiativeV224=saveInitiativeV224;
-  window.saveServiceProcurementV243=saveServiceProcurementV243;
-  window.setJourneyFilter=setJourneyFilter;
-  window.showAdminSection=showAdminSection;
-  window.showBOPlanningPanel=showBOPlanningPanel;
-  window.showContentPanel=showContentPanel;
-  window.showGasoPanelV231=showGasoPanelV231;
-  window.showStandardPanel=showStandardPanel;
-  window.submitArticleProposal=submitArticleProposal;
   window.addEventListener=_w;
   document.addEventListener=_d;
 })();

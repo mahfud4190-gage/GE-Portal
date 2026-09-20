@@ -63,7 +63,14 @@
     }
   }
   function save(next){
-    const snapshot={}; for(const k of Object.keys(next||{})){if(Array.isArray(next[k])||k==='standardContent'||k==='portalManagerR2')snapshot[k]=clone(next[k])}
+    const snapshot={};
+    // Only persist collections that this page actually hydrated. The runtime shares
+    // one in-memory state object, so sending untouched empty arrays could otherwise
+    // be interpreted as DELETE for collections that were never loaded on this page.
+    for(const k of Object.keys(next||{})){
+      if(!Object.prototype.hasOwnProperty.call(baseline,k)) continue;
+      if(Array.isArray(next[k])||k==='standardContent'||k==='portalManagerR2')snapshot[k]=clone(next[k]);
+    }
     pending=pending.then(()=>persistSnapshot(snapshot)).catch(err=>{console.error('[Edition1 Firebase Store]',err);window.dispatchEvent(new CustomEvent('gx-data-save-error',{detail:err}));throw err});
     return next;
   }
@@ -90,6 +97,6 @@
       await new Promise(r=>setTimeout(r,100));
     }
   }
-  window.data=state; window.GEStore={get:()=>state,save,hydrate,waitAuth,isHydrated:()=>hydrated,flush:()=>pending,source:'Firestore'};
+  window.data=state; window.GEStore={get:()=>state,save,hydrate,waitAuth,isHydrated:()=>hydrated,flush:()=>pending,source:'Firestore',projectId:window.GX_FIREBASE_CONFIG?.projectId||''};
   window.addEventListener('gx-data-save-error',e=>{if(e.detail?.message)console.error('Firestore save failed:',e.detail.message)});
 })();

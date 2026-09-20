@@ -1,0 +1,44 @@
+P40 — EDITION 1 CANONICAL RUNTIME & PRESENTATION CLEANUP
+
+Replacement delta only.
+
+Replaced canonical Edition 1 pages:
+- standar.html
+- inisiatif.html
+- service-planning.html
+- calendar.html
+- planning-documents.html
+- data.html
+- admin.html
+- berita.html
+- kontak.html
+- lounge-list.html
+- branch-office-planning.html
+- gaso-planning.html
+
+Replaced:
+- package.json build chain: obsolete P40R8/P40R9/P40R11/P40R12 chain removed; one canonical Edition 1 test used.
+- tests/p40-edition1-canonical-runtime.js: new single Edition 1 source/runtime contract.
+
+Removed from canonical package/build:
+- tests/p40r8-data-page-runtime.js
+- tests/p40r9-data-page-shell-runtime.js
+- tests/p40r10-data-page-canonical-runtime.js
+- tests/p40r11-data-page-runtime-cache.js
+- tests/p40r12-edition1-shell-bootstrap-order.js
+- tests/p40r8-local-diagnostic.js
+- tests/p40r-p29-presentation-recovery.js
+- docs/P40R11_EDITION1_DATA_PAGE_RUNTIME_RECOVERY.md
+- docs/P40R12_EDITION1_SHELL_BOOTSTRAP_RECOVERY.md
+
+Retained unchanged:
+- assets/portal-shell.js (protected by P33-P37 frozen-source contract)
+- Firebase/Auth/Firestore runtime and production data
+- all pre-P40 build contracts
+
+Verification performed in the reconstructed working tree:
+- P40_EDITION1_CANONICAL_RUNTIME_PASS (12 pages)
+- npm run build PASS
+- portal-shell.js SHA-256 remains 300203269b4157022d0745f17309c71087fa382c280260756fb0e12b0c9ad583
+
+Git exact-case verification could not be executed in this artifact because the reconstructed working tree does not contain a .git directory. It must be executed in the actual Git checkout before commit/push.

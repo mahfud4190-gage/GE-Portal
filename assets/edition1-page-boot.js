@@ -23,9 +23,15 @@
   function setSession(){const s=session();const n=document.getElementById('sessionName'),r=document.getElementById('sessionRole');if(n)n.textContent=s.name||s.username||s.email||'';if(r)r.textContent=[s.role,s.accessLevel].filter(Boolean).join(' • ')}
   function showStatus(message,error=false){let b=document.getElementById('e1DataStatus');if(!b){b=document.createElement('div');b.id='e1DataStatus';b.className='e1-data-status';document.querySelector('main.main')?.prepend(b)}b.textContent=message;b.dataset.error=error?'1':'0';b.style.display=message?'block':'none'}
   async function waitFirebase(){
+    // auth.js owns the canonical loader. Call it explicitly so page boot never
+    // races Firebase runtime creation, even when scripts are cached or deferred.
+    if(!window.GXFirebase && typeof window.gxLoadFirebaseRuntime==='function'){
+      const loaded=await window.gxLoadFirebaseRuntime();
+      if(!loaded && !window.GXFirebase) throw new Error('Firebase runtime unavailable.');
+    }
     const deadline=Date.now()+15000;
     while(!window.GXFirebase && Date.now()<deadline) await sleep(50);
-    if(!window.GXFirebase) throw new Error('Firebase runtime unavailable after 15 seconds.');
+    if(!window.GXFirebase) throw new Error('Firebase runtime unavailable.');
     const u=await window.GXFirebase.currentUser();
     if(!u) throw new Error('Authentication required.');
     const sessionDeadline=Date.now()+10000;

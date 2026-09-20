@@ -1,6 +1,7 @@
 'use strict';
 const { bad, ok, bearer, firebase } = require('./_firebase');
 const { FieldValue } = require('firebase-admin/firestore');
+const { collectionRef, auditRef } = require('./_portal-data');
 
 const COLLECTIONS = new Set([
   'airports','initiatives','news','touchpoints','documents','projectEvents','loungePurchases','loungeVisitors',
@@ -89,16 +90,21 @@ async function readCollection(db,actor,c){
   if(!COLLECTIONS.has(c)) throw Object.assign(new Error(`Collection not allowed: ${c}`),{statusCode:400,code:'COLLECTION_NOT_ALLOWED'});
   if(!canRead(actor,c)) throw Object.assign(new Error(`Read access denied for ${c}.`),{statusCode:403,code:'FORBIDDEN'});
   if(c==='auditLogs' && !ADMIN_ROLES.has(actor.role)) return [];
+  const ref=collectionRef(db,c);
   let docs;
-  if(c==='initiatives' && EXTERNAL_ROLES.has(actor.role)){
+  if(c==='auditLogs'||c==='inbox'){
+    const [nestedSnap,legacySnap]=await Promise.all([ref.get(),db.collection(c).get()]);
+    const map=new Map();[...nestedSnap.docs,...legacySnap.docs].forEach(d=>map.set(d.id,d));docs=[...map.values()];
+    if(c==='inbox'&&!ADMIN_ROLES.has(actor.role)) docs=docs.filter(d=>{const x=d.data()||{};return !x.recipientId||String(x.recipientId)===String(actor.id)});
+  } else if(c==='initiatives' && EXTERNAL_ROLES.has(actor.role)){
     const [a,b]=await Promise.all([
-      db.collection(c).where('sharedWithUserIds','array-contains',String(actor.id)).get(),
-      db.collection(c).where('mentionedUserIds','array-contains',String(actor.id)).get()
+      ref.where('sharedWithUserIds','array-contains',String(actor.id)).get(),
+      ref.where('mentionedUserIds','array-contains',String(actor.id)).get()
     ]); const map=new Map(); [...a.docs,...b.docs].forEach(d=>map.set(d.id,d)); docs=[...map.values()];
   } else if(c==='inbox' && !ADMIN_ROLES.has(actor.role)){
-    const snap=await db.collection(c).where('recipientId','==',String(actor.id)).get(); docs=snap.docs;
+    const snap=await ref.where('recipientId','==',String(actor.id)).get(); docs=snap.docs;
   } else {
-    const snap=await db.collection(c).get(); docs=snap.docs;
+    const snap=await ref.get(); docs=snap.docs;
   }
   let rows=docs.map(d=>({id:d.id,...sanitize(d.data())}));
   if(c==='users') rows=rows.map(x=>{delete x.password;delete x.passwordHash;delete x.temporaryPassword;return x});
@@ -114,12 +120,12 @@ async function writeOne(db,actor,collection,action,id,raw){
   if(!COLLECTIONS.has(collection)) throw Object.assign(new Error(`Collection not allowed: ${collection}`),{statusCode:400,code:'COLLECTION_NOT_ALLOWED'});
   if(!(collection==='inbox' && action==='CREATE') && !canWrite(actor,collection)) throw Object.assign(new Error(`Write access denied for ${collection}.`),{statusCode:403,code:'FORBIDDEN'});
   if(['users','auditLogs'].includes(collection) && !ADMIN_ROLES.has(actor.role)) throw Object.assign(new Error('Administrative access required.'),{statusCode:403,code:'FORBIDDEN'});
-  const ref=id?db.collection(collection).doc(cleanId(id)):db.collection(collection).doc();
+  const base=collectionRef(db,collection); const ref=id?base.doc(cleanId(id)):base.doc();
   if(action==='DELETE'){
     const snap=await ref.get(); if(!snap.exists) return {id:ref.id,deleted:false};
     const prev=snap.data()||{}; if(!inScope(actor,prev)) throw Object.assign(new Error('Record outside account scope.'),{statusCode:403,code:'SCOPE_FORBIDDEN'});
     await ref.delete();
-    await db.collection('auditLogs').add({actorId:actor.id,actorRole:actor.role,name:actor.name||actor.username||actor.email||actor.id,username:actor.username||actor.email||'',module:collection,object:ref.id,detail:`${collection} ${action.toLowerCase()}`,targetType:`EDITION1_${collection.toUpperCase()}`,targetId:ref.id,action:'Delete',timestamp:FieldValue.serverTimestamp(),result:'SUCCESS'});
+    await auditRef(db).add({actorId:actor.id,actorRole:actor.role,name:actor.name||actor.username||actor.email||actor.id,username:actor.username||actor.email||'',module:collection,object:ref.id,detail:`${collection} ${action.toLowerCase()}`,targetType:`EDITION1_${collection.toUpperCase()}`,targetId:ref.id,action:'Delete',timestamp:FieldValue.serverTimestamp(),result:'SUCCESS'});
     return {id:ref.id,deleted:true};
   }
   const data=cleanData(raw); const existing=await ref.get(); const prev=existing.exists?existing.data()||{}:{};
@@ -130,7 +136,7 @@ async function writeOne(db,actor,collection,action,id,raw){
   if(action==='CREATE' && existing.exists) throw Object.assign(new Error('Record already exists.'),{statusCode:409,code:'ALREADY_EXISTS'});
   await ref.set(next,{merge:action==='UPDATE'});
   const out=await ref.get();
-  await db.collection('auditLogs').add({actorId:actor.id,actorRole:actor.role,name:actor.name||actor.username||actor.email||actor.id,username:actor.username||actor.email||'',module:collection,object:ref.id,detail:`${collection} ${action.toLowerCase()}`,targetType:`EDITION1_${collection.toUpperCase()}`,targetId:ref.id,action:action.charAt(0)+action.slice(1).toLowerCase(),timestamp:FieldValue.serverTimestamp(),result:'SUCCESS'});
+  await auditRef(db).add({actorId:actor.id,actorRole:actor.role,name:actor.name||actor.username||actor.email||actor.id,username:actor.username||actor.email||'',module:collection,object:ref.id,detail:`${collection} ${action.toLowerCase()}`,targetType:`EDITION1_${collection.toUpperCase()}`,targetId:ref.id,action:action.charAt(0)+action.slice(1).toLowerCase(),timestamp:FieldValue.serverTimestamp(),result:'SUCCESS'});
   return {id:ref.id,...sanitize(out.data())};
 }
 exports.handler=async(event)=>{

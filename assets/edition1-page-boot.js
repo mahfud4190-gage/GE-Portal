@@ -1,5 +1,5 @@
 /* P40 Edition 1 canonical page boot.
- * Shell ownership: assets/portal-shell.js (same shell as the production dashboard).
+ * Shell ownership: assets/canonical-portal-shell.js (single canonical dashboard shell).
  * Business-data ownership: Firebase/Firestore through /api/edition1-data.
  */
 (function(){
@@ -56,7 +56,7 @@ async function boot(){
   rerender();
   const d=window.GEStore.get();
   const total=cfg.collections.reduce((n,k)=>{const v=d[k];return n+(Array.isArray(v)?v.length:(v&&typeof v==='object'?1:0))},0);
-  showStatus(`Terhubung • Firestore • ${window.GEStore.projectId||window.GX_FIREBASE_CONFIG?.projectId||'ground-experience-portal'} • ${total} record terhidrasi`);
+  showStatus(`Terhubung • Firestore • ${window.GEStore.projectId||window.GX_FIREBASE_CONFIG?.projectId||'ground-experience-portal'} • portalData • ${total} record terhidrasi`);
  }catch(e){console.error('[P40 Edition1 boot]',e);showStatus(e?.message||'Firebase / Firestore tidak dapat diakses.',true)}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();

@@ -1,0 +1,30 @@
+P40 REPLACEMENT — CANONICAL EDITION 1 / FIRESTORE
+
+COPY these files into the repository at the exact paths in this archive.
+
+This is a replacement set, not an additional shell layer.
+
+1. The 12 e1-*.html pages no longer load:
+   - edition1-portal-shell-entry.js
+   - edition1-portal-route-adapter.js
+   - edition1-overlay-manager.js
+   - edition1-canonical-shell.js
+
+2. The 12 e1 pages use the same canonical dashboard shell geometry/navigation through:
+   assets/canonical-portal-shell.js
+
+3. The e1 pages use clean Firebase runtime variants that do not use localStorage:
+   assets/e1-auth.js
+   assets/e1-firebase-client.js
+
+4. Business data is read/written through:
+   /api/edition1-data
+   and the production Firestore business layout:
+   portalData/{domain}/records/{recordId}
+   while Firebase Authentication profiles remain in users/{uid}.
+
+5. Account modal is viewport-top-layered and internally scrollable. It cannot be trapped below the header/sidebar.
+
+6. Footer is owned by .shell > .main and stays in normal content flow, right of the sidebar.
+
+Do not add these files on top of another e1 shell implementation. Replace the matching paths.

@@ -1,6 +1,6 @@
 /* Edition 1 Firebase Store — Firestore is the only business-data source of truth.
  * This object is an in-memory working set only; it is never seeded from local data
- * and is never persisted to localStorage. All reads/writes go through /api/edition1-data.
+ * and is never persisted to browser storage. All reads/writes go through /api/edition1-data, whose canonical Firestore business path is portalData/{domain}/records/{id}.
  */
 (function(){
   'use strict';

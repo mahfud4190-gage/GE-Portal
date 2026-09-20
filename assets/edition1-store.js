@@ -78,9 +78,17 @@
     return state;
   }
   async function waitAuth(){
-    if(window.GX_AUTH_READY && typeof window.GX_AUTH_READY.then==='function') await window.GX_AUTH_READY;
-    if(!window.GXFirebase) throw new Error('Firebase runtime unavailable.');
-    const u=await window.GXFirebase.currentUser(); if(!u)throw new Error('Authentication required.');
+    const deadline=Date.now()+15000;
+    while(!window.GXFirebase && Date.now()<deadline) await new Promise(r=>setTimeout(r,50));
+    if(!window.GXFirebase) throw new Error('Firebase runtime unavailable after 15 seconds.');
+    const u=await window.GXFirebase.currentUser();
+    if(!u) throw new Error('Authentication required.');
+    const sessionDeadline=Date.now()+10000;
+    while(Date.now()<sessionDeadline){
+      const s=typeof window.gxGetSession==='function'?(window.gxGetSession()||{}):window.GX_CURRENT_USER||{};
+      if(s.uid && String(s.uid)===String(u.uid)) return;
+      await new Promise(r=>setTimeout(r,100));
+    }
   }
   window.data=state; window.GEStore={get:()=>state,save,hydrate,waitAuth,isHydrated:()=>hydrated,flush:()=>pending,source:'Firestore'};
   window.addEventListener('gx-data-save-error',e=>{if(e.detail?.message)console.error('Firestore save failed:',e.detail.message)});

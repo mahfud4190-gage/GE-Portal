@@ -20,3 +20,7 @@ const runtime=fs.readFileSync(path.join(root,'assets/edition1-business-runtime.j
 const handlers=[...new Set([...runtime.matchAll(/(?:^|[;{}])function\s+([A-Za-z_$][\w$]*)\s*\(/gm)].map(m=>m[1]))];
 for(const p of pages){const s=fs.readFileSync(path.join(root,`e1-${p}.html`),'utf8');const names=[...s.matchAll(/onclick="([^"]+)"/g)].flatMap(m=>[...m[1].matchAll(/\b([A-Za-z_$][\w$]*)\s*\(/g)].map(x=>x[1]));for(const n of names){if(['alert','confirm','close','replace','setTimeout','event','this','remove','add','toggle','focus','preventDefault','classList','getElementById','querySelector','querySelectorAll'].includes(n))continue;assert(combined.includes(`function ${n}(`)||combined.includes(`window.${n}=`)||combined.includes(`${n}=`),`${p}: inline handler function not found in consolidated runtime: ${n}`)}}
 console.log('P40_FIREBASE_EDITION1_FUNCTIONAL_CONTRACT_PASS');
+
+for(const p of pages){const s=fs.readFileSync(path.join(root,`e1-${p}.html`),'utf8');assert(s.includes('assets/firebase-config.js'),'Firebase config preload missing for '+p);assert(s.includes('assets/firebase-client.js'),'Firebase client preload missing for '+p);assert(s.includes('assets/e1-canonical.css'),'Canonical shell CSS missing for '+p);}
+assert(fs.existsSync(path.join(root,'assets/e1-canonical.css')),'Canonical shell CSS file missing');
+console.log('P40_V2_CANONICAL_SHELL_PASS');

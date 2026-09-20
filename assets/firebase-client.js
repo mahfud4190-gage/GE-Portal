@@ -18,65 +18,11 @@ async function currentProfile(){const u=await currentUser();if(!u)return null;co
 async function signInWithEmail(email,password){const s=await init();if(!s.ready)throw s.error||new Error('Firebase unavailable');let c;authDiag('FIREBASE_SIGNIN_START',{identifierType:'email'});try{c=await s.auth.signInWithEmailAndPassword(String(email).trim(),String(password));authDiag('FIREBASE_SIGNIN_SUCCESS',{uid:String(c.user.uid),emailPresent:!!c.user.email})}catch(e){const code=String(e?.code||'');authDiag('FIREBASE_SIGNIN_FAILED',{firebaseCode:code||null,errorName:e?.name||'Error',errorMessage:e?.message||'Authentication failed',errorStack:e?.stack||''});if(code==='auth/invalid-email')throw authError('AUTH_INVALID_EMAIL',e?.message||code);if(code==='auth/user-not-found'||code==='auth/wrong-password'||code==='auth/invalid-credential')throw authError('INVALID_CREDENTIALS',e?.message||code);if(code==='auth/operation-not-allowed')throw authError('AUTH_PROVIDER_DISABLED',e?.message||code);if(code==='auth/unauthorized-domain')throw authError('AUTH_UNAUTHORIZED_DOMAIN',e?.message||code);throw e}let p;try{p=normalizeUser(await profile(c.user.uid),c.user);authDiag('USER_PROFILE_NORMALIZED',{uid:String(c.user.uid),profileFound:!!p,rawRole:p?.role??null,normalizedRole:p?.role??null,rawAccessLevel:p?.accessLevel??null,normalizedAccessLevel:p?.accessLevel??null,scopeType:p?.scopeType??null});}catch(e){authDiag('POST_AUTH_PROFILE_FAILED',{uid:String(c.user.uid),errorCode:e?.code||e?.message||null,errorName:e?.name||'Error',errorMessage:e?.authMessage||e?.message||'',errorStack:e?.stack||''});try{await s.auth.signOut()}catch(_){ }throw e}if(p&&String(p.status||'Active').toLowerCase()!=='active'){authDiag('ACCOUNT_STATUS_BLOCKED',{uid:String(c.user.uid),status:p.status});await s.auth.signOut();throw authError('ACCOUNT_INACTIVE',`Account status is ${p.status}.`)}if(p&&isExternal(p)){try{writeLegacyAccess(await initiativesFor(p.uid),p.uid)}catch(e){authDiag('EXTERNAL_SCOPE_SYNC_FAILED',{uid:String(p.uid),errorName:e?.name||'Error',errorMessage:e?.message||''})}}return p}
 async function signInWithUsername(username,password){const s=await init();if(!s.ready)throw s.error||new Error('Firebase unavailable');const value=String(username||'').trim();if(value.includes('@'))return signInWithEmail(value,password);let snap;try{snap=await s.db.collection('users').where('username','==',value.toLowerCase()).limit(1).get()}catch(e){authDiag('USERNAME_LOOKUP_FAILED',{errorName:e?.name||'Error',errorCode:e?.code||null,errorMessage:e?.message||''});if(e?.code==='permission-denied')throw authError('USERNAME_LOOKUP_UNAVAILABLE',e?.message||'Username lookup is unavailable before authentication.');throw e}if(snap.empty)throw authError('INVALID_CREDENTIALS','Username not found.');const p=snap.docs[0].data();if(!p.email)throw authError('USER_EMAIL_MISSING','Profile does not contain an authentication email.');return signInWithEmail(p.email,password)}
 async function signOut(){const s=await init();if(s.auth)await s.auth.signOut()}
-async function apiRequest(path,options={}){
- const s=await init();
- if(!s.ready||!s.auth)throw new Error('Firebase unavailable');
- const u=s.auth.currentUser;if(!u)throw new Error('Authentication required.');
- const token=await u.getIdToken();
- const headers={...(options.headers||{}),Authorization:`Bearer ${token}`};
- if(options.body&&!headers['Content-Type'])headers['Content-Type']='application/json';
- const response=await fetch(path,{...options,headers,cache:'no-store'});
- let payload=null;try{payload=await response.json()}catch(_){}
- if(!response.ok)throw authError(payload?.code||'MASTER_API_FAILED',payload?.message||`Master API failed (${response.status}).`);
- return payload||{};
-}
-function stableNumericId(value){
- const s=String(value||'');let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)};return Math.abs(h>>>0)||1;
-}
-function normalizeInitiativeRecord(x){
- const firestoreId=String(x?.firestoreId||x?.id||'');
- const rawId=x?.id;
- const numeric=Number.isFinite(Number(rawId))&&String(rawId)!==''?Number(rawId):stableNumericId(firestoreId);
- return {...x,id:numeric,firestoreId};
-}
-function normalizeLoungeRecord(x){
- const firestoreId=String(x?.firestoreId||x?.id||'');
- const rawId=x?.id;
- const numeric=Number.isFinite(Number(rawId))&&String(rawId)!==''?Number(rawId):stableNumericId(firestoreId);
- return {...x,id:numeric,firestoreId};
-}
-async function initiativesFor(uid){
- const payload=await apiRequest('/api/initiatives');
- return (payload.initiatives||[]).map(normalizeInitiativeRecord).filter(x=>!uid||x);
-}
-async function accessibleInitiatives(user){return initiativesFor(user?.uid||'')}
-async function syncAccessibleInitiativesToLegacyStore(user){
- const initiatives=await initiativesFor(user?.uid||'');
- writeLegacyAccess(initiatives,user?.uid);
- return initiatives;
-}
-async function syncLoungesToLegacyStore(){
- const payload=await apiRequest('/api/lounges');
- const lounges=(payload.lounges||[]).map(normalizeLoungeRecord);
- try{const d=JSON.parse(localStorage.getItem(GX_DATA_KEY)||'{}');d.lounges=lounges;localStorage.setItem(GX_DATA_KEY,JSON.stringify(d))}catch(_){}
- return lounges;
-}
-async function syncEdition1Masters(user){
- const results={};
- try{results.initiatives=await syncAccessibleInitiativesToLegacyStore(user)}catch(e){console.warn('[Edition1] initiatives sync failed',e)}
- try{results.lounges=await syncLoungesToLegacyStore()}catch(e){console.warn('[Edition1] lounges sync failed',e)}
- return results;
-}
-async function saveInitiativeRecord(action,record){return apiRequest('/api/initiatives',{method:'POST',body:JSON.stringify({action,...record})})}
-async function saveLoungeRecord(action,record){return apiRequest('/api/lounges',{method:'POST',body:JSON.stringify({action,...record})})}
-async function updateInitiativeSharing(initiativeId,patch){return apiRequest('/api/initiatives',{method:'POST',body:JSON.stringify({action:'UPDATE',firestoreId:String(initiativeId),...patch})})}
-async function notifyMention({actorId,actorName,recipientId,initiativeId,initiativeName,message}){
- const s=await init();if(!s.ready||!s.auth)throw new Error('Firebase unavailable');
- const u=s.auth.currentUser;if(!u)throw new Error('Authentication required.');
- const token=await u.getIdToken();
- const response=await fetch('/api/initiatives',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({action:'NOTIFY_MENTION',actorId,actorName,recipientId,initiativeId,initiativeName,message})});
- if(!response.ok)throw new Error('Mention notification failed.');return response.json();
-}
-async function inboxFor(uid){const payload=await apiRequest(`/api/inbox?uid=${encodeURIComponent(uid||'')}`);return payload.inbox||[]}
-window.GXFirebase={state,configured,init,currentUser,currentProfile,signInWithEmail,signInWithUsername,signOut,initiativesFor,accessibleInitiatives,syncAccessibleInitiativesToLegacyStore,syncLoungesToLegacyStore,syncEdition1Masters,saveInitiativeRecord,saveLoungeRecord,updateInitiativeSharing,notifyMention,inboxFor};
+async function initiativesFor(uid){const s=await init();if(!s.ready||!s.db||!uid)return[];const col=s.db.collection('initiatives');const [shared,mentioned]=await Promise.all([col.where('sharedWithUserIds','array-contains',String(uid)).get(),col.where('mentionedUserIds','array-contains',String(uid)).get()]);const map=new Map();[...shared.docs,...mentioned.docs].forEach(d=>map.set(d.id,{id:d.id,...d.data()}));return[...map.values()]}
+async function accessibleInitiatives(user){const u=user||await currentProfile();if(!u)return[];if(isExternal(u))return initiativesFor(u.uid);const s=await init();if(!s.ready||!s.db)return[];const snap=await s.db.collection('initiatives').get();return snap.docs.map(d=>({id:d.id,...d.data()}))}
+async function syncAccessibleInitiativesToLegacyStore(user){const u=user||await currentProfile();if(!u)return[];const initiatives=await accessibleInitiatives(u);if(isExternal(u))writeLegacyAccess(initiatives,u.uid);return initiatives}
+async function updateInitiativeSharing(initiativeId,patch){const s=await init();if(!s.ready||!s.db)throw new Error('Firebase unavailable');const allowed={};['visibility','sharedWithUserIds','mentionedUserIds'].forEach(k=>{if(Object.prototype.hasOwnProperty.call(patch||{},k))allowed[k]=Array.isArray(patch[k])?patch[k].map(String):patch[k]});allowed.updatedAt=window.firebase.firestore.FieldValue.serverTimestamp();await s.db.collection('initiatives').doc(String(initiativeId)).set(allowed,{merge:true});return allowed}
+async function notifyMention({actorId,actorName,recipientId,initiativeId,initiativeName,message}){const s=await init();if(!s.ready||!s.db)throw new Error('Firebase unavailable');const ref=s.db.collection('inbox').doc();await ref.set({type:'INITIATIVE_MENTION',actorId:String(actorId||''),actorName:String(actorName||''),recipientId:String(recipientId||''),initiativeId:String(initiativeId||''),initiativeName:String(initiativeName||''),subject:'Mention pada initiative',message:String(message||''),createdAt:window.firebase.firestore.FieldValue.serverTimestamp(),read:false,status:'UNREAD'});return ref.id}
+async function inboxFor(uid){const s=await init();if(!s.ready||!s.db||!uid)return[];const snap=await s.db.collection('inbox').where('recipientId','==',String(uid)).orderBy('createdAt','desc').get();return snap.docs.map(d=>({id:d.id,...d.data()}))}
+window.GXFirebase={state,configured,init,currentUser,currentProfile,signInWithEmail,signInWithUsername,signOut,initiativesFor,accessibleInitiatives,syncAccessibleInitiativesToLegacyStore,updateInitiativeSharing,notifyMention,inboxFor};
 })();

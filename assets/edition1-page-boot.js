@@ -5,6 +5,7 @@ const page=(location.pathname.split('/').pop()||'index.html').toLowerCase();
 const call=(name,...args)=>{try{const fn=window[name];if(typeof fn==='function')return fn(...args);console.warn('[Edition1 boot] missing',name)}catch(e){console.error('[Edition1 boot]',name,e)}};
 async function run(){
  try{if(window.GX_AUTH_READY)await window.GX_AUTH_READY}catch(e){console.warn('[Edition1 boot] auth readiness failed',e)}
+ try{await window.GEEdition1MasterBridge?.syncEdition1Masters?.()}catch(e){console.warn('[Edition1 boot] master sync failed',e)}
  try{window.GERefreshData?.()}catch(_){}
  if(page==='standar.html'){
    call('geEnsureStandardContentV248'); call('geEnsureStandardModalV248'); call('geApplyStandardContentV248'); call('renderPersonnel'); call('renderPersonnelReadiness'); call('renderSkyPriority'); call('renderTouchpointStandards'); call('renderAnnouncementLibraryV246');

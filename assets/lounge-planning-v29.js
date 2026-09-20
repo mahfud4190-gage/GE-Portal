@@ -295,16 +295,9 @@
     const obj={...(old||{}),...model,documentName,documentKey,id:old?.id||Date.now(),no:old?.no??'',priceDisplay:model.priceDisplay||old?.priceDisplay||''};
     if(old&&Array.isArray(old.priceSchedules)&&!model.priceSchedules.length)delete obj.priceSchedules;
     data.lounges=data.lounges||[];
-    try{
-      if(window.GXFirebase?.saveLoungeRecord){
-        const result=await window.GXFirebase.saveLoungeRecord(old?'UPDATE':'CREATE',{...obj,firestoreId:old?.firestoreId||''});
-        const saved=result?.lounge;
-        if(saved){obj={...obj,...saved,firestoreId:String(saved.firestoreId||old?.firestoreId||obj.firestoreId||obj.id)};obj.id=Number.isFinite(Number(obj.id))?Number(obj.id):(old?.id||Date.now())}
-      }
-      if(old){const i=data.lounges.findIndex(x=>String(x.id)===String(old.id));if(i<0)return false;data.lounges[i]=obj}
-      else data.lounges.push(obj);
-      save();
-    }catch(e){notice('Data Tidak Tersimpan','Perubahan tidak dapat disimpan: '+(e.message||'Unknown error'),'warning');return false}
+    if(old){const i=data.lounges.findIndex(x=>String(x.id)===String(old.id));if(i<0)return false;data.lounges[i]=obj}
+    else data.lounges.push(obj);
+    try{save()}catch(e){notice('Data Tidak Tersimpan','Perubahan tidak dapat disimpan: '+(e.message||'Unknown error'),'warning');return false}
     return true;
   }
   async function saveAdd(prefix){

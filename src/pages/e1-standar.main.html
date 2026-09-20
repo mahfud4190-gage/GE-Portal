@@ -1,0 +1,118 @@
+<div class="hero"><h2>Standar Layanan Garuda Indonesia</h2><p>Framework People • Process • Premises untuk menjaga konsistensi service delivery.</p></div><div class="grid3 standard-selector-grid">
+<button class="card standard-selector active" data-standard-panel="people" onclick="showStandardPanel('people',this)">
+<h3>People</h3><ul><li>Appearance</li><li>Seragam</li><li>Grooming</li><li>Service Attitude</li></ul>
+<span class="selector-action">Lihat Personnel Readiness</span>
+</button>
+<button class="card standard-selector" data-standard-panel="process" onclick="showStandardPanel('process',this)">
+<h3>Process</h3><ul><li>Opening</li><li>Assisting</li><li>Closing</li><li>Service Recovery</li></ul>
+<span class="selector-action">Lihat Detail Process</span>
+</button>
+<button class="card standard-selector" data-standard-panel="premises" onclick="showStandardPanel('premises',this)">
+<h3>Premises</h3><ul><li>Area Touch Point</li><li>Signage</li><li>Cleanliness</li><li>Visual Standard</li></ul>
+<span class="selector-action">Lihat Detail Premises</span>
+</button>
+<button class="card standard-selector" data-standard-panel="skypriority" onclick="showStandardPanel('skypriority',this)">
+<h3>SkyPriority</h3><ul><li>Priority Check-in</li><li>Priority Baggage</li><li>Priority Boarding</li><li>Priority Service</li></ul>
+<span class="selector-action">Lihat SkyPriority Reference</span>
+</button>
+</div>
+<div class="standard-detail-panel" id="standardProcessPanel" style="display:none">
+<div class="page-header"><span class="eyebrow">PROCESS STANDARD</span><h2>Ground Service Announcement</h2><p>Operational reference library untuk announcement layanan darat Garuda Indonesia.</p></div>
+<div class="card data-filter-card"><div class="data-filter-grid">
+<input id="announcementSearchV246" oninput="renderAnnouncementLibraryV246()" placeholder="Cari announcement"/>
+<select id="announcementTypeV246" onchange="renderAnnouncementLibraryV246()"><option value="">Semua Touch Point</option><option>Boarding Gate</option></select>
+<select id="announcementAircraftV246" onchange="renderAnnouncementLibraryV246()"><option value="">Semua Aircraft Type</option><option>Narrow Body</option><option>Wide Body</option></select>
+<select id="announcementLanguageV246" onchange="renderAnnouncementLibraryV246()"><option value="">Semua Bahasa</option><option>Bahasa Indonesia</option><option>English</option></select>
+</div></div>
+<div class="announcement-library-v246" id="announcementLibraryV246"></div>
+</div>
+<div class="standard-detail-panel" id="standardPremisesPanel" style="display:none">
+<div class="card standard-coming-panel">
+<h3>Premises Standard</h3>
+<p>Detail dashboard Premises akan dikembangkan pada tahap berikutnya. Struktur awal mencakup Area Touch Point, Signage, Cleanliness, dan Visual Standard.</p>
+</div>
+</div>
+<div class="standard-detail-panel" id="standardSkypriorityPanel" style="display:none">
+<div class="title"><div><h3>SkyPriority Service Reference</h3><div class="section-subtitle">Availability matrix berdasarkan master SkyPriority. Data aktual akan mengikuti file SkyTeam yang diunggah berikutnya.</div></div>
+<button class="btn" data-admin-only="" onclick="openPlanningRecordModal('skypriority')">Tambah SkyPriority</button>
+</div>
+<div class="card data-filter-card"><div class="data-filter-grid">
+<select id="skyAirportFilter" onchange="renderSkyPriority()"><option value="">Semua Airport</option></select>
+<select id="skyServiceFilter" onchange="renderSkyPriority()"><option value="">Semua Service Element</option></select>
+<select id="skyAvailableFilter" onchange="renderSkyPriority()"><option value="">Semua Availability</option><option>Available</option><option>Not Available</option><option>Partial</option></select>
+</div></div>
+<div class="card table-scroll"><table class="planning-table"><thead><tr><th>No</th><th>Airport</th><th>Service Element</th><th>Availability</th><th>Reference</th><th>Remark</th><th data-admin-only="">Kelola</th></tr></thead><tbody id="skyPriorityRows"></tbody></table><div id="skyPriorityEmpty"></div></div>
+</div>
+<section id="touchpointStandardSectionV247">
+<div class="title touchpoint-standard-title"><div><h3>Touch Point Standard Reference</h3><div class="section-subtitle">Planning reference per touch point: People, Process, Premises, Requirement, Applicability, dan supporting document.</div></div>
+<button class="btn" data-admin-only="" onclick="openPlanningRecordModal('touchpoint')">Tambah Standard</button>
+</div>
+<div class="card data-filter-card"><div class="data-filter-grid">
+<select id="tpStdTouchpointFilter" onchange="renderTouchpointStandards()"><option value="">Semua Touch Point</option></select>
+<input id="tpStdCategoryFilter" type="hidden" value="People"/>
+<input id="tpStdSearch" oninput="renderTouchpointStandards()" placeholder="Cari component / requirement"/>
+</div></div>
+<div class="card table-scroll"><table class="planning-table"><thead><tr><th>No</th><th>Touch Point</th><th>Category</th><th>Component</th><th>Requirement</th><th>Applicability</th><th>Reference</th><th>Document</th><th data-admin-only="">Kelola</th></tr></thead><tbody id="touchpointStandardRows"></tbody></table><div id="touchpointStandardEmpty"></div></div>
+</section>
+<div class="standard-detail-panel" id="standardPeoplePanel">
+<div class="title personnel-readiness-title">
+<div>
+<h3>Branch Office Personnel Readiness</h3>
+<div class="section-subtitle">Kesiapan fungsi utama di Airport/Branch Office berdasarkan master personil. Airport dengan kategori HO tidak dihitung.</div>
+</div>
+</div>
+<div class="personnel-readiness-kpis">
+<div class="card readiness-kpi"><span>Total Airport / BO</span><b id="readinessAirportCount">0</b></div>
+<div class="card readiness-kpi"><span>GM</span><b id="readinessGM">0</b></div>
+<div class="card readiness-kpi"><span>KK</span><b id="readinessKK">0</b></div>
+<div class="card readiness-kpi"><span>SS</span><b id="readinessSS">0</b></div>
+<div class="card readiness-kpi"><span>SV</span><b id="readinessSV">0</b></div>
+</div>
+<div class="readiness-layout">
+<div class="card readiness-coverage-card">
+<div>
+<span class="eyebrow">Organization Readiness</span>
+<h3>BO dengan 4 Fungsi Utama Lengkap</h3>
+<p>Fungsi utama yang digunakan untuk klasifikasi: GM, KK, SS, dan SV.</p>
+<div class="readiness-class-legend">
+<span class="class-a">BO A — 4 fungsi lengkap</span>
+<span class="class-b">BO B — 3 fungsi</span>
+<span class="class-c">BO C — 1–2 fungsi</span>
+</div>
+</div>
+<div class="coverage-donut" id="personnelCoverageDonut" style="--coverage:0">
+<div><b id="personnelCoveragePct">0%</b><span>BO A</span></div>
+</div>
+</div>
+<div class="classification-cards">
+<div class="card classification-card"><span>BO A</span><b id="classACount">0</b><small>4 fungsi utama</small></div>
+<div class="card classification-card"><span>BO B</span><b id="classBCount">0</b><small>3 fungsi utama</small></div>
+<div class="card classification-card"><span>BO C</span><b id="classCCount">0</b><small>1–2 fungsi utama</small></div>
+</div>
+</div>
+<div class="card data-filter-card">
+<div class="data-filter-grid">
+<input id="readinessSearch" oninput="renderPersonnelReadiness()" placeholder="Cari Airport / Branch Office"/>
+<select id="readinessClassFilter" onchange="renderPersonnelReadiness()">
+<option value="">Semua Klasifikasi</option><option>BO A</option><option>BO B</option><option>BO C</option>
+</select>
+</div>
+</div>
+<div class="card table-scroll">
+<table class="readiness-table">
+<thead><tr>
+<th>No</th><th>Airport</th><th>Klasifikasi</th><th>GM</th><th>KK</th><th>SS</th><th>SV</th><th>Total Personil</th>
+</tr></thead>
+<tbody id="readinessRows"></tbody>
+</table>
+</div>
+</div>
+<div class="modal-backdrop" id="announcementReferenceModalV246"><div class="modal-card"><button class="modal-x" onclick="closeAnnouncementReferenceV246()">×</button><span class="eyebrow">ANNOUNCEMENT REFERENCE</span><h2 id="announcementReferenceTitleV246"></h2><div id="announcementReferenceBodyV246"></div><div class="modal-actions sticky-actions"><button class="btn secondary" onclick="closeAnnouncementReferenceV246()">Tutup</button></div></div></div>
+<div class="modal-backdrop" id="planningRecordModal">
+<div class="modal-card planning-record-modal">
+<button class="modal-x" onclick="closePlanningRecordModal()">×</button>
+<h2 id="planningRecordTitle">Planning Record</h2>
+<div id="planningRecordForm"></div>
+</div>
+</div>
+</main></div><footer class="footer"><b>GROUND EXPERIENCE — GARUDA INDONESIA</b><br/>Portal Service Experience • Firebase / Firestore Production Data</footer><button aria-label="Kembali ke atas" class="back-to-top" id="backToTop">↑</button><script src="assets/firebase-config.js?v=e1"></script><script src="assets/firebase-client.js?v=e1"></script><script src="assets/auth.js?v=e1"></script><script src="assets/edition1-store.js?v=1"></script><script defer="defer" src="assets/edition1-files.js?v=1"></script><script defer="defer" src="assets/edition1-business-runtime.js?v=1"></script><script defer="defer" src="assets/access-assistance-p32.js?v=32.1"></script><script defer="defer" src="assets/edition1-portal-shell-entry.js?v=1"></script><script defer="defer" src="assets/edition1-portal-route-adapter.js?v=1"></script><script defer="defer" src="assets/edition1-overlay-manager.js?v=1"></script><script defer="defer" src="assets/edition1-page-boot.js?v=1"></script>

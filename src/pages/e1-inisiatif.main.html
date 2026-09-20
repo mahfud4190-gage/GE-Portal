@@ -1,0 +1,103 @@
+<section class="hero">
+<h2>Kegiatan &amp; Inisiatif</h2>
+<p>Pemantauan target, realisasi, pencapaian, dan kemajuan seluruh inisiatif Ground Experience.</p>
+</section>
+<div class="page-header">
+<h2>Ringkasan Kemajuan</h2>
+<p>Perbandingan target dan realisasi berdasarkan touch point.</p>
+</div>
+<div class="journey-tabs">
+<button class="journey-tab" data-journey="" onclick="setJourneyFilter('')">Semua Journey</button>
+<button class="journey-tab" data-journey="Pre-Journey" onclick="setJourneyFilter('Pre-Journey')">Pre-Journey</button>
+<button class="journey-tab" data-journey="Pre-Flight" onclick="setJourneyFilter('Pre-Flight')">Pre-Flight</button>
+<button class="journey-tab" data-journey="Post-Flight" onclick="setJourneyFilter('Post-Flight')">Post-Flight</button>
+<button class="journey-tab" data-journey="Post-Journey" onclick="setJourneyFilter('Post-Journey')">Post-Journey</button>
+</div>
+<div class="chart-grid" id="initiativeCharts"></div>
+<div class="title">
+<div><h3>Daftar Inisiatif</h3><div class="section-subtitle">Seluruh inisiatif Ground Experience</div></div>
+</div>
+<div class="card">
+<div class="searchbar">
+<input id="q" oninput="renderInitiatives()" placeholder="Cari inisiatif"/>
+<select id="ft" onchange="renderInitiatives()"><option value="">Semua Touch Point</option></select>
+<select id="fs" onchange="renderInitiatives()"><option value="">Semua Pencapaian</option><option>Below</option><option>Meet</option><option>Exceed</option></select>
+<button class="btn secondary" onclick="exportCSV()">Unduh CSV</button>
+</div><br/>
+<div class="title"><button class="btn" data-admin-only="" onclick="openInitiativeModalV224()">Tambah Inisiatif</button></div>
+<div class="initiative-grid-final" id="initRows"></div>
+</div>
+<!-- Proven V224 initiative workflow restored from the working R4 reference. -->
+<div class="initiative-dialog" id="initiativeModalV224">
+<div class="initiative-dialog-card initiative-modal-v224">
+<button class="modal-x" onclick="closeInitiativeModalV224()">×</button>
+<h2 id="initiativeModalTitleV224">Tambah Inisiatif</h2>
+<p class="section-subtitle">Master inisiatif, PIC, due date, target, realisasi, dan remark.</p>
+<input id="initiativeEditIdV224" type="hidden"/>
+<form onsubmit="event.preventDefault();saveInitiativeV224()">
+<div class="formgrid">
+<label>Nama Inisiatif<input id="initiativeNameV224" required=""/></label>
+<label>Touch Point<input id="initiativeTouchpointV224" required=""/></label>
+<label>Airport<input id="initiativeAirportV224" placeholder="Contoh: CGK"/></label>
+<label>PIC<input id="initiativePicV224" placeholder="Nama / Unit PIC"/></label>
+<label>Journey<select id="initiativeJourneyV224"><option>Pre-Journey</option><option>Pre-Flight</option><option>Post-Flight</option><option>Post-Journey</option></select></label>
+<label>Due Date<input id="initiativeDueDateV224" type="date"/></label>
+<label>Target (%)<input id="initiativePlanV224" max="100" min="0" required="" step="0.01" type="number"/></label>
+<label>Realisasi (%)<input id="initiativeRealV224" max="100" min="0" required="" step="0.01" type="number"/></label>
+<label class="span2">Remark<textarea id="initiativeRemarkV224" rows="4"></textarea></label>
+</div>
+<div class="modal-actions sticky-actions"><button class="btn">Simpan</button><button class="btn secondary" onclick="closeInitiativeModalV224()" type="button">Batal</button></div>
+</form>
+</div>
+</div>
+<div class="initiative-dialog" id="initiativeProgressModalV224">
+<div class="initiative-dialog-card initiative-progress-modal-v224">
+<button class="modal-x" onclick="closeInitiativeProgressV224()">×</button>
+<h2>Update Progress</h2><p class="section-subtitle" id="initiativeProgressNameV224"></p>
+<input id="initiativeProgressIdV224" type="hidden"/>
+<form onsubmit="event.preventDefault();saveInitiativeProgressV224()">
+<label>Realisasi (%)<input id="initiativeProgressRealV224" max="100" min="0" required="" step="0.01" type="number"/></label>
+<label>Remark<textarea id="initiativeProgressRemarkV224" rows="5"></textarea></label>
+<div class="modal-actions sticky-actions"><button class="btn">Simpan Progress</button><button class="btn secondary" onclick="closeInitiativeProgressV224()" type="button">Batal</button></div>
+</form>
+</div>
+</div>
+<div class="initiative-dialog" id="initiativeTimelineModalV224">
+<div class="initiative-dialog-card initiative-timeline-modal-v224">
+<button class="modal-x" onclick="closeInitiativeTimelineV224()">×</button>
+<div id="initiativeTimelineBodyV224"></div>
+</div>
+</div>
+<div class="initiative-dialog" id="initiativeStepModalV224">
+<div class="initiative-dialog-card initiative-step-modal-v224">
+<button class="modal-x" onclick="closeInitiativeStepV224()">×</button>
+<h2>Tambah Tahapan / Milestone</h2>
+<input id="initiativeStepParentIdV224" type="hidden"/><input id="initiativeStepEditIndexV224" type="hidden"/>
+<div class="formgrid">
+<label>Tahapan<input id="initiativeStepTitleV224" required=""/></label><label>PIC<input id="initiativeStepPicV224"/></label>
+<label>Tipe Tahapan<select id="geV254StepType"><option value="date">Single Due Date</option><option value="period">Period</option></select></label>
+<label>Start Date<input id="geV254StepStart" type="date"/></label><label>End Date<input id="geV254StepEnd" type="date"/></label>
+<label>Due Date<input id="initiativeStepDueDateV224" type="date"/></label><label>Estimasi Biaya<input id="geV254StepEstimate" min="0" step="1000" type="number"/></label>
+<label>Realisasi Biaya<input id="geV254StepActualCost" min="0" step="1000" type="number"/></label>
+<label>Status<select id="initiativeStepStatusV224"><option>Not Started</option><option>On Progress</option><option>Completed</option><option>Hold</option></select></label>
+<label class="span2">Keterangan<textarea id="initiativeStepRemarkV224" rows="4"></textarea></label>
+</div>
+<div class="modal-actions sticky-actions"><button class="btn" onclick="saveInitiativeStepV224()">Simpan Tahapan</button><button class="btn secondary" onclick="closeInitiativeStepV224()">Batal</button></div>
+</div>
+</div>
+<div class="initiative-dialog" id="initiativeDocModalV227">
+<div class="initiative-dialog-card initiative-doc-modal-v227">
+<button class="modal-x" onclick="closeInitiativeDocumentV227()">×</button><h2 id="initiativeDocModalTitleV227">Tambah Dokumen Inisiatif</h2>
+<input id="initiativeDocParentIdV227" type="hidden"/><input id="initiativeDocKindV227" type="hidden"/><input id="initiativeDocEditIndexV227" type="hidden"/>
+<div class="formgrid">
+<label>Jenis Dokumen<select id="initiativeDocTypeV227"></select></label><label>Nomor / Referensi<input id="initiativeDocReferenceV227"/></label>
+<label>Unit / Penerbit<input id="initiativeDocIssuerV227"/></label><label>Tanggal Dokumen<input id="initiativeDocDateV227" type="date"/></label>
+<label>Versi / Revisi<input id="initiativeDocVersionV227"/></label><label>Status<select id="initiativeDocStatusV227"><option>Current</option><option>Superseded</option><option>Draft</option></select></label>
+<label class="span2 initiative-doc-required-check-v227"><input id="initiativeDocRequiredV227" type="checkbox"/> Required document</label>
+<label class="span2">Keterangan<textarea id="initiativeDocDescriptionV227" rows="3"></textarea></label>
+<label class="span2">Lampiran Dokumen<input accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png" id="initiativeDocFileV227" type="file"/><small id="initiativeDocCurrentFileV227"></small></label>
+</div>
+<div class="modal-actions sticky-actions"><button class="btn" onclick="saveInitiativeDocumentV227()">Simpan Dokumen</button><button class="btn secondary" onclick="closeInitiativeDocumentV227()">Batal</button></div>
+</div>
+</div>
+</main></div><footer class="footer"><b>GROUND EXPERIENCE — GARUDA INDONESIA</b><br/>Portal Service Experience • Firebase / Firestore Production Data</footer><button aria-label="Kembali ke atas" class="back-to-top" id="backToTop">↑</button><script src="assets/firebase-config.js?v=e1"></script><script src="assets/firebase-client.js?v=e1"></script><script src="assets/auth.js?v=e1"></script><script src="assets/edition1-store.js?v=1"></script><script defer="defer" src="assets/edition1-files.js?v=1"></script><script defer="defer" src="assets/edition1-business-runtime.js?v=1"></script><script defer="defer" src="assets/access-assistance-p32.js?v=32.1"></script><script defer="defer" src="assets/edition1-portal-shell-entry.js?v=1"></script><script defer="defer" src="assets/edition1-portal-route-adapter.js?v=1"></script><script defer="defer" src="assets/edition1-overlay-manager.js?v=1"></script><script defer="defer" src="assets/edition1-page-boot.js?v=1"></script>

@@ -1,0 +1,58 @@
+<section class="lounge-open-heading-v237">
+  <div class="lounge-open-kicker-v237">MASTER DATA</div>
+  <h2>Daftar Penerbangan</h2>
+  <p>Referensi jadwal penerbangan untuk mendukung verifikasi Lounge/Tenant Access dan kondisi irregular operation.</p>
+</section>
+
+<div class="title">
+  <div><h3>Flight Information</h3><div class="section-subtitle">Flight, route, tanggal, STD, ETD, capacity, dan operational status.</div></div>
+  <div class="bulk-action-group" id="flightManageActionsV236">
+    <button class="btn lounge-primary-v236" onclick="openFlightModalV236()">Tambah Penerbangan</button>
+    <a class="btn secondary" href="templates/Template_Daftar_Penerbangan_Lounge_Tenant.csv" download>Unduh Template</a>
+    <button class="btn secondary" onclick="openFlightBulkV236()">Upload Data</button>
+  </div>
+</div>
+
+<div class="card data-filter-card lounge-filter-card-v236">
+  <div class="data-filter-grid">
+    <input id="flightSearchV236" placeholder="Cari flight / route" oninput="renderFlightsV236()">
+    <select id="flightAirportV236" onchange="renderFlightsV236()"><option value="">Semua Airport</option></select>
+    <select id="flightStatusFilterV236" onchange="renderFlightsV236()"><option value="">Semua Status</option></select>
+    <input id="flightDateFilterV236" type="date" onchange="renderFlightsV236()">
+  </div>
+</div>
+
+<div class="card table-scroll">
+<table class="planning-table"><thead><tr>
+  <th>No</th><th>Flight</th><th>Rute</th><th>Tanggal</th><th>STD</th><th>ETD</th><th>Capacity</th><th>Status</th><th>Kelola</th>
+</tr></thead><tbody id="flightRowsV236"></tbody></table>
+<div id="flightEmptyV236"></div>
+</div>
+
+<div id="flightModalV236" class="modal-backdrop"><div class="modal-card">
+<button class="modal-x" onclick="closeFlightModalV236()">×</button>
+<h2 id="flightModalTitleV236">Tambah Penerbangan</h2><input id="flightEditIdV236" type="hidden">
+<div class="formgrid">
+<label>Flight<input id="flightNoV236" placeholder="GA127"></label>
+<label>Tanggal<input id="flightDateV236" type="date"></label>
+<label>From<input id="flightFromV236" maxlength="3" placeholder="DJB"></label>
+<label>To<input id="flightToV236" maxlength="3" placeholder="CGK"></label>
+<label>STD<input id="flightStdV236" type="time"></label>
+<label>ETD<input id="flightEtdV236" type="time"></label>
+<label>Capacity<input id="flightCapacityV236" type="number" min="0"></label>
+<label>Status<select id="flightStatusV236"><option>Scheduled</option><option>On Time</option><option>Delayed</option><option>Postponed</option><option>Cancelled</option><option>Departed</option></select></label>
+</div>
+<div class="modal-actions sticky-actions"><button class="btn lounge-primary-v236" onclick="saveFlightV236()">Simpan</button><button class="btn secondary" onclick="closeFlightModalV236()">Batal</button></div>
+</div></div>
+
+<div id="flightBulkModalV236" class="modal-backdrop"><div class="modal-card bulk-import-modal-v223">
+<button class="modal-x" onclick="closeFlightBulkV236()">×</button><span class="bulk-import-eyebrow">Bulk Data Import</span>
+<h2>Upload Daftar Penerbangan</h2><p class="section-subtitle">Upload file CSV/XLSX dengan header sesuai template.</p>
+<div class="bulk-import-dropzone"><input id="flightBulkFileV236" type="file" accept=".xlsx,.csv" onchange="previewFlightBulkV236(this.files[0])"><div><b>Pilih XLSX atau CSV</b><span>Flight, From, To, Tanggal, STD, ETD, Capacity, Status</span></div></div>
+<div id="flightBulkPreviewV236" class="bulk-import-preview-v223"></div>
+<div class="modal-actions sticky-actions"><button id="flightBulkConfirmV236" class="btn lounge-primary-v236" onclick="confirmFlightBulkV236()" disabled>Import Data</button><button class="btn secondary" onclick="closeFlightBulkV236()">Batal</button></div>
+</div></div>
+</main></div>
+<footer class="footer"><b>GROUND EXPERIENCE — GARUDA INDONESIA</b><br>Portal Service Experience • Internal Ground Services Workspace</footer>
+<button id="backToTop" class="back-to-top" aria-label="Kembali ke atas" title="Kembali ke atas">↑</button>
+<script src="assets/v2554-stability.js?v=2.55.5" defer></script><script src="assets/overlay-v30.js?v=30.1" defer></script><script src="assets/access-assistance-p32.js?v=32.1" defer></script><script src="assets/p33-p37-presentation.js?v=37.1" defer></script><script src="assets/portal-shell.js?v=10.5" defer></script>

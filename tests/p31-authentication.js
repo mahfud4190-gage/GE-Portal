@@ -18,8 +18,8 @@ assert(firebaseClient.includes('signInWithEmailAndPassword'), 'Email/password Fi
 assert(firebaseClient.includes("fetch('/api/auth-session'"), 'Post-auth profile lookup must use secure session endpoint');
 assert(!firebaseClient.includes("collection('users').doc(String(uid)).get()"), 'Client must not read server-only user profiles directly');
 
-// Post-auth profile access is mediated by the authenticated session endpoint.
-// The live Firestore rule set is managed separately; this contract must not hard-code the historical server-only rule.
+// The identified root cause: client profile reads are blocked by the deployed rules.
+assert(rules.includes("match /users/{uid} { allow read, write: if false; }"), 'Server-only users rule must remain intact');
 assert(sessionFn.includes("db.collection('users').doc(decoded.uid).get()"), 'Server session endpoint must perform the profile lookup');
 assert(sessionFn.includes("'PROFILE_NOT_FOUND'"), 'Missing profile must be distinguished');
 assert(sessionFn.includes("'ACCOUNT_INACTIVE'"), 'Inactive account must be distinguished');

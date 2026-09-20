@@ -21,9 +21,9 @@ assert(netlify.includes('npm --prefix netlify/functions install --omit=dev --ign
 assert(netlify.includes('directory = "netlify/functions"'), 'Netlify functions directory must remain configured');
 assert(netlify.includes('from = "/api/*"') && netlify.includes('to = "/.netlify/functions/:splat"'), 'API rewrite must remain configured');
 
-// The profile lookup remains server-mediated; Firestore rules are not hard-coded here because the deployed rules permit authenticated profile access.
+// The server-only profile rule remains intact; do not expose users/{uid} from the browser.
 const rules = read('firestore.rules');
-assert(rules.includes('rules_version ='), 'Firestore rules file must remain present');
+assert(rules.includes("match /users/{uid} { allow read, write: if false; }"), 'Users profile must remain server-only');
 assert(!client.includes("collection('users').doc(String(uid)).get()"), 'Browser must not bypass server-only profile rules');
 
 console.log('P31A_SESSION_PROFILE_SERVICE_PASS');

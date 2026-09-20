@@ -1,0 +1,394 @@
+{
+  "planning-documents.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Planning Documents</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "station-360.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Station 360</title>\n\n<script src=\"assets/auth.js?v=2.57\"></script><script src=\"assets/data.js?v=2.57\"></script><script src=\"assets/core-v257.js?v=2.57\"></script><script src=\"assets/relationships-v257.js?v=2.57\"></script><script src=\"assets/network-v257.js?v=2.57\"></script><script src=\"assets/service-location-v257.js?v=2.57\"></script><script src=\"assets/service-chain-v257.js?v=2.57\"></script><script src=\"assets/shared-objects-v257.js?v=2.57\"></script><script src=\"assets/readiness-v257.js?v=2.57\"></script><script src=\"assets/agreement-v257.js?v=2.57\"></script><script src=\"assets/customer-experience-v257.js?v=2.57\"></script><script src=\"assets/station-360-v257.js?v=2.57\"></script>\n<script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "e1-kontak.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>Kontak</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "lounge-visitor.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Index</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\" class=\"lounge-tosca-theme lounge-reference-v237\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "asset-facility.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Asset & Facility · Ground Experience Portal</title><script>document.documentElement.classList.add('r9-boot')</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\"><style>\n.p39-note{font-size:12px;color:#64748b}.p39-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:end}.p39-toolbar label{display:flex;flex-direction:column;gap:5px;font-size:12px}.p39-toolbar input,.p39-toolbar select{min-width:150px}.p39-table-wrap{overflow:auto}.p39-table{width:100%;border-collapse:collapse}.p39-table th,.p39-table td{padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}.p39-table tr[data-id]{cursor:pointer}.p39-table tr[data-id]:hover{background:#f8fafc}.p39-table small{display:block;color:#64748b;margin-top:3px}.p39-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.p39-kpi{padding:14px}.p39-kpi small{display:block;color:#64748b}.p39-kpi b{font-size:24px;display:block;margin-top:4px}.p39-detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.p39-detail-grid div{padding:10px;background:#f8fafc;border-radius:10px}.p39-detail-grid small{display:block;color:#64748b;margin-bottom:4px}.p39-detail-grid b{font-weight:600}.p39-detail-grid .span2{grid-column:span 2}.p39-modal .modal-card{max-width:1100px;width:min(1100px,94vw)}.p39-error{margin-top:8px;color:#b91c1c;font-size:13px;white-space:pre-wrap}.p39-empty{padding:24px;text-align:center;color:#64748b}.p39-empty-large{display:flex;flex-direction:column;gap:6px}.p39-actions{display:flex;gap:8px;flex-wrap:wrap}.p39-danger{border-color:#b91c1c;color:#b91c1c}.ge-btn.compact{padding:6px 9px;font-size:12px}.ge-btn.danger{border-color:#b91c1c;color:#b91c1c}.ge-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}.p39-table td:last-child{white-space:nowrap}@media(max-width:1000px){.p39-kpis{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.p39-kpis,.p39-detail-grid{grid-template-columns:1fr}.p39-detail-grid .span2{grid-column:auto}}\n</style>",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "action-scenario.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>P3.2 Action & Scenario Planning</title><script src=\"assets/data.js\"></script><script src=\"assets/auth.js\"></script><script src=\"assets/core-v257.js\"></script><script src=\"assets/history-v257.js\"></script><script src=\"assets/permission-v257.js\"></script><script src=\"assets/improvement-v257.js\"></script>\n<style>body{background:#f5f7fa}.wrap{max-width:1450px;margin:auto;padding:24px}.head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.card,.panel{background:#fff;border:1px solid #dfe5eb;border-radius:12px;padding:16px}.panel{position:static;right:auto;top:auto;width:auto;max-width:none;box-shadow:none;backdrop-filter:none}.metric{font-size:26px;font-weight:700;color:#17324d}.muted{color:#6f7d8a}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.span2{grid-column:1/-1}.btn{border:1px solid #cdd6df;background:#fff;border-radius:8px;padding:8px 12px;cursor:pointer}.btn.primary{background:#f58220;color:#fff;border-color:#f58220}select,input,textarea{width:100%;box-sizing:border-box;border:1px solid #cfd8e1;border-radius:7px;padding:8px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid #e6ebef;text-align:left;vertical-align:top}th{background:#f7f9fb}.guard{background:#fff6e8;border:1px solid #f5d39b;padding:10px;border-radius:8px}.pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#eef3f7}@media(max-width:900px){.cards,.grid2,.formgrid{grid-template-columns:1fr}.span2{grid-column:auto}}</style>\n<script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "e1-inisiatif.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>Inisiatif</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "e1-planning-documents.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>Planning Documents</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "station-material.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Station Material</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "improvement-intake.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>P3.1 Improvement Intake & Opportunity</title><script src=\"assets/data.js\"></script><script src=\"assets/auth.js\"></script><script src=\"assets/core-v257.js\"></script><script src=\"assets/relationships-v257.js\"></script><script src=\"assets/history-v257.js\"></script><script src=\"assets/permission-v257.js\"></script><script src=\"assets/shared-objects-v257.js\"></script><script src=\"assets/readiness-v257.js\"></script><script src=\"assets/customer-experience-v257.js\"></script><script src=\"assets/improvement-v257.js\"></script>\n<style>body{background:#f5f7fa}.p31{max-width:1450px;margin:auto;padding:24px}.head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:18px 0}.card,.panel{background:#fff;border:1px solid #dfe5eb;border-radius:12px;padding:16px}.panel{position:static;right:auto;top:auto;width:auto;max-width:none;box-shadow:none;backdrop-filter:none}.metric{font-size:26px;font-weight:700;color:#17324d}.muted{color:#6f7d8a}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.btn{border:1px solid #cdd6df;background:white;border-radius:8px;padding:8px 12px;cursor:pointer}.btn.primary{background:#f58220;color:white;border-color:#f58220}select,input,textarea{width:100%;box-sizing:border-box;border:1px solid #cfd8e1;border-radius:7px;padding:8px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.span2{grid-column:1/-1}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid #e6ebef;text-align:left;vertical-align:top}th{background:#f7f9fb}.pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#eef3f7}.warn{background:#fff6e8;border:1px solid #f5d39b;padding:10px;border-radius:8px;margin:12px 0}@media(max-width:900px){.cards,.grid2,.formgrid{grid-template-columns:1fr}.span2{grid-column:auto}}</style>\n<script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "gaso-planning.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>GASO Planning</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "agreement-service.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Agreement & Document · Ground Experience Portal</title><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "e1-lounge-list.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>Index</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "cost-intelligence.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Cost Intelligence · Ground Experience Portal</title><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "data.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Data</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "post-journey.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Inisiatif</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "post-flight.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Inisiatif</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "e1-admin.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>Admin</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "map.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Map</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "berita.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Berita</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "e1-service-planning.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>Service Planning</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "customer-experience.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Customer Experience · Ground Experience Portal</title><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "cx-import.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Import CSI & NPS — Ground Experience Portal</title>\n\n<script src=\"assets/auth.js\"></script><script src=\"assets/data.js\"></script><script src=\"assets/core-v257.js\"></script><script src=\"assets/customer-experience-v257.js\"></script><script src=\"assets/tesseract.min.js\"></script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "e1-calendar.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>Inisiatif</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "lounge-flights.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Index</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\" class=\"lounge-tosca-theme lounge-reference-v237\"",
+    "mainTag": "<main class=\"main lounge-module-main lounge-reference-main-v237\">",
+    "shellType": "legacy"
+  },
+  "lounge-access.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Index</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"https://unpkg.com/@zxing/browser@0.1.5/umd/zxing-browser.min.js\" defer></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\" class=\"lounge-tosca-theme lounge-reference-v237\"",
+    "mainTag": "<main class=\"main lounge-module-main lounge-reference-main-v237\">",
+    "shellType": "legacy"
+  },
+  "e1-data.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>Data</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "network-stations.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Airport Experience Network</title>\n\n<script src=\"assets/auth.js?v=2.57\"></script><script src=\"assets/data.js?v=2.57\"></script><script src=\"assets/core-v257.js?v=2.57\"></script><script src=\"assets/relationships-v257.js?v=2.57\"></script><script src=\"assets/network-v257.js?v=2.57\"></script><script src=\"assets/service-location-v257.js?v=2.57\"></script><script src=\"assets/service-chain-v257.js?v=2.57\"></script><script src=\"assets/station-360-v257.js?v=2.57\"></script>\n<script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "audit-log.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Audit Log · Ground Experience Portal</title><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "standar.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Standar</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "planning-workspace.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Planning Workspace</title>\n<script src=\"assets/auth.js?v=2.57\"></script><script src=\"assets/data.js?v=2.57\"></script><script src=\"assets/core-v257.js?v=2.57\"></script><script src=\"assets/relationships-v257.js?v=2.57\"></script><script src=\"assets/permission-v257.js?v=2.57\"></script>\n<script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.20.1\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "e1-branch-office-planning.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>Branch Office Planning</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "index.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Ground Experience Portal</title>\n<script src=\"assets/firebase-config.js?v=e1\"></script><script src=\"assets/firebase-client.js?v=e1\"></script><script src=\"assets/auth.js?v=e1\"></script><script src=\"assets/edition1-store.js?v=1\"></script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\" id=\"dashboardRoot\">",
+    "shellType": "legacy"
+  },
+  "touchpoint.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Touchpoint</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script>\n<script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "e1-standar.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>Standar</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "bo-space.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Branch Office Space</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "service-planning.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Service Planning</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "inisiatif.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Inisiatif</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script>\n<script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "lounge-procurement.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Lounge &amp; Service Procurement</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "pre-flight.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Inisiatif</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "e1-gaso-planning.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>GASO Planning</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "portal-management.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Portal Management · Ground Experience Portal</title><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "lounge-purchase.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Index</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\" class=\"lounge-tosca-theme lounge-reference-v237\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "program-kerja.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Program Kerja — Ground Experience Portal</title>\n\n<script src=\"assets/auth.js\"></script><script src=\"assets/data.js\"></script><script src=\"assets/budget-cost-v257.js\"></script><script src=\"assets/xlsx.full.min.js\"></script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "airport-systems.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Airport Systems</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "master-data.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Master Data · Ground Experience Portal</title><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "lounge-list.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Index</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "branch-office-planning.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Branch Office Planning</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "e1-berita.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<title>Berita</title><meta charset=\"utf-8\"/><meta content=\"width=device-width,initial-scale=1\" name=\"viewport\"/><link href=\"assets/portal.css?v=e1\" rel=\"stylesheet\"/><link href=\"assets/edition1-pages.css?v=1\" rel=\"stylesheet\"/>",
+    "bodyAttrs": " id=\"top\" class=\"e1-page\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "edition1"
+  },
+  "layanan.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Layanan</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "pre-journey.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Inisiatif</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "budget-cost.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Budget & Financial · Ground Experience Portal</title><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "admin.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Admin</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script src=\"assets/user-access-p26.js?v=26.1\" defer></script><script src=\"assets/page-identity-v28.js?v=28.1\" defer></script><script src=\"assets/overlay-v30.js?v=30.1\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "kontak.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Kontak</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "readiness.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Readiness & Compliance · Ground Experience Portal</title><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": "",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  },
+  "calendar.html": {
+    "htmlAttrs": " lang=\"id\"",
+    "head": "<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Inisiatif</title><script src=\"assets/auth.js?v=2.54.1\"></script><script src=\"assets/data.js?v=2.54.1\"></script><script src=\"assets/core-v257.js?v=2.57-P1.1\" defer></script><script src=\"assets/relationships-v257.js?v=2.57-P1.2\" defer></script><script src=\"assets/compatibility-v257.js?v=2.57-P1.7\" defer></script><script src=\"assets/files.js?v=2.54.1\"></script><script src=\"assets/app.js?v=2.54.1\" defer></script><script src=\"assets/v254-project.js?v=2.54.4\" defer></script><script src=\"assets/v2544-modal-fix.js?v=2.54.4\" defer></script><script>document.documentElement.classList.add(\"r9-boot\")</script><link rel=\"stylesheet\" href=\"assets/portal.css?v=10.5\">",
+    "bodyAttrs": " id=\"top\"",
+    "mainTag": "<main class=\"main\">",
+    "shellType": "legacy"
+  }
+}

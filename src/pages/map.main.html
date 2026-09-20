@@ -1,0 +1,109 @@
+<div class="map-page-head"><div><h1>Airport Experience Network</h1><p>Peta operasional Airport dan Branch Office. Klik marker untuk melihat profil station, kesiapan, capability, agreement, dan informasi terkait.</p></div><div><a class="ge-btn" href="network-stations.html">Station List</a></div></div>
+
+<div class="map-toolbar">
+  <div class="map-filter-row">
+    <button class="map-chip active" data-region="" onclick="filterAirportMap('',this)">Semua Wilayah</button>
+    <button class="map-chip" data-region="Domestik" onclick="filterAirportMap('Domestik',this)">Domestik</button>
+    <button class="map-chip" data-region="Asia" onclick="filterAirportMap('Asia',this)">Asia</button>
+    <button class="map-chip" data-region="Middle East" onclick="filterAirportMap('Middle East',this)">Middle East</button>
+    <button class="map-chip" data-region="Europe" onclick="filterAirportMap('Europe',this)">Europe</button>
+    <button class="map-chip" data-region="Asia Pacific" onclick="filterAirportMap('Asia Pacific',this)">Asia Pacific</button>
+  </div>
+
+  <div class="map-search-tools">
+    <input id="mapAirportSearch" placeholder="Cari airport / kota / GM" oninput="renderAirportMapMarkers()">
+    <select id="mapStatusFilter" onchange="renderAirportMapMarkers()">
+      <option value="">Semua Status</option><option>Active</option><option>Inactive</option>
+    </select>
+    <select id="mapPendingFilter" onchange="renderAirportMapMarkers()">
+      <option value="">Semua Contract Status</option><option value="pending">Ada Pending</option><option value="clear">Tidak Ada Pending</option>
+    </select>
+    <select id="mapVendorFilterV244" onchange="renderAirportMapMarkers()">
+      <option value="">Semua Vendor / Provider</option>
+    </select>
+  </div>
+</div>
+
+
+
+<div class="airport-map-shell airport-map-shell-v216">
+  <div class="airport-map-v216" id="interactiveMap">
+    <div class="map-control-rail map-control-rail-v216" aria-label="Map controls">
+      <button type="button" onclick="geMapZoomStep(1)" title="Zoom In">+</button>
+      <button type="button" onclick="geMapZoomStep(-1)" title="Zoom Out">−</button>
+      <button type="button" onclick="geMapResetView()" title="Reset View">⌂</button>
+    </div>
+
+    <div class="map-viewport-v216" id="mapViewport">
+      <div class="map-stage-v216" id="mapStage">
+        <img class="geo-map-image-v216" src="assets/garuda_operational_map.svg" alt="Operational map Europe Asia Middle East Africa Indonesia Australia">
+        <div id="airportMarkerLayer"></div>
+      </div>
+    </div>
+
+    <div id="mapTooltip" class="map-tooltip map-tooltip-v216"></div>
+
+    <div class="map-legend-v216">
+      <strong>Legenda</strong>
+      <span><i class="legend-dot active"></i> Active Airport</span>
+      <span><i class="legend-dot inactive"></i> Inactive</span>
+      <span><i class="legend-dot pending"></i> Pending Contract</span>
+    </div>
+
+    <div class="map-zoom-label" id="mapZoomLabel">Operational Network • 100%</div>
+  </div>
+
+  <aside class="map-detail map-detail-v216" id="airportDetail">
+    <div class="map-detail-empty">
+      <div class="code">GA</div>
+      <h2>Pilih Airport</h2>
+      <p>Hover marker untuk melihat informasi singkat. Klik marker untuk menampilkan detail Airport/Branch Office.</p>
+    </div>
+  </aside>
+</div>
+
+<div class="map-region-cards map-region-cards-v216" id="mapRegionCards">
+  <button class="active" onclick="filterAirportMap('',this)"><b>Semua Wilayah</b><span id="countAllAirport">0 Airport</span></button>
+  <button onclick="filterAirportMap('Domestik',this)"><b>Domestik</b><span id="countDomesticAirport">0 Airport</span></button>
+  <button onclick="filterAirportMap('Asia',this)"><b>Asia</b><span id="countAsiaAirport">0 Airport</span></button>
+  <button onclick="filterAirportMap('Asia Pacific',this)"><b>Asia Pacific</b><span id="countAsiaPacificAirport">0 Airport</span></button>
+  <button onclick="filterAirportMap('Middle East',this)"><b>Middle East</b><span id="countMiddleEastAirport">0 Airport</span></button>
+  <button onclick="filterAirportMap('Europe',this)"><b>Europe</b><span id="countEuropeAirport">0 Airport</span></button>
+</div>
+
+
+
+<div id="airportMoveModal" class="map-move-modal-backdrop" aria-hidden="true">
+  <div class="map-move-modal-card" role="dialog" aria-modal="true" aria-labelledby="airportMoveTitle">
+    <button type="button" class="map-move-modal-x" onclick="geCloseMoveModal218()">×</button>
+    <div class="map-move-icon">⌖</div>
+    <div class="map-move-copy">
+      <span class="map-move-eyebrow">Super Admin • Map Adjustment</span>
+      <h2 id="airportMoveTitle">Pindahkan Titik Airport?</h2>
+      <p id="airportMoveDescription">Pilih tindakan untuk marker airport ini.</p>
+      <div class="map-move-airport">
+        <div><span>Airport</span><b id="airportMoveCode">-</b></div>
+        <div><span>Kota</span><b id="airportMoveCity">-</b></div>
+        <div><span>Koordinat Saat Ini</span><b id="airportMoveCoordinate">-</b></div>
+      </div>
+      <div class="map-move-actions">
+        <button type="button" class="btn secondary" onclick="geMoveViewDetail218()">Tidak, Lihat Detail</button>
+        <button type="button" class="btn" onclick="geMoveConfirm218()">Ya, Pindahkan Titik</button>
+      </div>
+      <small>Setelah mode pindah aktif, drag marker ke lokasi yang benar dan lepaskan untuk menyimpan.</small>
+    </div>
+  </div>
+</div>
+
+<div id="mapRelocationBanner218" class="map-relocation-banner-v218">
+  <div>
+    <span>Mode Pemindahan Titik</span>
+    <b id="mapRelocationBannerText218">Geser marker ke lokasi yang benar</b>
+  </div>
+  <button type="button" onclick="geCancelRelocate218()">Batal</button>
+</div>
+
+</main></div>
+<footer class="footer"><b>GROUND EXPERIENCE — GARUDA INDONESIA</b><br>Portal Service Experience • Internal Ground Services Workspace</footer>
+<button id="backToTop" class="back-to-top" aria-label="Kembali ke atas" title="Kembali ke atas">↑</button>
+<script src="assets/v2554-stability.js?v=2.55.5" defer></script><script src="assets/overlay-v30.js?v=30.1" defer></script><script src="assets/access-assistance-p32.js?v=32.1" defer></script><script src="assets/p33-p37-presentation.js?v=37.1" defer></script><script src="assets/portal-shell.js?v=10.5" defer></script>

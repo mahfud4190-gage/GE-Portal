@@ -1,9 +1,6 @@
 # User Import Canonical Format
 
-**Status:** CURRENT AUTHORITY — P26 account/access import only.
-
-This document defines the privileged **User Account & Access** import contract. It does not define the business-domain templates under `templates/`. For business-domain template authority, use [Template Authority](TEMPLATE_AUTHORITY.md).
-
+User import is designed for privileged administrators only.
 
 ## Canonical columns
 

@@ -139,12 +139,10 @@
     decorateStatusCells(table);
   }
 
-  function enhanceTables(root=document){ if(root.matches?.('table'))classifyTable(root); root.querySelectorAll?.('table').forEach(classifyTable); }
+  function enhanceTables(){ document.querySelectorAll('table').forEach(classifyTable); }
 
-  function applyStandaloneStatuses(root=document){
-    const selector='.pill,.planning-status,[class*="status-active"],[class*="status-inactive"],[class*="flight-status"],[class*="due-badge"],[class*="severity"],[class*="ge-badge"]';
-    if(root.matches?.(selector))decorateStatusElement(root);
-    root.querySelectorAll?.(selector).forEach(decorateStatusElement);
+  function applyStandaloneStatuses(){
+    document.querySelectorAll('.pill,.planning-status,[class*="status-active"],[class*="status-inactive"],[class*="flight-status"],[class*="due-badge"],[class*="severity"],[class*="ge-badge"]').forEach(decorateStatusElement);
   }
 
   function applyPageIdentity(){
@@ -215,22 +213,11 @@
     wirePlanningCards();
     wireContractFollowupContext();
     if(typeof MutationObserver==='function'){
-      const main=document.querySelector('body.final-v257 > .shell > .main,.shell > .main,.main');
-      if(main && main.dataset.gxP33Observer!=='1'){
-        main.dataset.gxP33Observer='1';
-        let queued=false;
-        const observer=new MutationObserver(records=>{
-          const added=records.flatMap(r=>[...r.addedNodes||[]].filter(n=>n.nodeType===1));
-          const relevant=added.length || records.some(r=>r.type==='characterData');
-          if(!relevant || queued)return;
-          queued=true;
-          (window.requestAnimationFrame||window.setTimeout)(()=>{
-            queued=false;
-            added.forEach(node=>{enhanceTables(node);applyStandaloneStatuses(node)});
-          },0);
-        });
-        observer.observe(main,{childList:true,subtree:true,characterData:true});
-      }
+      const observer=new MutationObserver(()=>{
+        enhanceTables();
+        applyStandaloneStatuses();
+      });
+      observer.observe(document.body,{childList:true,subtree:true});
     }
   }
 
@@ -239,130 +226,4 @@
   window.GX_P33_P37_INIT=init;
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,40));
   else setTimeout(init,40);
-})();
-
-/* P40 — Presentation runtime consolidation.
-   Presentation/navigation only. Does not change Firebase data, auth, or business state.
-   The shared shell is the single owner of navigation; this layer only removes
-   conflicting legacy transitions and keeps the sidebar responsive. */
-(function(){
-  'use strict';
-  const STYLE_ID='p40-presentation-runtime';
-  const INTERNAL_NAV_SELECTOR='.ge-nav-link, .side a[href], .r8-nav-scroll a[href]';
-
-  function installStyle(){
-    if(document.getElementById(STYLE_ID)) return;
-    const style=document.createElement('style');
-    style.id=STYLE_ID;
-    style.textContent=`
-      html body.final-v257 .side{
-        display:flex!important;
-        flex-direction:column!important;
-        min-height:0!important;
-        overflow:hidden!important;
-        overscroll-behavior:contain!important;
-      }
-      html body.final-v257 .r8-nav-scroll{
-        display:block!important;
-        flex:1 1 auto!important;
-        min-height:0!important;
-        height:auto!important;
-        overflow-y:auto!important;
-        overflow-x:hidden!important;
-        overscroll-behavior:contain!important;
-        -webkit-overflow-scrolling:touch!important;
-        scrollbar-width:auto!important;
-      }
-      html body.final-v257 .ge-nav-link,
-      html body.final-v257 .ge-nav-link:hover,
-      html body.final-v257 .ge-nav-link:focus,
-      html body.final-v257 .ge-nav-link.active{
-        transform:none!important;
-      }
-      html body.final-v257 .ge-nav-link,
-      html body.final-v257 .ge-nav-link:hover,
-      html body.final-v257 .ge-nav-link:focus,
-      html body.final-v257 .ge-nav-link.active{
-        transition:none!important;
-      }
-      html body.final-v257 .ge-nav-link.active{
-        box-shadow:none!important;
-      }
-      html body.final-v257 .ge-nav-link .ni,
-      html body.final-v257 .ge-nav-link:hover .ni,
-      html body.final-v257 .ge-nav-link:focus .ni{
-        transform:none!important;
-      }
-      html body.final-v257.r10-leaving,
-      html.r9-leaving body,
-      html body.r10-leaving{opacity:1!important;transition:none!important;animation:none!important}
-    `;
-    (document.head||document.documentElement).appendChild(style);
-  }
-
-  function isInternalNav(a){
-    if(!a || !a.matches(INTERNAL_NAV_SELECTOR)) return false;
-    if(a.target && a.target!=='_self') return false;
-    if(a.hasAttribute('download')) return false;
-    const raw=(a.getAttribute('href')||'').trim();
-    if(!raw || raw.startsWith('#') || /^(?:javascript:|mailto:|tel:|data:|blob:)/i.test(raw)) return false;
-    let url; try{url=new URL(raw,location.href)}catch(_){return false}
-    return url.origin===location.origin && !(url.pathname===location.pathname && url.search===location.search && url.hash);
-  }
-
-  function saveScroll(){
-    try{
-      const scroller=document.querySelector('.r8-nav-scroll,.side');
-      if(scroller)sessionStorage.setItem('GE_P40_NAV_SCROLL',String(scroller.scrollTop||0));
-    }catch(_){ }
-  }
-
-  function navigate(a){ saveScroll(); window.location.assign(a.href); }
-
-  function installNavigationGuard(){
-    if(window.__P40_NAV_GUARD__)return;
-    window.__P40_NAV_GUARD__=true;
-    window.addEventListener('click',e=>{
-      if(e.button!==0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey)return;
-      const a=e.target?.closest?.(INTERNAL_NAV_SELECTOR);
-      if(!isInternalNav(a))return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      navigate(a);
-    },true);
-    window.addEventListener('keydown',e=>{
-      if(e.key!=='Enter'&&e.key!==' ')return;
-      const a=e.target?.closest?.(INTERNAL_NAV_SELECTOR);
-      if(!isInternalNav(a))return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      navigate(a);
-    },true);
-  }
-
-  function installSidebar(){
-    const side=document.querySelector('body.final-v257 .side');
-    const scroller=side?.querySelector('.r8-nav-scroll')||side;
-    if(!scroller || scroller.dataset.p40Ready==='1')return;
-    scroller.dataset.p40Ready='1';
-    scroller.addEventListener('wheel',e=>{
-      if(scroller.scrollHeight<=scroller.clientHeight)return;
-      const before=scroller.scrollTop;
-      scroller.scrollTop+=e.deltaY;
-      if(scroller.scrollTop!==before)e.preventDefault();
-    },{passive:false});
-    try{
-      const saved=Number(sessionStorage.getItem('GE_P40_NAV_SCROLL'));
-      if(Number.isFinite(saved)&&saved>0)requestAnimationFrame(()=>{scroller.scrollTop=saved});
-    }catch(_){ }
-  }
-
-  function init(){
-    installStyle();
-    installNavigationGuard();
-    installSidebar();
-    setTimeout(installSidebar,200);
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
-  else init();
 })();

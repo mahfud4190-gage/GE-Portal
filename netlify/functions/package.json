@@ -1,8 +1,1 @@
-{
-  "name": "ground-experience-netlify-functions",
-  "private": true,
-  "engines": { "node": ">=20" },
-  "dependencies": {
-    "firebase-admin": "^13.5.0"
-  }
-}
+{"name":"ge-clean-functions","private":true,"engines":{"node":">=20"},"dependencies":{"firebase-admin":"^13.5.0"}}

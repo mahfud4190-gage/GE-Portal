@@ -6,23 +6,23 @@
 <script src="assets/firebase-config.js?v=1"></script>
 <script src="assets/firebase-client.js?v=2"></script>
 <script src="assets/auth.js?v=2.58"></script>
-<link rel="stylesheet" href="assets/portal.css?v=10.6">
+<link rel="stylesheet" href="assets/design.css">
 </head>
 <body>
-<section class="login-page"><div class="login-card"><div class="login-brand"><div class="login-logos"><img class="garuda-logo" src="assets/garuda-indonesia.png" alt="Garuda Indonesia"><img class="danantara-logo" src="assets/danantara.png" alt="Danantara Indonesia"></div><h1>Ground Experience Portal</h1><p>Internal Service Experience Workspace</p></div>
+<section class="login-page"><div class="login-card"><div class="login-brand"><div class="login-logos"><img class="garuda-logo" src="assets/brand/garuda-indonesia.png" alt="Garuda Indonesia"><img class="danantara-logo" src="assets/brand/danantara.png" alt="Danantara Indonesia"></div><h1>Ground Experience Portal</h1><p>Internal Service Experience Workspace</p></div>
 <form class="login-form" id="loginForm"><label for="loginUser">Username / Email</label><input id="loginUser" autocomplete="username" required><label for="loginPass">Password</label><input id="loginPass" type="password" autocomplete="current-password" required><button class="login-submit" id="loginSubmit" type="submit">Masuk</button><div id="loginError" class="login-error" role="alert"></div><button class="login-forgot" id="forgotPassword" type="button">Lupa password?</button></form>
 <div class="login-assistance" id="loginAssistance" hidden><div class="login-assistance-head"><strong>Bantuan Akses Akun</strong><button type="button" class="login-assistance-close" id="closeAssistance" aria-label="Tutup">×</button></div><p>Ajukan permintaan bantuan akses kepada administrator yang berwenang.</p><label for="assistanceIdentifier">Username / Email</label><input id="assistanceIdentifier" autocomplete="username"><label for="assistanceReason">Keterangan (opsional)</label><textarea id="assistanceReason" rows="3" maxlength="500" placeholder="Jelaskan kendala akses Anda."></textarea><button class="login-submit" id="assistanceSubmit" type="button">Kirim Permintaan</button><div id="assistanceMessage" class="login-assistance-message" role="status"></div></div>
 </div></section>
 <script>
 (async()=>{
-  try{await GXFirebase.init();const u=await GXFirebase.currentUser();if(u){const cached=gxGetSession();if(cached&&String(cached.uid||'')===String(u.uid))location.replace(gxConsumeReturnTo()||gxDefaultPage());else{try{await gxSyncFirebaseSession();location.replace(gxConsumeReturnTo()||gxDefaultPage())}catch(e){console.warn('Firebase session restore:',e)}}}}catch(e){console.warn('Firebase init:',e)}
+  try{await GXFirebase.init();const u=await GXFirebase.currentUser();if(u){const cached=gxGetSession();if(cached&&String(cached.uid||'')===String(u.uid))location.replace('index.html#/'+(gxConsumeReturnTo()||gxDefaultPage()));else{try{await gxSyncFirebaseSession();location.replace('index.html#/'+(gxConsumeReturnTo()||gxDefaultPage()))}catch(e){console.warn('Firebase session restore:',e)}}}}catch(e){console.warn('Firebase init:',e)}
 })();
 loginForm.addEventListener('submit',async e=>{
   e.preventDefault();loginError.style.display='none';loginSubmit.disabled=true;loginSubmit.textContent='Memproses…';
   try{
     const user=await gxAuthenticate(loginUser.value,loginPass.value);
     if(!user)throw new Error('INVALID_CREDENTIALS');
-    const session={...user,loginAt:Date.now(),authProvider:'firebase'};gxSetSession(session);const target=gxConsumeReturnTo()||gxDefaultPage();if(typeof gxAuthDiagnostic==='function')gxAuthDiagnostic('LOGIN_SESSION_CREATED',{uid:String(session.uid||''),rawRole:session.role??null,normalizedRole:session.role??null,accessLevel:session.accessLevel??null,scopeType:session.scopeType??null,redirectTarget:target,dashboardPOV:window.GXDashboardPOV?window.GXDashboardPOV(session):'unresolved'});gxAuditDirect('Login','Authentication','Session','User logged in',session);location.replace(target);
+    const session={...user,loginAt:Date.now(),authProvider:'firebase'};gxSetSession(session);const rawTarget=gxConsumeReturnTo()||gxDefaultPage();const target='index.html#/'+rawTarget;if(typeof gxAuthDiagnostic==='function')gxAuthDiagnostic('LOGIN_SESSION_CREATED',{uid:String(session.uid||''),rawRole:session.role??null,normalizedRole:session.role??null,accessLevel:session.accessLevel??null,scopeType:session.scopeType??null,redirectTarget:target,dashboardPOV:window.GXDashboardPOV?window.GXDashboardPOV(session):'unresolved'});gxAuditDirect('Login','Authentication','Session','User logged in',session);location.replace(target);
   }catch(err){
     const messages={
       INVALID_CREDENTIALS:'Username/email atau password tidak sesuai.',
@@ -73,5 +73,5 @@ assistanceSubmit.addEventListener('click',async()=>{
   }finally{assistanceSubmit.disabled=false;assistanceSubmit.textContent='Kirim Permintaan';}
 });
 </script>
-<script src="assets/v2544-modal-fix.js?v=2.54.4" defer></script><script src="assets/v2554-stability.js?v=2.55.5" defer></script><script src="assets/portal-shell.js?v=10.5" defer></script>
+
 </body></html>

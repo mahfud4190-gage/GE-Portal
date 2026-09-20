@@ -1,20 +1,11 @@
-# Ground Experience Portal — R3 Functional Clean
+# GE Portal R3 Locked Rebuild
 
-Fokus R3 hanya satu: mempertahankan fungsi/data/design product P40 sambil menghapus jalur runtime lama yang saling menimpa.
+Clean rebuild from P40 reference.
 
-## Firestore contract yang dipakai
-- User profile: `users/{uid}`
-- Business data: `portalData/{group}/records/{recordId}`
-- Metadata: `portalMetadata/...` (disiapkan untuk modul metadata berikutnya)
-
-R3 TIDAK membaca business collection dari root Firestore. Ini disesuaikan dengan database aktual dan rules yang diberikan.
-
-## Runtime
-- Satu `index.html`
-- Satu router/shell, tidak berpindah ke HTML lama
-- Tidak ada legacy theme fallback
-- Modal global fixed/centered
-- Module pages membaca group Firestore yang sesuai
-
-## Deploy
-Gunakan branch testing. Netlify Functions membutuhkan Firebase service account environment variables yang sama dengan deployment sebelumnya.
+- Physical HTML: 2 (`index.html`, `login.html`)
+- Logical page routes preserved: 50
+- Edition 1 visual baseline retained and consolidated into `assets/design.css`.
+- Proven Firebase login flow retained.
+- Business data path: `portalData/<group>/records/<id>`; users remain `users/<uid>`.
+- No e1 duplicate HTML, route adapter, modal-fix, stability override, compatibility chain, or old-page redirect layer.
+- P40 source package is reference only and is not included.

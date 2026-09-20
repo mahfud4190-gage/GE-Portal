@@ -1,11 +1,49 @@
-import {login,session} from './api.js';import * as M from './modules.js';import {$,esc} from './ui.js';
-const routes={
- dashboard:['Dashboard',M.dashboard,'OVERVIEW'],customer:['Customer Experience',e=>M.generic(e,'customer','Customer Experience','touchpoints'),'EXPERIENCE & INSIGHT'],stations:['Airport Experience Network',e=>M.generic(e,'stations','Airport Experience Network','airports'),'EXPERIENCE & INSIGHT'],station360:['Station Profile / 360',e=>M.generic(e,'station360','Station Profile / 360','airports'),'EXPERIENCE & INSIGHT'],
- readiness:['Readiness Assessment',e=>M.generic(e,'readiness','Readiness Assessment','touchpointStandards'),'READINESS & STANDARDS'],capability:['Capability & Standards',e=>M.generic(e,'capability','Capability & Standards','touchpointStandards'),'READINESS & STANDARDS'],standards:['Service Standard',e=>M.generic(e,'standards','Service Standard','standardContent'),'READINESS & STANDARDS'],
- initiatives:['Initiative & Improvement',M.initiatives,'IMPROVEMENT & PLANNING'],opportunity:['Improvement Opportunity',e=>M.generic(e,'opportunity','Improvement Opportunity','initiatives'),'IMPROVEMENT & PLANNING'],calendar:['Calendar & Project Tracking',e=>M.generic(e,'calendar','Calendar & Project Tracking','projectEvents'),'IMPROVEMENT & PLANNING'],planning:['Planning Workspace',M.planning,'IMPROVEMENT & PLANNING'],documents:['Planning Documents',e=>M.generic(e,'documents','Planning Documents','documents'),'IMPROVEMENT & PLANNING'],lounge:['Lounge / Tenant',M.lounge,'IMPROVEMENT & PLANNING'],visitor:['Lounge / Tenant Visitor',e=>M.generic(e,'visitor','Lounge / Tenant Visitor','loungeVisitors'),'IMPROVEMENT & PLANNING'],purchase:['Lounge Purchase',e=>M.generic(e,'purchase','Lounge Purchase','loungePurchases'),'IMPROVEMENT & PLANNING'],materials:['Station Material',e=>M.generic(e,'materials','Station Material','stationMaterials'),'IMPROVEMENT & PLANNING'],bospace:['Branch Office Space',e=>M.generic(e,'bospace','Branch Office Space','boSpaces'),'IMPROVEMENT & PLANNING'],procurement:['Service Procurement',e=>M.generic(e,'procurement','Service Procurement','serviceProcurement'),'IMPROVEMENT & PLANNING'],systems:['Airport Systems',e=>M.generic(e,'systems','Airport Systems','airportSystems'),'IMPROVEMENT & PLANNING'],
- news:['Berita & Informasi',e=>M.generic(e,'news','Berita & Informasi','news'),'COMMUNICATION'],inbox:['Inbox',e=>M.generic(e,'inbox','Inbox','inbox'),'COMMUNICATION'],data:['Data Administration',e=>M.generic(e,'data','Data Administration','documents'),'ADMINISTRATION'],admin:['User Management',M.admin,'ADMINISTRATION']};
-function nav(){let last='';return Object.entries(routes).map(([k,v])=>{const h=v[2]!==last?`<div class="nav-group">${esc(v[2])}</div>`:'';last=v[2];return h+`<button data-route="${k}"><span class="dot"></span>${esc(v[0])}</button>`}).join('')}
-function loginView(){document.body.innerHTML='<div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>';$('#app').innerHTML=`<main class="login"><section class="login-brand"><img src="assets/brand/garuda-horizontal-white.png"><div><h1>GROUND EXPERIENCE PORTAL</h1><p>One portal. One current theme. Firestore as source of truth.</p></div></section><form class="login-card" id="login"><h2>Welcome Back</h2><p class="muted">Sign in to continue to Ground Experience Portal.</p><label class="field">Email / Username<input id="identity" required autocomplete="username"></label><label class="field">Password<input id="password" type="password" required autocomplete="current-password"></label><div id="err" class="error"></div><button class="btn primary wide">Sign In</button></form></main>`;$('#login').onsubmit=async e=>{e.preventDefault();const b=e.submitter;b.disabled=true;try{await login($('#identity').value,$('#password').value);shell()}catch(x){$('#err').textContent=x.message}finally{b.disabled=false}}}
-function shell(){document.body.innerHTML='<div id="app"></div><div id="modal-root"></div><div id="toast-root"></div>';$('#app').innerHTML=`<div class="layout"><aside class="side"><div class="side-brand"><img src="assets/brand/garuda-horizontal-white.png"></div><nav class="nav">${nav()}</nav></aside><section class="main"><header class="top"><div><h2>GROUND EXPERIENCE PORTAL</h2><small id="crumb">System Dashboard</small></div><div class="user"><div class="avatar">${esc((session.profile?.name||'SA').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase())}</div><div><b>${esc(session.profile?.name||session.profile?.username||'User')}</b><small>${esc(session.profile?.role||'')}</small></div><button class="btn ghost" id="logout">Sign Out</button></div></header><main class="content" id="content"></main></section></div>`;document.querySelectorAll('[data-route]').forEach(b=>b.onclick=()=>location.hash=b.dataset.route);$('#logout').onclick=M.logout;route()}
-async function route(){if(!session.token)return loginView();const key=location.hash.slice(1)||'dashboard',r=routes[key]||routes.dashboard;document.querySelectorAll('[data-route]').forEach(b=>b.classList.toggle('active',b.dataset.route===key));const cr=$('#crumb');if(cr)cr.textContent=r[0];const el=$('#content');el.innerHTML='<div class="loading-card"><div class="spinner"></div><span>Memuat data Firestore…</span></div>';try{await r[1](el)}catch(e){el.innerHTML=`<div class="card error-card"><h2>Data tidak dapat dimuat</h2><p>${esc(e.message)}</p><p class="muted">Route tetap aktif; tidak ada fallback ke old theme/page.</p></div>`}}
-window.addEventListener('hashchange',route);session.token?shell():loginView();
+(function(){'use strict';
+const E1={
+ 'standar.html':['services',['airports','personnel','touchpointStandards','skyPriority','announcements','standardContent']],
+ 'inisiatif.html':['initiatives',['initiatives','touchpoints','documents']],
+ 'service-planning.html':['planning',['stationMaterials','lounges','boSpaces','airportSystems','touchpointStandards','documents','serviceProcurement']],
+ 'calendar.html':['initiatives',['initiatives','projectEvents','touchpoints']],
+ 'planning-documents.html':['planning',['documents','initiatives']],
+ 'data.html':['data',['airports','personnel']],
+ 'admin.html':['admin',['users','inbox','auditLogs','portalManagerR2','airports','lounges']],
+ 'berita.html':['news',['articles','announcements','faqs','news','documents']],
+ 'kontak.html':['contact',['inbox']],
+ 'lounge-list.html':['planning',['lounges','loungeVisitors','serviceProcurement','documents']],
+ 'branch-office-planning.html':['planning',['lounges','boSpaces','serviceProcurement','airportSystems','stationMaterials','documents']],
+ 'gaso-planning.html':['planning',['gasoMaster','gasoServiceSupport','gasoPlanningService','airports','documents']]
+};
+const GENERAL={
+ 'index.html':['airports','initiatives','touchpoints','documents','lounges','loungeVisitors','stationMaterials','airportSystems','news','personnel','skyPriority'],
+ 'planning-workspace.html':['lounges','boSpaces','serviceProcurement','airportSystems','stationMaterials','documents'],
+ 'customer-experience.html':['touchpoints','airports'], 'network-stations.html':['airports'], 'station-360.html':['airports','touchpoints','personnel'],
+ 'readiness.html':['airports','personnel'], 'service-capability.html':['airports','touchpointStandards'], 'master-data.html':['airports','touchpoints','personnel'],
+ 'audit-log.html':['auditLogs'], 'portal-management.html':['portalManagerR2'], 'improvement-intake.html':['initiatives','touchpoints'], 'budget-cost.html':['initiatives'], 'cost-intelligence.html':['initiatives']
+};
+function routeFromLocation(){let r=(location.hash||'').replace(/^#\/?/,'').split('?')[0];return (r&&window.GE_PAGES[r])?r:'index.html'}
+function setRoute(r,push=true){if(!window.GE_PAGES[r])r='index.html';window.GE_ROUTE=r;if(push&&location.hash!=='#/'+r)history.pushState(null,'','#/'+r);renderRoute(r)}
+function intercept(){document.addEventListener('click',e=>{const a=e.target.closest('a[href]');if(!a)return;const raw=(a.getAttribute('href')||'').split('?')[0].split('#')[0];if(window.GE_PAGES[raw]){e.preventDefault();setRoute(raw)}})}
+function rerender(r){
+ if(r==='inisiatif.html'){window.renderInitiatives?.();window.geApplyInitiativePresentationV224?.()}
+ else if(r==='standar.html'){window.renderTouchpointStandards?.();window.renderPersonnelReadiness?.();window.renderSkyPriority?.();window.geEnsureStandardModalV248?.();window.geApplyStandardContentV248?.();window.renderAnnouncementLibraryV246?.()}
+ else if(r==='service-planning.html'||r==='planning-workspace.html'){window.geRenderPlanningPage?.();window.renderStationMaterials?.()}
+ else if(r==='calendar.html'){window.geV251Ensure?.();window.geV251RenderTouchpointPage?.();window.geV251InitCalendar?.();window.geCalRenderV2533?.();window.geCalRenderKPIV2534?.()}
+ else if(r==='planning-documents.html'){window.renderPlanningDocuments?.()}
+ else if(r==='data.html'){window.renderAirports?.();window.renderPersonnel?.();window.renderDocumentsAdmin?.()}
+ else if(r==='admin.html'){window.renderAdminOverview?.();window.renderAdminInbox?.();window.renderAuditLogs?.();window.p26RenderUsers?.();window.pmLoadPageR2?.()}
+ else if(r==='berita.html'){window.renderArticles?.();window.renderAnnouncements?.();window.renderFaqs?.();window.renderAnnouncementLibraryV246?.()}
+ else if(r==='lounge-list.html'){window.renderLounges?.();window.renderLoungeVisitors?.();window.renderLoungePriceSummaryV243?.();window.renderLoungeCardsV237?.()}
+ else if(r==='branch-office-planning.html'){window.geRenderPlanningPage?.();window.renderAirportSystems?.();window.renderLoungeProcurement?.();window.renderBOSpaces?.()}
+ else if(r==='gaso-planning.html'){window.renderGasoAllV231?.()}
+}
+async function hydrate(r){const cols=E1[r]?.[1]||GENERAL[r]||[];if(!cols.length)return;await window.GEStore.hydrate(cols)}
+async function renderRoute(r){document.body.classList.add('route-loading');try{const p=window.GE_PAGES[r];document.title=(p?.title||'Ground Experience')+' — Ground Experience Portal';const main=document.querySelector('main.main');if(!main)return;main.innerHTML=p?.html||'<section class="hero"><h2>Page unavailable</h2></section>';await hydrate(r);window.GE_ROUTE=r;window.dispatchEvent(new CustomEvent('ge-route-ready',{detail:{route:r}}));rerender(r);window.scrollTo({top:0,behavior:'auto'});document.querySelectorAll('.side a[href]').forEach(a=>a.classList.toggle('active',(a.getAttribute('href')||'').split('?')[0]===r));}catch(e){console.error(e);const main=document.querySelector('main.main');if(main)main.insertAdjacentHTML('afterbegin','<div class="e1-data-status" data-error="1">'+String(e.message||e)+'</div>')}finally{document.body.classList.remove('route-loading')}}
+async function start(){
+ await window.GXFirebase.init();const u=await window.GXFirebase.currentUser();if(!u){location.replace('login.html');return}
+ try{await window.gxSyncFirebaseSession()}catch(e){const c=window.gxGetSession?.();if(!c){location.replace('login.html');return}}
+ window.GE_ROUTE=routeFromLocation();
+ // shell() is initialized by shell.js DOM ready; force after session if exposed only via init timing.
+ await renderRoute(window.GE_ROUTE); intercept(); window.addEventListener('hashchange',()=>{const r=routeFromLocation();if(r!==window.GE_ROUTE){window.GE_ROUTE=r;renderRoute(r)}});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();

@@ -1,9 +1,5 @@
 # P38 Local Development — Production-Parity Workflow
 
-## P40B-1 documentation-only constraint
-
-The current corporate-managed device does not permit installation of Node.js / Netlify CLI. This is an environment constraint, not an application defect. P40B-1 does not add a local authentication bypass, fake credentials, a Super Admin bypass, or any application workaround. Browser/authenticated production-parity validation remains pending until an approved compatible environment is available.
-
 ## Quick start
 
 Prerequisites:

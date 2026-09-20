@@ -2,8 +2,6 @@
 
 This repository preserves the existing Ground Experience Portal as a **static multi-page application**. The refactor is packaging/maintenance focused: page filenames, HTML structure, CSS, assets, data compatibility layer, Firebase integration, business logic, and Netlify Functions are intentionally preserved.
 
-> **P40B-1 Documentation Authority:** Start with [`docs/README.md`](docs/README.md) for the current documentation map. The canonical development source is this P39-derived repository after approved documentation-only normalization; generated deployment artifacts and old ZIP packages are not canonical source. P39 and P40A remain locked. P40B-1 does not change runtime behavior.
-
 ## Architecture
 
 - **Frontend:** physical `.html` pages + existing JavaScript/CSS/assets.

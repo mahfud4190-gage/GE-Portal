@@ -1,7 +1,5 @@
-# P40 — Edition 1 Canonical Runtime
+# P40 Edition 1 — Canonical Runtime Replacement
 
-The twelve Edition 1 pages use one shared shell authority (`assets/portal-shell.js?v=10.20.1`) and retain their existing page-specific business/data runtime.
+This replacement uses Planning Workspace as the execution-graph control. The 12 Edition 1 pages use empty canonical shell hosts and a deterministic foundation. The legacy monolithic app runtime is converted to a passive business-definition library; page initialization is owned by one Edition 1 page boot. Legacy compatibility/project/stability runtime is removed from the 12-page graph. Firebase/Auth/Firestore source files are unchanged.
 
-The former R8/R9/R10/R11/R12 shell bootstrap/recovery chain is not part of the canonical runtime.
-
-Validation is performed by `tests/p40-edition1-canonical-runtime.js`.
+The package does not create production data, fake authentication, or bypass access controls.

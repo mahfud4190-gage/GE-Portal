@@ -13,7 +13,7 @@
     const flagged=['belum ada pks','sedang dalam proses','masih dalam proses','belum dilakukan perpanjangan','dokumen tidak valid','belum ada ba','draft pks','proses perpanjangan'].some(k=>remarks.includes(k));
     return expired||invalidStatus||missingDoc||flagged;
   }
-  function render(){
+  window.renderServicePlanningEdition1=function render(){
     if(!window.GEStore?.get)return;
     const data=window.GEStore.get();
     const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=String(v);};
@@ -29,5 +29,4 @@
     set('snapshotAirport',(data.airports||[]).length);
     set('snapshotPlanningMaster',planningMaster);
   }
-  window.addEventListener('DOMContentLoaded',render,{once:true});
 })();

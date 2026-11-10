@@ -12,6 +12,35 @@
     standardContent:{},portalManagerR2:{},contactMessages:[],guestbook:[]
   };
   const baseline={}; let hydrated=false; let pending=Promise.resolve();
+  // Cache is a short-lived READ optimization, never a write source.
+  // Namespace by Firebase project + authenticated UID, and expire quickly.
+  const CACHE_PREFIX='GX_E1_READ_V1:';
+  const CACHE_TTL_MS=120000;
+  const SENSITIVE_COLLECTIONS=new Set(['users','auditLogs','inbox','contactMessages','guestbook','personnel']);
+  const cacheKeys=new Set();
+  async function cacheIdentity(){
+    const u=await window.GXFirebase?.currentUser?.();
+    if(!u)throw new Error('Authentication required.');
+    return `${window.GX_FIREBASE_CONFIG?.projectId||'unknown'}:${u.uid}`;
+  }
+  function cachedRead(key){
+    try{
+      const raw=sessionStorage.getItem(key); if(!raw)return null;
+      const entry=JSON.parse(raw);
+      if(!entry||Date.now()>=entry.expiresAt||!entry.collections){sessionStorage.removeItem(key);return null;}
+      return clone(entry.collections);
+    }catch(_){return null;}
+  }
+  function clearReadCache(){
+    try{
+      const prefix=CACHE_PREFIX+`${window.GX_FIREBASE_CONFIG?.projectId||'unknown'}:`;
+      for(let i=sessionStorage.length-1;i>=0;i--){
+        const k=sessionStorage.key(i);if(k&&k.startsWith(prefix))sessionStorage.removeItem(k);
+      }
+    }catch(_){}
+    cacheKeys.clear();
+  }
+
   const MAP={events:'projectEvents',projectEvents:'projectEvents'};
   const clone=x=>x===undefined?undefined:JSON.parse(JSON.stringify(x));
   function collKey(k){if(k==='portalManagerR2')return 'portalManager';return MAP[k]||k}
@@ -31,15 +60,24 @@
   }
   async function apiGet(keys){
     const list=[...new Set(keys.map(collKey))];
+    const identity=await cacheIdentity();
+    const cacheKey=CACHE_PREFIX+identity+':'+list.slice().sort().join(',');
+    const mayCache=!list.some(c=>SENSITIVE_COLLECTIONS.has(c));
+    const hit=mayCache?cachedRead(cacheKey):null;
+    if(hit)return hit;
     const t=await token();
     const r=await fetch('/api/edition1-data?collections='+encodeURIComponent(list.join(',')),{headers:{Authorization:'Bearer '+t},cache:'no-store'});
-    const p=await r.json().catch(()=>({})); if(!r.ok)throw new Error(p.message||`Data request failed (${r.status}).`);
-    return p.collections||{};
+    const p=await r.json().catch(()=>({}));
+    if(!r.ok||!p.collections)throw new Error(p.message||`Data request failed (${r.status}).`);
+    // Validate response shape; missing collection is not equivalent to an empty collection.
+    for(const name of list)if(!Array.isArray(p.collections[name]))throw new Error(`Invalid data response: ${name}`);
+    if(mayCache)try{sessionStorage.setItem(cacheKey,JSON.stringify({expiresAt:Date.now()+CACHE_TTL_MS,collections:p.collections}));cacheKeys.add(cacheKey)}catch(_){}
+    return p.collections;
   }
   async function apiPost(body){
     const t=await token();
     const r=await fetch('/api/edition1-data',{method:'POST',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const p=await r.json().catch(()=>({})); if(!r.ok)throw new Error(p.message||`Save request failed (${r.status}).`); return p.result;
+    const p=await r.json().catch(()=>({})); if(!r.ok)throw new Error(p.message||`Save request failed (${r.status}).`); clearReadCache(); return p.result;
   }
   function indexById(rows){const m=new Map();(rows||[]).forEach(x=>m.set(String(x.id),x));return m}
   function same(a,b){return JSON.stringify(a)===JSON.stringify(b)}
@@ -58,7 +96,8 @@
         if(!pm.has(id)) await apiPost({collection,action:'CREATE',id,data:row});
         else if(!same(pm.get(id),row)) await apiPost({collection,action:'UPDATE',id,data:row});
       }
-      for(const id of pm.keys()) if(!nm.has(id)) await apiPost({collection,action:'DELETE',id,data:{}});
+      // CRITICAL: absence from a local snapshot NEVER authorizes remote deletion.
+      // Deletion must use a separately approved explicit operation (currently server-disabled).
       baseline[key]=clone(next);
     }
   }
@@ -71,10 +110,13 @@
       if(!Object.prototype.hasOwnProperty.call(baseline,k)) continue;
       if(Array.isArray(next[k])||k==='standardContent'||k==='portalManagerR2')snapshot[k]=clone(next[k]);
     }
-    pending=pending.then(()=>persistSnapshot(snapshot)).catch(err=>{console.error('[Edition1 Firebase Store]',err);window.dispatchEvent(new CustomEvent('gx-data-save-error',{detail:err}));throw err});
+    // Resume subsequent saves after a failure; never silently discard a later edit.
+    pending=pending.catch(()=>undefined).then(()=>persistSnapshot(snapshot)).catch(err=>{console.error('[Edition1 Firebase Store]',err);window.dispatchEvent(new CustomEvent('gx-data-save-error',{detail:err}));throw err});
     return next;
   }
   async function hydrate(keys){
+    // Do not overwrite in-memory edits while the previous save is in flight.
+    await pending;
     const requested=[...new Set(keys)];
     const result=await apiGet(requested);
     for(const key of requested){
@@ -97,6 +139,6 @@
       await new Promise(r=>setTimeout(r,100));
     }
   }
-  window.data=state; window.GEStore={get:()=>state,save,hydrate,waitAuth,isHydrated:()=>hydrated,flush:()=>pending,source:'Firestore',projectId:window.GX_FIREBASE_CONFIG?.projectId||''};
+  window.data=state; window.GEStore={get:()=>state,save,hydrate,waitAuth,clearReadCache,isHydrated:()=>hydrated,flush:()=>pending,source:'Firestore',projectId:window.GX_FIREBASE_CONFIG?.projectId||''};
   window.addEventListener('gx-data-save-error',e=>{if(e.detail?.message)console.error('Firestore save failed:',e.detail.message)});
 })();

@@ -1,0 +1,225 @@
+{
+  "input_bytes": 447576,
+  "output_bytes": 428951,
+  "important_before": 4759,
+  "important_after": 4267,
+  "root_level_shadowed_declarations_removed": 730,
+  "nested_rules_left_intact_for_safety": 53,
+  "root_rules_parsed": 3312,
+  "skipped_contexts": {
+    "at-rule skipped: keyframes": 5,
+    "at-rule skipped: view-transition": 1
+  },
+  "examples": [
+    {
+      "selector": "*",
+      "property": "box-sizing",
+      "was_important": false,
+      "line": 8
+    },
+    {
+      "selector": "html",
+      "property": "scroll-behavior",
+      "was_important": false,
+      "line": 8
+    },
+    {
+      "selector": "body",
+      "property": "font-family",
+      "was_important": false,
+      "line": 8
+    },
+    {
+      "selector": "body",
+      "property": "background",
+      "was_important": false,
+      "line": 8
+    },
+    {
+      "selector": "body",
+      "property": "color",
+      "was_important": false,
+      "line": 8
+    },
+    {
+      "selector": ".top",
+      "property": "background",
+      "was_important": false,
+      "line": 9
+    },
+    {
+      "selector": ".top",
+      "property": "z-index",
+      "was_important": false,
+      "line": 9
+    },
+    {
+      "selector": ".top",
+      "property": "border-bottom",
+      "was_important": false,
+      "line": 9
+    },
+    {
+      "selector": ".brand h1",
+      "property": "font-size",
+      "was_important": false,
+      "line": 10
+    },
+    {
+      "selector": ".brand h1",
+      "property": "letter-spacing",
+      "was_important": false,
+      "line": 10
+    },
+    {
+      "selector": ".brand h1",
+      "property": "font-weight",
+      "was_important": false,
+      "line": 10
+    },
+    {
+      "selector": ".brand p",
+      "property": "font-size",
+      "was_important": false,
+      "line": 10
+    },
+    {
+      "selector": ".brand p",
+      "property": "opacity",
+      "was_important": false,
+      "line": 10
+    },
+    {
+      "selector": ".shell",
+      "property": "min-height",
+      "was_important": false,
+      "line": 11
+    },
+    {
+      "selector": ".side",
+      "property": "background",
+      "was_important": false,
+      "line": 12
+    },
+    {
+      "selector": ".side",
+      "property": "border-right",
+      "was_important": false,
+      "line": 12
+    },
+    {
+      "selector": ".side",
+      "property": "position",
+      "was_important": false,
+      "line": 12
+    },
+    {
+      "selector": ".side",
+      "property": "top",
+      "was_important": false,
+      "line": 12
+    },
+    {
+      "selector": ".side",
+      "property": "height",
+      "was_important": false,
+      "line": 12
+    },
+    {
+      "selector": ".side",
+      "property": "transition",
+      "was_important": false,
+      "line": 12
+    },
+    {
+      "selector": ".side-hidden .side",
+      "property": "width",
+      "was_important": false,
+      "line": 15
+    },
+    {
+      "selector": ".side-hidden .side",
+      "property": "overflow",
+      "was_important": false,
+      "line": 15
+    },
+    {
+      "selector": ".side-hidden .main",
+      "property": "width",
+      "was_important": false,
+      "line": 15
+    },
+    {
+      "selector": ".hero",
+      "property": "background",
+      "was_important": false,
+      "line": 17
+    },
+    {
+      "selector": ".hero",
+      "property": "color",
+      "was_important": false,
+      "line": 17
+    },
+    {
+      "selector": ".hero",
+      "property": "border-radius",
+      "was_important": false,
+      "line": 17
+    },
+    {
+      "selector": ".hero",
+      "property": "padding",
+      "was_important": false,
+      "line": 17
+    },
+    {
+      "selector": ".hero",
+      "property": "margin-bottom",
+      "was_important": false,
+      "line": 17
+    },
+    {
+      "selector": ".hero",
+      "property": "box-shadow",
+      "was_important": false,
+      "line": 17
+    },
+    {
+      "selector": ".hero h2",
+      "property": "font-size",
+      "was_important": false,
+      "line": 17
+    },
+    {
+      "selector": ".hero h2",
+      "property": "font-weight",
+      "was_important": false,
+      "line": 17
+    },
+    {
+      "selector": ".hero p",
+      "property": "opacity",
+      "was_important": false,
+      "line": 17
+    },
+    {
+      "selector": ".card",
+      "property": "box-shadow",
+      "was_important": false,
+      "line": 18
+    },
+    {
+      "selector": ".btn",
+      "property": "border-radius",
+      "was_important": false,
+      "line": 19
+    },
+    {
+      "selector": ".btn",
+      "property": "font-weight",
+      "was_important": false,
+      "line": 19
+    }
+  ]
+}

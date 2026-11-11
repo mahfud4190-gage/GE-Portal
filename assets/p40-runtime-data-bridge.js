@@ -3,6 +3,9 @@
   'use strict';
   const route=(location.pathname.split('/').pop()||'index.html').toLowerCase();
   if(!['index.html','inisiatif.html','calendar.html'].includes(route))return;
+  // The first-class app hydrates these collections via GEStore.hydrate().
+  // A second independent query must NEVER replace GEStore's working state.
+  if(window.GEStore?.hydrate)return;
   let done=false,attempts=0;
   const hydrate=async()=>{
     if(done||!window.GXFirebase?.currentUser)return;
@@ -16,7 +19,8 @@
       const rows=payload.initiatives;
       const projectEvents=Array.isArray(payload.projectEvents)?payload.projectEvents:[];
       done=true;
-      if(window.GEStore?.get&&window.GEStore?.save){
+      if(window.GEStore?.hydrate)return;
+      if(window.GEStore?.get){
         const d=window.GEStore.get();
         d.initiatives=rows;
         if(projectEvents.length){
@@ -25,7 +29,7 @@
           projectEvents.forEach(x=>byId.set(`firebase-project-${x.id}`,{...x,id:`firebase-project-${x.id}`,pic:x.pic||x.picName||'',touchpoint:x.touchpoint||x.tp||'',source:'Firebase Project Event'}));
           d.events=[...byId.values()];
         }
-        window.GEStore.save(d)
+        // Read-only bridge: never send hydration results to Firestore.
       }
       if(window.data&&typeof window.data==='object'){
         window.data.initiatives=rows;

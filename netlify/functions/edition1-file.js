@@ -22,7 +22,7 @@ exports.handler=async(event)=>{
     return {statusCode:200,headers:{'Content-Type':meta.contentType||'application/octet-stream','Content-Disposition':`attachment; filename=\"${original}\"`},body:buf.toString('base64'),isBase64Encoded:true};
   }
   if(!['Super Admin','Admin'].includes(a.role)&&String(a.accessLevel)!=='Editor')throw Object.assign(new Error('Editor/Admin access required.'),{statusCode:403,code:'FORBIDDEN'});
-  if(event.httpMethod==='DELETE'){await bucket.file(key).delete({ignoreNotFound:true});return ok({ok:true,deleted:true,key});}
+  if(event.httpMethod==='DELETE')return bad(403,'DELETE_DISABLED','File deletion temporarily disabled for data protection.');
   if(event.httpMethod==='POST'){
     let body;try{body=JSON.parse(event.body||'{}')}catch{return bad(400,'INVALID_JSON','Invalid JSON.')}
     const b64=String(body.base64||'');if(!b64) return bad(400,'FILE_REQUIRED','File content is required.');

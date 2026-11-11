@@ -116,11 +116,9 @@ async function writeOne(db,actor,collection,action,id,raw){
   if(['users','auditLogs'].includes(collection) && !ADMIN_ROLES.has(actor.role)) throw Object.assign(new Error('Administrative access required.'),{statusCode:403,code:'FORBIDDEN'});
   const base=(collection==='users')?db.collection('users'):db.collection('portalData').doc(collection).collection('records'); const ref=id?base.doc(cleanId(id)):base.doc();
   if(action==='DELETE'){
-    const snap=await ref.get(); if(!snap.exists) return {id:ref.id,deleted:false};
-    const prev=snap.data()||{}; if(!inScope(actor,prev)) throw Object.assign(new Error('Record outside account scope.'),{statusCode:403,code:'SCOPE_FORBIDDEN'});
-    await ref.delete();
-    await db.collection('portalData').doc('auditLogs').collection('records').add({actorId:actor.id,actorRole:actor.role,name:actor.name||actor.username||actor.email||actor.id,username:actor.username||actor.email||'',module:collection,object:ref.id,detail:`${collection} ${action.toLowerCase()}`,targetType:`EDITION1_${collection.toUpperCase()}`,targetId:ref.id,action:'Delete',timestamp:FieldValue.serverTimestamp(),result:'SUCCESS'});
-    return {id:ref.id,deleted:true};
+    // Incident containment: prevent all implicit and explicit deletion until
+    // a separate audited, confirmation-based delete workflow is implemented.
+    throw Object.assign(new Error('Deletion temporarily disabled to protect production Firestore data.'),{statusCode:403,code:'DELETE_DISABLED'});
   }
   const data=cleanData(raw); const existing=await ref.get(); const prev=existing.exists?existing.data()||{}:{};
   if(existing.exists && !inScope(actor,prev)) throw Object.assign(new Error('Record outside account scope.'),{statusCode:403,code:'SCOPE_FORBIDDEN'});
@@ -128,6 +126,7 @@ async function writeOne(db,actor,collection,action,id,raw){
   const now=FieldValue.serverTimestamp();
   const next={...data,updatedAt:now,updatedBy:actor.id}; if(!existing.exists){next.createdAt=now;next.createdBy=actor.id}
   if(action==='CREATE' && existing.exists) throw Object.assign(new Error('Record already exists.'),{statusCode:409,code:'ALREADY_EXISTS'});
+  if(action==='UPDATE' && !existing.exists) throw Object.assign(new Error('Record no longer exists; UPDATE cannot recreate it.'),{statusCode:409,code:'RECORD_NOT_FOUND'});
   await ref.set(next,{merge:action==='UPDATE'});
   const out=await ref.get();
   await db.collection('portalData').doc('auditLogs').collection('records').add({actorId:actor.id,actorRole:actor.role,name:actor.name||actor.username||actor.email||actor.id,username:actor.username||actor.email||'',module:collection,object:ref.id,detail:`${collection} ${action.toLowerCase()}`,targetType:`EDITION1_${collection.toUpperCase()}`,targetId:ref.id,action:action.charAt(0)+action.slice(1).toLowerCase(),timestamp:FieldValue.serverTimestamp(),result:'SUCCESS'});
